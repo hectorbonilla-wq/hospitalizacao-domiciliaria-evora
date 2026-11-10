@@ -211,6 +211,17 @@ CAPACIDADE_VISITAS_POR_DOENTE_DIA = 1     # visitas diárias por doente
 CAPACIDADE_TEMPO_ENTRE_VISITAS_MIN = 15   # deslocação média entre 2 domicílios
 
 # ---------------------------------------------------------------------------
+# 7B. Instâncias de doentes (gerar_instancias.py)
+# ---------------------------------------------------------------------------
+# Doentes FICTÍCIOS em localizações reais: sorteados nas subsecções a ≤ 30 min,
+# com probabilidade proporcional à população com 65 ou mais anos (Censos 2021).
+INSTANCIAS_TAMANHOS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+INSTANCIAS_VARIAVEL_PESO = "N_INDIVIDUOS_65_OU_MAIS"   # ou "N_INDIVIDUOS" (todos)
+INSTANCIAS_SEMENTE = 2021                              # mesma semente = mesmas instâncias
+INSTANCIAS_CANDIDATOS_EXTRA = 0.3                      # +30 % de candidatos para substituir os > 30 min
+INSTANCIAS_DISTANCIA_MAX_RUA_M = 300                   # ponto sorteado até 300 m de uma rua
+
+# ---------------------------------------------------------------------------
 # 8. Pastas do projeto
 # ---------------------------------------------------------------------------
 PASTA_PROJETO = Path(__file__).resolve().parent

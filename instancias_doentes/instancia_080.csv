@@ -1,0 +1,81 @@
+﻿id_doente;morada;codigo_postal;localidade;concelho;latitude;longitude
+P001;Travessa das Anjinhas;7000-548;Évora;Évora;38.573791;-7.91386
+P002;Rua de Arraiolos;7000-862;Évora;Évora;38.577679;-7.919015
+P003;Rua Luís Inácio Nunes;7000-306;Évora;Évora;38.568995;-7.926342
+P004;Rua do Cano;7000-596;Évora;Évora;38.573636;-7.910485
+P005;Rua Nossa Senhora de Fátima à Torregela;7005-567;Évora;Évora;38.562954;-7.924798
+P006;Rua de Dom Manuel da Conceição Santos;7005-451;Évora;Évora;38.566559;-7.900131
+P007;Rua José Rosmaninho;7005-500;Évora;Évora;38.560306;-7.912464
+P008;Avenida São João de Deus;7005-181;Évora;Évora;38.570721;-7.901594
+P009;Rua Frei Luís de Granada;7005-496;Évora;Évora;38.563004;-7.919472
+P010;Rua Diana de Liz;7005-413;Évora;Évora;38.564421;-7.910456
+P011;Beco da Horta da Porta;7000-930;Évora;Évora;38.574014;-7.916269
+P012;Travessa de Diogo Botelho;7000-554;Évora;Évora;38.570371;-7.913794
+P013;Avenida Cartaxo Júnior;7000-465;Évora;Évora;38.568267;-7.93191
+P014;Rua de Santo António;7005-402;Évora;Évora;38.57175;-7.896686
+P015;Rua Henrique de Menezes;7005-507;Évora;Évora;38.559953;-7.909108
+P016;Travessa da Palmeira;7000-546;Évora;Évora;38.570004;-7.913834
+P017;Ecopista Ramal de Mora;7005-634;Évora;Évora;38.573219;-7.898892
+P018;Largo Cantinho de Nossa Senhora das Graças;7005-197;Évora;Évora;38.566263;-7.898846
+P019;Rua Fernanda Seno;7005-485;Évora;Évora;38.562528;-7.911683
+P020;Rua Samora Machel;7000-394;Évora;Évora;38.571954;-7.927737
+P021;Largo Nossa Senhora da Conceição;7005-225;Évora;Évora;38.570484;-7.89996
+P022;Rua Doutor Hernani Cidade;7000-888;Évora;Évora;38.57561;-7.921118
+P023;Rua Moinho do Pinheiro;7000-093;Évora;Évora;38.531451;-8.022803
+P024;Rua Samora Machel;7000-394;Évora;Évora;38.571554;-7.927495
+P025;Rua Ramiro Correia;7005-593;Évora;Évora;38.571637;-7.894091
+P026;Rua Crónica Eborense;7000-691;Évora;Évora;38.567751;-7.933156
+P027;Rua dos Anjos;7005-458;Évora;Évora;38.615339;-7.89876
+P028;Rua Padre Manuel Fialho;7000-924;Évora;Évora;38.575947;-7.91769
+P029;Estrada das Quintinhas das Coronheiras;7005-425;Évora;Évora;38.596358;-7.904926
+P030;Rua Embaixador Assis Chateaubrian;7005-475;Évora;Évora;38.586492;-7.914757
+P031;Avenida Doutor Francisco Sá Carneiro;7000-757;Évora;Évora;38.576787;-7.922804
+P032;Travessa da Palmeira;7000-546;Évora;Évora;38.56933;-7.912692
+P033;Rua de Santa Catarina;7000-516;Évora;Évora;38.571778;-7.911261
+P034;Avenida Heróis do Ultramar;7005-161;Évora;Évora;38.566954;-7.895593
+P035;Estrada dos Aliados;7005-670;Évora;Évora;38.567666;-7.88844
+P036;Rua Doutor Manuel Carvalho Moniz;7005-796;Évora;Évora;38.567916;-7.89679
+P037;Avenida dos Salesianos;7000-726;Évora;Évora;38.569842;-7.919237
+P038;Rua Crónica Eborense;7000-691;Évora;Évora;38.569236;-7.933132
+P039;Rua do Valbom;7040-113;Arraiolos;Évora;38.716044;-7.974651
+P040;Rua Progresso do Alentejo;7000-460;Évora;Évora;38.569487;-7.932737
+P041;Praceta da Sé;7000-820;Évora;Évora;38.576469;-7.920628
+P042;Rua Doutor Fernando José Soares Pinheiro;7000-411;Évora;Évora;38.565523;-7.926609
+P043;Rua Cândido dos Reis;7000-582;Évora;Évora;38.574453;-7.912853
+P044;Rua Onofre da Silva;7005-571;Évora;Évora;38.58965;-7.90189
+P045;Rua do Poço Entre Vinhas;7005-438;Évora;Évora;38.570495;-7.894188
+P046;Avenida Dona Leonor de Oliveira Fernandes;7005-144;Évora;Évora;38.569613;-7.897666
+P047;Rua Júlio Reis Pereira;7005-540;Évora;Évora;38.586914;-7.905585
+P048;Rua Vasco Santana;7005-635;Évora;Évora;38.592608;-7.914619
+P049;Estrada da Igrejinha;7005-875;Évora;Évora;38.611655;-7.919535
+P050;Rua do Chafariz D'el Rei;7009-504;Évora;Évora;38.567323;-7.90278
+P051;Rua José Régio;7005-537;Évora;Évora;38.588893;-7.907087
+P052;Rua Frei Miguel;7005-498;Évora;Évora;38.555639;-7.923011
+P053;Rua da Cal Branca;7000-511;Évora;Évora;38.571692;-7.912842
+P054;Rua dos Caçadores;7005-459;Évora;Évora;38.616886;-7.898477
+P055;Travessa das Façanhas;7000-950;Évora;Évora;38.571172;-7.903862
+P056;Rua Ferragial do Poço Novo;7005-208;Évora;Évora;38.579445;-7.910498
+P057;Avenida Engenheiro Arantes e Oliveira;7000-758;Évora;Évora;38.573426;-7.919809
+P058;Rua da Pedreira;7000-708;Évora;Évora;38.580304;-7.925126
+P059;Rua Sebastião da Gama;7005-609;Évora;Évora;38.565547;-7.898715
+P060;Avenida Heróis do Ultramar;7005-161;Évora;Évora;38.566102;-7.896964
+P061;Rua da Pedreira;7000-708;Évora;Évora;38.580076;-7.924955
+P062;Rua da Boavista;7005-856;Évora;Évora;38.567118;-7.884243
+P063;Quinta do Boleto;7005-266;Évora;Évora;38.576712;-7.898857
+P064;Rua da Bela Vista;7005-346;Évora;Évora;38.592412;-7.907785
+P065;Rua João Cutileiro;7005-206;Évora;Évora;38.562923;-7.918938
+P066;Rua 26 de Fevereiro;7000-378;Évora;Évora;38.567646;-7.924163
+P067;Rua Doutor Fernando José Soares Pinheiro;7000-411;Évora;Évora;38.565607;-7.932072
+P068;Rua Sebastião da Gama;7005-609;Évora;Évora;38.565746;-7.898523
+P069;Rua de Braga;7005-388;Évora;Évora;38.562237;-7.92342
+P070;Avenida Dona Leonor de Oliveira Fernandes;7005-144;Évora;Évora;38.567715;-7.897427
+P071;Praceta de Santa Catarina;7000-830;Évora;Évora;38.574317;-7.916736
+P072;Avenida do Escurinho;7000-372;Évora;Évora;38.566664;-7.928409
+P073;Rua Júlio Reis Pereira;7005-540;Évora;Évora;38.586536;-7.905469
+P074;Rua Dom Pedro V;7005-453;Évora;Évora;38.59186;-7.908076
+P075;Avenida Arquitectos Torralva;7000-740;Évora;Évora;38.576841;-7.918563
+P076;Rua do Escudeiro da Roda;7000-607;Évora;Évora;38.575517;-7.910133
+P077;Rua da Escola;7005-354;Évora;Évora;38.570333;-7.89331
+P078;Rua Cidade de Coimbra;7005-324;Évora;Évora;38.565014;-7.925762
+P079;Largo do Chão das Covas;7000-573;Évora;Évora;38.575129;-7.910944
+P080;Avenida Dona Leonor de Oliveira Fernandes;7005-144;Évora;Évora;38.569563;-7.897644

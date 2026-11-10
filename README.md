@@ -281,6 +281,18 @@ Fica o resultado que passa mais verificações. As colunas `verificacao_morada`,
 > A pasta `doentes/` e `resultados/doentes/` estão no `.gitignore`: **nunca** são enviadas para o
 > GitHub, exceto o exemplo fictício.
 
+### Instâncias de 10 a 100 doentes
+
+A pasta [`instancias_doentes/`](instancias_doentes/README.md) tem **10 instâncias encaixadas** (10, 20,
+…, 100 doentes), todas a ≤ 30 min do hospital, com matriz quadrada de km e minutos. Os doentes são
+**fictícios**, mas as localizações são **ruas reais** do OpenStreetMap. Os doentes são sorteados nas
+subsecções da BGRI 2021 proporcionalmente à **população com 65 ou mais anos** (Censos 2021).
+Geram-se com:
+
+```bash
+python instancias_doentes/gerar_instancias.py
+```
+
 ### Tempos em "condições reais"
 
 O OpenRouteService e o OSRM calculam tempos em **fluxo livre** (sem trânsito), com velocidades típicas por tipo de via do OpenStreetMap. Os servidores públicos
@@ -318,6 +330,7 @@ hospitalizacao_domiciliaria_evora/
 ├── executar_tudo.py                  ← corre as etapas 1 a 10 (10 = Parte B, exemplo)
 ├── matriz_doentes.py                 ← PARTE B: doentes por morada → matriz quadrada
 ├── exemplo_doentes_30min/            ← EXEMPLO separado: 9 doentes a ≤ 30 min (entrada, programa, resultados)
+├── instancias_doentes/               ← INSTÂNCIAS de 10, 20, …, 100 doentes fictícios em ruas reais, com matrizes
 ├── doentes/
 │   └── doentes_exemplo.csv           ← doentes FICTÍCIOS (os seus ficheiros ficam aqui, fora do Git)
 ├── etapa_01_descarregar_dados_ine.py

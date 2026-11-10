@@ -80,11 +80,11 @@ from utilitarios import mensagem
 PASTA_DOENTES = config.PASTA_PROJETO / "doentes"
 FICHEIRO_EXEMPLO = PASTA_DOENTES / "doentes_exemplo.csv"
 FICHEIRO_CACHE_GEOCODIFICACAO = PASTA_DOENTES / "cache_geocodificacao.csv"
-# Máximo de doentes por ficheiro (uma única matriz todos-para-todos):
-#   OpenRouteService: (doentes + 1)² ≤ 3500 percursos → 58 doentes
-#   OSRM público: 100 pontos → 99 doentes
-MAXIMO_DOENTES_ORS = 58
-MAXIMO_DOENTES_OSRM = 99
+# Máximo de doentes por ficheiro. Matrizes grandes são pedidas em blocos
+# (ver calcular_matriz); 200 doentes = 201 × 201 = 40 401 percursos
+# (12 pedidos ao OpenRouteService, que gastam quota diária).
+MAXIMO_DOENTES_ORS = 200
+MAXIMO_DOENTES_OSRM = 200
 
 # Tipos de resultado do Nominatim e a precisão correspondente
 PRECISAO_POR_TIPO = {
@@ -414,7 +414,10 @@ def avaliar_candidato(linha, candidato, subseccoes):
     if bgri["municipio"] == "":
         problemas.append("ponto fora da área de estudo da BGRI")
         localidade_ok = False
-    elif localidade and localidade not in normalizar(f"{bgri['municipio']} {bgri['freguesia']}"):
+    elif (localidade and localidade not in normalizar(f"{bgri['municipio']} {bgri['freguesia']}")
+          and not (linha.get("concelho") and normalizar(linha["concelho"]) == normalizar(bgri["municipio"]))):
+        # (se o ficheiro tiver a coluna opcional "concelho", basta o concelho coincidir:
+        #  aldeias como "Valverde" não são nomes de freguesia)
         problemas.append(f"localidade '{linha['localidade']}' não coincide com "
                          f"{bgri['freguesia']} ({bgri['municipio']})")
         localidade_ok = False
@@ -552,7 +555,9 @@ def validar_doentes(doentes):
     doentes.loc[fora, "estado"] = "fora da área de estudo / de Portugal"
     # Só conta o resultado ESCOLHIDO (o texto depois de " | " descreve o candidato rejeitado)
     problemas_escolhido = doentes["verificacao_morada"].str.split(" | ", regex=False).str[0]
-    outro_lugar = problemas_escolhido.str.contains("não coincide", na=False) & (doentes["estado"] == "")
+    coordenadas_do_ficheiro = doentes["fonte_coordenadas"].str.startswith("coordenadas indicadas", na=False)
+    outro_lugar = (problemas_escolhido.str.contains("não coincide", na=False) & (doentes["estado"] == "")
+                   & ~coordenadas_do_ficheiro)   # com GPS indicado, é só um aviso
     doentes.loc[outro_lugar, "estado"] = ("localizado noutro concelho/freguesia — confirme a morada "
                                           "ou indique latitude/longitude")
     for _, linha in doentes[doentes["estado"] != ""].iterrows():
@@ -565,6 +570,10 @@ def calcular_matriz(doentes):
     Pede ao motor de routing (OpenRouteService ou OSRM, rede OpenStreetMap) a
     matriz completa (hospital + doentes, todos para todos).
 
+    Se a matriz for grande demais para um só pedido (OpenRouteService: até
+    3500 percursos por pedido), é pedida em BLOCOS DE LINHAS (grupos de
+    origens para todos os destinos) e os blocos são juntados no fim.
+
     Parâmetros:
         doentes (DataFrame): doentes com coordenadas válidas.
 
@@ -576,16 +585,27 @@ def calcular_matriz(doentes):
     etiquetas = ["HOSPITAL"] + doentes["id_doente"].tolist()
     coordenadas = [(config.HOSPITAL_LONGITUDE, config.HOSPITAL_LATITUDE)]
     coordenadas += list(zip(doentes["longitude"], doentes["latitude"]))
-    mensagem(f"   A pedir ao {nome_motor()} a matriz {len(etiquetas)} × {len(etiquetas)} (rede OpenStreetMap)...")
-    resposta = pedir_matriz(coordenadas)
-    tempos = pd.DataFrame(resposta["durations"], index=etiquetas, columns=etiquetas, dtype=float) / 60
-    distancias = pd.DataFrame(resposta["distances"], index=etiquetas, columns=etiquetas, dtype=float) / 1000
+    n = len(etiquetas)
+    maximo_percursos = 3500 if nome_motor() == "OpenRouteService" else 10000
+    linhas_por_pedido = max(1, maximo_percursos // n)
+    blocos = [list(range(i, min(i + linhas_por_pedido, n))) for i in range(0, n, linhas_por_pedido)]
+    mensagem(f"   A pedir ao {nome_motor()} a matriz {n} × {n} (rede OpenStreetMap) "
+             f"em {len(blocos)} pedido(s)...")
+
+    duracoes, distancias_m, origens = [], [], []
+    for bloco in blocos:
+        resposta = pedir_matriz(coordenadas, sources=bloco if len(blocos) > 1 else None)
+        duracoes += resposta["durations"]
+        distancias_m += resposta["distances"]
+        origens += resposta["sources"]
+    tempos = pd.DataFrame(duracoes, index=etiquetas, columns=etiquetas, dtype=float) / 60
+    distancias = pd.DataFrame(distancias_m, index=etiquetas, columns=etiquetas, dtype=float) / 1000
     encaixe = pd.DataFrame({
         "ponto": etiquetas,
-        "distancia_ate_estrada_m": [round(p.get("distance", 0), 1) for p in resposta["sources"]],
-        "rua_mais_proxima": [p.get("name", "") for p in resposta["sources"]],
-        "longitude_na_estrada": [p["location"][0] for p in resposta["sources"]],
-        "latitude_na_estrada": [p["location"][1] for p in resposta["sources"]],
+        "distancia_ate_estrada_m": [round(p.get("distance") or 0, 1) for p in origens],
+        "rua_mais_proxima": [p.get("name", "") for p in origens],
+        "longitude_na_estrada": [(p.get("location") or [None, None])[0] for p in origens],
+        "latitude_na_estrada": [(p.get("location") or [None, None])[1] for p in origens],
     })
     return tempos, distancias, encaixe
 
@@ -707,10 +727,23 @@ def verificar_matriz_quadrada(tempos_reais, tempos_livre, distancias, encaixe):
     registar("Tempos e distâncias fora da diagonal > 0",
              (tempos_livre.to_numpy()[~np.eye(n, dtype=bool)] > 0).all()
              and (distancias.to_numpy()[~np.eye(n, dtype=bool)] > 0).all(), "")
+    # Desigualdade triangular: ir de A a C diretamente não deve demorar mais do
+    # que ir de A a C passando por B. Testa-se primeiro a matriz usada no
+    # planeamento (condições reais, que inclui o tempo de paragem em B).
     violacoes, trios, excesso = contar_violacoes_triangulares(
+        np.nan_to_num(t, nan=1e9), config.TOLERANCIA_TRIANGULAR_S / 60)
+    registar("Desigualdade triangular (tempos em condições reais)", violacoes == 0,
+             f"{violacoes} violações em {trios} trios (maior excesso {excesso:.2f} min)")
+    violacoes_l, _, excesso_l = contar_violacoes_triangulares(
         np.nan_to_num(tempos_livre.to_numpy(), nan=1e9), config.TOLERANCIA_TRIANGULAR_S / 60)
-    registar("Desigualdade triangular (tempos)", violacoes == 0,
-             f"{violacoes} violações em {trios} trios")
+    linhas.append({"verificacao": "Desigualdade triangular (tempos sem trânsito)",
+                   "resultado": "OK" if violacoes_l == 0 else "INFO",
+                   "valor": f"{violacoes_l} violações em {trios} trios (maior excesso {excesso_l:.2f} min)"
+                            + ("" if violacoes_l == 0 else
+                               " — normal entre pontos muito próximos: num ponto de paragem pode-se "
+                               "inverter a marcha, o que não é permitido a meio de uma rua; na "
+                               "matriz em condições reais o tempo de paragem anula este efeito")})
+    mensagem(f"   [{linhas[-1]['resultado']:^7}] {linhas[-1]['verificacao']}: {linhas[-1]['valor'][:90]}")
     assimetria = np.nanmax(np.abs(tempos_livre.to_numpy() - tempos_livre.to_numpy().T))
     registar("Assimetria máxima A→B vs B→A (não se assume simetria)", True, f"{assimetria:.2f} min")
     afastados = encaixe.loc[encaixe["distancia_ate_estrada_m"] > config.DISTANCIA_MAXIMA_ATE_ESTRADA_M, "ponto"]
@@ -766,7 +799,7 @@ def icone_doente(id_doente, minutos, cor):
     return folium.DivIcon(html=html, icon_size=(110, 16), icon_anchor=(8, 8))
 
 
-def criar_mapa(tabela, destino):
+def criar_mapa(tabela, destino, desenhar_percursos=True):
     """
     Mapa HTML (fundo OpenStreetMap) com o hospital, os doentes e os percursos.
 
@@ -818,7 +851,7 @@ def criar_mapa(tabela, destino):
                  f"<b>Doente → hospital:</b> {d['distancia_doente_hospital_km']} km · "
                  f"{d['tempo_doente_hospital_condicoes_reais_min']} min (condições reais) · "
                  f"{d['tempo_doente_hospital_fluxo_livre_min']} min (sem trânsito)")
-        if incluido:
+        if incluido and desenhar_percursos:
             percurso = obter_percurso(hospital, (d["latitude"], d["longitude"]))
             if percurso:
                 folium.PolyLine(percurso, color=cor, weight=3, opacity=0.55,
@@ -873,7 +906,7 @@ def criar_mapa(tabela, destino):
     mapa.save(destino)
 
 
-def exportar(pasta, tabela, quadradas, completas, pares, encaixe, verificacoes):
+def exportar(pasta, tabela, quadradas, completas, pares, encaixe, verificacoes, desenhar_percursos=True):
     """
     Grava todos os resultados (CSV, Excel e mapa).
 
@@ -929,7 +962,7 @@ def exportar(pasta, tabela, quadradas, completas, pares, encaixe, verificacoes):
         encaixe.to_excel(excel, sheet_name="encaixe_na_rede", index=False)
         verificacoes.to_excel(excel, sheet_name="verificacoes", index=False)
         parametros.to_excel(excel, sheet_name="parametros", index=False)
-    criar_mapa(tabela, pasta / "mapa_doentes.html")
+    criar_mapa(tabela, pasta / "mapa_doentes.html", desenhar_percursos)
 
 
 # ---------------------------------------------------------------------------
@@ -969,7 +1002,8 @@ def criar_exemplo():
 # ---------------------------------------------------------------------------
 # Programa principal
 # ---------------------------------------------------------------------------
-def executar_matriz_doentes(caminho=FICHEIRO_EXEMPLO, pasta_resultados=None):
+def executar_matriz_doentes(caminho=FICHEIRO_EXEMPLO, pasta_resultados=None, matriz_pre_calculada=None,
+                            desenhar_percursos=None):
     """
     Executa a Parte B completa para um ficheiro de doentes.
 
@@ -977,6 +1011,12 @@ def executar_matriz_doentes(caminho=FICHEIRO_EXEMPLO, pasta_resultados=None):
         caminho (Path): ficheiro CSV de doentes.
         pasta_resultados (Path ou None): onde gravar os resultados; por omissão
             resultados/doentes/<nome_do_ficheiro>/.
+        matriz_pre_calculada (tuple ou None): (tempos, distancias, encaixe) já
+            calculados para um conjunto MAIOR que inclua estes doentes (com os
+            mesmos id_doente e coordenadas). Evita repetir pedidos ao routing:
+            a matriz destes doentes é extraída dessa matriz maior.
+        desenhar_percursos (bool ou None): desenhar no mapa o percurso de cada
+            doente (1 pedido por doente). None = só se houver até 20 doentes.
 
     Devolve:
         Path: pasta com os resultados.
@@ -997,7 +1037,15 @@ def executar_matriz_doentes(caminho=FICHEIRO_EXEMPLO, pasta_resultados=None):
         raise ValueError("Nenhum doente com coordenadas válidas.")
 
     # 4-5. Matriz completa (todos os geocodificados) e condições reais
-    tempos_livre, distancias, encaixe = calcular_matriz(validos)
+    if matriz_pre_calculada is not None:
+        ordem = ["HOSPITAL"] + validos["id_doente"].tolist()
+        tempos_todos, distancias_todas, encaixe_todos = matriz_pre_calculada
+        tempos_livre = tempos_todos.loc[ordem, ordem]
+        distancias = distancias_todas.loc[ordem, ordem]
+        encaixe = encaixe_todos.set_index("ponto").loc[ordem].reset_index()
+        mensagem(f"   Matriz {len(ordem)} × {len(ordem)} extraída da matriz já calculada (sem novos pedidos).")
+    else:
+        tempos_livre, distancias, encaixe = calcular_matriz(validos)
     tempos_reais = aplicar_condicoes_reais(tempos_livre)
     mensagem(f"   Condições reais (estimativa): fluxo livre × {config.CONDICOES_REAIS_FATOR_TRANSITO} "
              f"+ {config.CONDICOES_REAIS_TEMPO_ACESSO_MIN} min de acesso")
@@ -1025,7 +1073,9 @@ def executar_matriz_doentes(caminho=FICHEIRO_EXEMPLO, pasta_resultados=None):
     pasta = Path(pasta_resultados) if pasta_resultados else (
         config.PASTA_PROJETO / "resultados" / "doentes" / caminho.stem)
     completas = {"distancias_km": distancias, "tempos_condicoes_reais_min": tempos_reais}
-    exportar(pasta, tabela, quadradas, completas, pares, encaixe, verificacoes)
+    if desenhar_percursos is None:
+        desenhar_percursos = len(incluidos) <= 20
+    exportar(pasta, tabela, quadradas, completas, pares, encaixe, verificacoes, desenhar_percursos)
 
     # Mostrar no ecrã
     mensagem("-" * 70)

@@ -1,0 +1,3408 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_4b41b9d6805d9ad35d6eb16e8811e08c {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/>
+</head>
+<body>
+    
+    
+    <div style="position:fixed;bottom:40px;left:10px;z-index:9999;background:rgba(255,255,255,0.95);
+                padding:8px 10px;border:1px solid #999;border-radius:6px;font:12px Arial;
+                max-width:300px;max-height:55%;overflow:auto;">
+      <b>Doentes — Hospitalização Domiciliária (HESE)</b><br>
+      <span style="background:#c0392b;color:white;padding:0 4px;border-radius:3px;font-weight:bold">H</span> Hospital
+      &nbsp; <span style="color:#1a9850;font-size:15px">&#9679;</span> ≤ 30 min
+      &nbsp; <span style="color:#d95f02;font-size:15px">&#9679;</span> &gt; 30 min<br>
+      <span style="color:#1a9850">&#9473;&#9473;</span> percurso real (rede OpenStreetMap)<br>
+      <small>Círculo com número = doentes próximos agrupados (clique para abrir).</small>
+      <table style="border-collapse:collapse;margin-top:4px;font-size:11px;width:100%">
+        <tr style="border-bottom:1px solid #ccc"><th align="left">Doente</th><th>km</th>
+            <th>H→D min</th><th>D→H min</th></tr><tr><td style='color:#1a9850;font-weight:bold'>P001</td><td align='right'>2.4</td><td align='right'>11.2</td><td align='right'>10.1</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P002</td><td align='right'>2.6</td><td align='right'>10.6</td><td align='right'>10.6</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P003</td><td align='right'>3.6</td><td align='right'>15.7</td><td align='right'>15.2</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P004</td><td align='right'>1.7</td><td align='right'>10.9</td><td align='right'>8.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P005</td><td align='right'>3.8</td><td align='right'>15.7</td><td align='right'>12.3</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P006</td><td align='right'>1.3</td><td align='right'>8.3</td><td align='right'>6.7</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P007</td><td align='right'>2.9</td><td align='right'>12.8</td><td align='right'>10.2</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P008</td><td align='right'>0.6</td><td align='right'>5.4</td><td align='right'>5.2</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P009</td><td align='right'>3.4</td><td align='right'>14.9</td><td align='right'>10.6</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P010</td><td align='right'>1.9</td><td align='right'>10.0</td><td align='right'>8.0</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P011</td><td align='right'>2.6</td><td align='right'>11.2</td><td align='right'>10.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P012</td><td align='right'>2.6</td><td align='right'>12.6</td><td align='right'>10.5</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P013</td><td align='right'>4.7</td><td align='right'>14.4</td><td align='right'>12.9</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P014</td><td align='right'>1.2</td><td align='right'>8.6</td><td align='right'>8.7</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P015</td><td align='right'>2.5</td><td align='right'>12.3</td><td align='right'>10.1</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P016</td><td align='right'>2.6</td><td align='right'>12.6</td><td align='right'>10.6</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P017</td><td align='right'>0.9</td><td align='right'>7.3</td><td align='right'>7.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P018</td><td align='right'>1.4</td><td align='right'>9.0</td><td align='right'>7.1</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P019</td><td align='right'>2.3</td><td align='right'>11.3</td><td align='right'>8.7</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P020</td><td align='right'>4.1</td><td align='right'>14.2</td><td align='right'>14.1</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P021</td><td align='right'>0.8</td><td align='right'>6.8</td><td align='right'>6.6</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P022</td><td align='right'>3.0</td><td align='right'>12.4</td><td align='right'>12.7</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P023</td><td align='right'>14.4</td><td align='right'>26.8</td><td align='right'>23.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P024</td><td align='right'>4.1</td><td align='right'>14.3</td><td align='right'>14.1</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P025</td><td align='right'>1.6</td><td align='right'>10.0</td><td align='right'>9.3</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P026</td><td align='right'>4.8</td><td align='right'>15.0</td><td align='right'>13.2</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P027</td><td align='right'>6.8</td><td align='right'>17.6</td><td align='right'>18.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P028</td><td align='right'>2.5</td><td align='right'>10.8</td><td align='right'>10.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P029</td><td align='right'>4.5</td><td align='right'>15.4</td><td align='right'>15.1</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P030</td><td align='right'>3.0</td><td align='right'>12.1</td><td align='right'>12.0</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P031</td><td align='right'>3.0</td><td align='right'>12.4</td><td align='right'>12.4</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P032</td><td align='right'>2.5</td><td align='right'>11.9</td><td align='right'>8.7</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P033</td><td align='right'>2.0</td><td align='right'>12.3</td><td align='right'>10.7</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P034</td><td align='right'>1.6</td><td align='right'>9.7</td><td align='right'>7.5</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P035</td><td align='right'>2.0</td><td align='right'>11.1</td><td align='right'>8.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P036</td><td align='right'>1.3</td><td align='right'>8.5</td><td align='right'>6.3</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P037</td><td align='right'>3.2</td><td align='right'>13.1</td><td align='right'>11.2</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P038</td><td align='right'>4.7</td><td align='right'>14.9</td><td align='right'>13.9</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P039</td><td align='right'>21.9</td><td align='right'>28.9</td><td align='right'>29.1</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P040</td><td align='right'>4.6</td><td align='right'>14.6</td><td align='right'>13.6</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P041</td><td align='right'>2.9</td><td align='right'>12.2</td><td align='right'>12.5</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P042</td><td align='right'>5.6</td><td align='right'>17.7</td><td align='right'>13.4</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P043</td><td align='right'>2.4</td><td align='right'>10.4</td><td align='right'>9.7</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P044</td><td align='right'>3.8</td><td align='right'>12.7</td><td align='right'>11.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P045</td><td align='right'>1.3</td><td align='right'>8.7</td><td align='right'>8.4</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P046</td><td align='right'>0.9</td><td align='right'>7.6</td><td align='right'>6.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P047</td><td align='right'>3.4</td><td align='right'>12.4</td><td align='right'>12.1</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P048</td><td align='right'>3.6</td><td align='right'>12.8</td><td align='right'>12.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P049</td><td align='right'>6.0</td><td align='right'>16.4</td><td align='right'>16.5</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P050</td><td align='right'>1.2</td><td align='right'>7.8</td><td align='right'>3.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P051</td><td align='right'>3.5</td><td align='right'>13.1</td><td align='right'>12.6</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P052</td><td align='right'>5.2</td><td align='right'>16.2</td><td align='right'>13.2</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P053</td><td align='right'>3.0</td><td align='right'>13.4</td><td align='right'>11.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P054</td><td align='right'>7.2</td><td align='right'>19.3</td><td align='right'>18.5</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P055</td><td align='right'>0.4</td><td align='right'>4.7</td><td align='right'>6.2</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P056</td><td align='right'>2.1</td><td align='right'>9.1</td><td align='right'>9.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P057</td><td align='right'>2.8</td><td align='right'>11.4</td><td align='right'>11.4</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P058</td><td align='right'>3.4</td><td align='right'>13.1</td><td align='right'>13.1</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P059</td><td align='right'>1.4</td><td align='right'>9.1</td><td align='right'>6.7</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P060</td><td align='right'>1.5</td><td align='right'>9.7</td><td align='right'>7.4</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P061</td><td align='right'>3.3</td><td align='right'>12.9</td><td align='right'>12.9</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P062</td><td align='right'>2.5</td><td align='right'>12.8</td><td align='right'>10.6</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P063</td><td align='right'>1.2</td><td align='right'>8.1</td><td align='right'>8.4</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P064</td><td align='right'>3.8</td><td align='right'>13.3</td><td align='right'>13.3</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P065</td><td align='right'>3.0</td><td align='right'>12.9</td><td align='right'>9.7</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P066</td><td align='right'>3.3</td><td align='right'>14.3</td><td align='right'>12.2</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P067</td><td align='right'>5.1</td><td align='right'>15.4</td><td align='right'>15.6</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P068</td><td align='right'>1.4</td><td align='right'>9.0</td><td align='right'>6.8</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P069</td><td align='right'>3.8</td><td align='right'>15.4</td><td align='right'>12.1</td></tr><tr><td style='color:#1a9850;font-weight:bold'>P070</td><td align='right'>1.3</td><td align='right'>8.3</td><td align='right'>6.2</td></tr>
+      </table>
+      <small>Minutos em condições reais estimadas (fluxo livre × 1.15
+      + 3 min).</small><br>
+    </div>
+    
+            <div class="folium-map" id="map_4b41b9d6805d9ad35d6eb16e8811e08c" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_4b41b9d6805d9ad35d6eb16e8811e08c = L.map(
+                "map_4b41b9d6805d9ad35d6eb16e8811e08c",
+                {
+                    center: [38.5688861, -7.9031778],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 11,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+            L.control.scale().addTo(map_4b41b9d6805d9ad35d6eb16e8811e08c);
+
+            
+
+        
+    
+            var tile_layer_1af6f3406b0e40c980325473181f79c2 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_1af6f3406b0e40c980325473181f79c2.addTo(map_4b41b9d6805d9ad35d6eb16e8811e08c);
+        
+    
+        function geo_json_1ca6ab241a9fb6f260e943575d04dab0_styler(feature) {
+            switch(feature.id) {
+                default:
+                    return {"color": "#2c7fb8", "fillColor": "#2c7fb8", "fillOpacity": 0.1, "opacity": 0.8, "weight": 1.5};
+            }
+        }
+
+        function geo_json_1ca6ab241a9fb6f260e943575d04dab0_onEachFeature(feature, layer) {
+
+            layer.on({
+            });
+        };
+        var geo_json_1ca6ab241a9fb6f260e943575d04dab0 = L.geoJson(null, {
+                onEachFeature: geo_json_1ca6ab241a9fb6f260e943575d04dab0_onEachFeature,
+            
+                style: geo_json_1ca6ab241a9fb6f260e943575d04dab0_styler,
+            ...{
+}
+        });
+
+        function geo_json_1ca6ab241a9fb6f260e943575d04dab0_add (data) {
+            geo_json_1ca6ab241a9fb6f260e943575d04dab0
+                .addData(data);
+        }
+            geo_json_1ca6ab241a9fb6f260e943575d04dab0_add({"bbox": [-8.184518, 38.337953, -7.637086, 38.808307], "features": [{"bbox": [-8.184518, 38.337953, -7.637086, 38.808307], "geometry": {"coordinates": [[[-8.157028, 38.675533], [-8.132475, 38.690043], [-8.118747, 38.694573], [-8.10184, 38.712129], [-8.100111, 38.713436], [-8.099554, 38.713204], [-8.099295, 38.713029], [-8.08241, 38.71087], [-8.071817, 38.73493], [-8.06917, 38.73737], [-8.067194, 38.735225], [-8.062735, 38.731583], [-8.062267, 38.731214], [-8.061957, 38.730938], [-8.049056, 38.724384], [-8.045507, 38.72378], [-8.027001, 38.715209], [-8.021111, 38.715198], [-8.010119, 38.743271], [-8.01612, 38.755069], [-8.013987, 38.75797], [-7.993602, 38.773689], [-7.990163, 38.774755], [-7.988606, 38.771092], [-7.988006, 38.7696], [-7.98688, 38.76662], [-7.986763, 38.766246], [-7.986662, 38.765589], [-7.984845, 38.759994], [-7.970176, 38.745156], [-7.951553, 38.756395], [-7.942289, 38.764041], [-7.93086, 38.76863], [-7.911493, 38.778665], [-7.911069, 38.778958], [-7.910944, 38.779026], [-7.908629, 38.776484], [-7.908781, 38.776285], [-7.910661, 38.774216], [-7.912011, 38.772749], [-7.912707, 38.771999], [-7.913222, 38.771495], [-7.913703, 38.771056], [-7.915102, 38.769918], [-7.915965, 38.769231], [-7.916366, 38.76894], [-7.916775, 38.76866], [-7.917304, 38.768338], [-7.917829, 38.768046], [-7.919928, 38.767035], [-7.921935, 38.766072], [-7.930226, 38.739736], [-7.923732, 38.733104], [-7.923146, 38.732437], [-7.894951, 38.722254], [-7.883908, 38.728764], [-7.881019, 38.731389], [-7.878636, 38.73357], [-7.877803, 38.734393], [-7.875142, 38.731968], [-7.86054, 38.714296], [-7.835639, 38.713828], [-7.824377, 38.715], [-7.815524, 38.738259], [-7.816455, 38.740691], [-7.8164, 38.740819], [-7.814918, 38.741807], [-7.814738, 38.741785], [-7.812322, 38.741299], [-7.791196, 38.736165], [-7.770707, 38.734435], [-7.757492, 38.739891], [-7.755737, 38.741129], [-7.753803, 38.742238], [-7.752411, 38.742915], [-7.751301, 38.743423], [-7.737075, 38.751641], [-7.709614, 38.761441], [-7.705178, 38.765205], [-7.700725, 38.768982], [-7.6872, 38.783132], [-7.685386, 38.785428], [-7.683985, 38.786941], [-7.681837, 38.789001], [-7.680602, 38.790039], [-7.678438, 38.791661], [-7.677466, 38.792326], [-7.673269, 38.794986], [-7.663906, 38.800404], [-7.66295, 38.800846], [-7.661865, 38.80132], [-7.660748, 38.801781], [-7.658633, 38.802584], [-7.6569, 38.803218], [-7.655166, 38.803852], [-7.653101, 38.804607], [-7.65101, 38.805371], [-7.649909, 38.805754], [-7.64796, 38.806367], [-7.646923, 38.806658], [-7.645997, 38.806896], [-7.645025, 38.807131], [-7.644065, 38.807339], [-7.642028, 38.807727], [-7.640895, 38.807902], [-7.639934, 38.808033], [-7.637488, 38.808307], [-7.637086, 38.80473], [-7.651865, 38.801226], [-7.65393, 38.800471], [-7.655664, 38.799837], [-7.657397, 38.799203], [-7.671342, 38.791945], [-7.687247, 38.776993], [-7.688188, 38.775791], [-7.690158, 38.773511], [-7.691929, 38.771744], [-7.69422, 38.769751], [-7.696875, 38.767498], [-7.69843, 38.766209], [-7.702849, 38.76246], [-7.707284, 38.758696], [-7.709492, 38.757043], [-7.710563, 38.756296], [-7.712309, 38.755192], [-7.714218, 38.75409], [-7.716505, 38.752921], [-7.718059, 38.752211], [-7.719901, 38.751437], [-7.723155, 38.750184], [-7.726122, 38.748931], [-7.727201, 38.74844], [-7.730416, 38.746801], [-7.732367, 38.745742], [-7.734334, 38.744674], [-7.736544, 38.743677], [-7.738005, 38.743112], [-7.743336, 38.741001], [-7.749628, 38.738467], [-7.751879, 38.73709], [-7.762421, 38.709335], [-7.762782, 38.695863], [-7.743095, 38.679811], [-7.740326, 38.678768], [-7.72966, 38.675725], [-7.729525, 38.675667], [-7.710434, 38.66842], [-7.701003, 38.667675], [-7.70057, 38.666094], [-7.669115, 38.6672], [-7.66809, 38.671114], [-7.667969, 38.671751], [-7.667784, 38.672214], [-7.667469, 38.672738], [-7.666186, 38.674367], [-7.664798, 38.676318], [-7.664444, 38.676681], [-7.661867, 38.674166], [-7.648921, 38.651769], [-7.649203, 38.64818], [-7.65227, 38.648421], [-7.67344, 38.647052], [-7.67704, 38.647055], [-7.691332, 38.649048], [-7.708368, 38.629871], [-7.710771, 38.62507], [-7.715016, 38.619139], [-7.736881, 38.615084], [-7.748963, 38.608607], [-7.744465, 38.581691], [-7.72373, 38.57224], [-7.72257, 38.571897], [-7.718676, 38.570307], [-7.692758, 38.554782], [-7.68784, 38.556445], [-7.686327, 38.553179], [-7.68745, 38.549326], [-7.689193, 38.546176], [-7.70099, 38.527502], [-7.701069, 38.516146], [-7.702909, 38.513067], [-7.703389, 38.48637], [-7.693581, 38.475893], [-7.692063, 38.474593], [-7.670978, 38.46347], [-7.670446, 38.463354], [-7.669881, 38.463184], [-7.669121, 38.462876], [-7.657472, 38.459427], [-7.657644, 38.455831], [-7.659934, 38.455941], [-7.662225, 38.45605], [-7.679778, 38.454547], [-7.680023, 38.454486], [-7.692383, 38.456608], [-7.695522, 38.45837], [-7.722645, 38.442526], [-7.717645, 38.429503], [-7.716178, 38.427916], [-7.714634, 38.42624], [-7.71424, 38.42567], [-7.714046, 38.425177], [-7.714017, 38.425058], [-7.718687, 38.400791], [-7.722026, 38.399445], [-7.722292, 38.400106], [-7.72311, 38.402123], [-7.723906, 38.404051], [-7.724175, 38.404873], [-7.724361, 38.405705], [-7.724445, 38.406473], [-7.724455, 38.407096], [-7.724407, 38.407774], [-7.724225, 38.409025], [-7.723655, 38.412441], [-7.723134, 38.415563], [-7.730274, 38.43352], [-7.75116, 38.434622], [-7.754321, 38.436345], [-7.771716, 38.445952], [-7.785215, 38.443012], [-7.785929, 38.44265], [-7.786638, 38.442414], [-7.788883, 38.441959], [-7.819162, 38.433707], [-7.816332, 38.418429], [-7.818808, 38.415815], [-7.843351, 38.398471], [-7.844115, 38.397825], [-7.84644, 38.400574], [-7.848949, 38.407679], [-7.848659, 38.409537], [-7.84862, 38.420085], [-7.846994, 38.423296], [-7.844853, 38.439109], [-7.84561, 38.442202], [-7.845058, 38.443324], [-7.829961, 38.461336], [-7.829023, 38.472446], [-7.829077, 38.472985], [-7.844216, 38.496584], [-7.847638, 38.498276], [-7.85851, 38.500373], [-7.882959, 38.4825], [-7.879311, 38.458199], [-7.879867, 38.454642], [-7.894607, 38.437473], [-7.89691, 38.434706], [-7.913257, 38.419175], [-7.916016, 38.416862], [-7.933254, 38.405353], [-7.940869, 38.397494], [-7.947964, 38.390091], [-7.953953, 38.382658], [-7.968762, 38.370726], [-7.989617, 38.350361], [-7.998891, 38.337953], [-8.000564, 38.338273], [-8.001403, 38.338485], [-8.00222, 38.339662], [-8.002489, 38.346327], [-8.000884, 38.350236], [-7.997274, 38.354811], [-7.987115, 38.377815], [-7.999243, 38.3898], [-7.999434, 38.393395], [-7.993517, 38.409236], [-7.991171, 38.411966], [-7.975317, 38.439114], [-7.975363, 38.442713], [-7.97245, 38.44438], [-7.949637, 38.462998], [-7.962178, 38.483532], [-7.965283, 38.485354], [-7.977255, 38.491007], [-7.981451, 38.492109], [-8.006447, 38.483392], [-8.015068, 38.475211], [-8.017551, 38.472604], [-8.033969, 38.464703], [-8.045856, 38.439389], [-8.053361, 38.428456], [-8.066203, 38.423395], [-8.083425, 38.410673], [-8.086257, 38.388998], [-8.086859, 38.388137], [-8.089395, 38.387233], [-8.090261, 38.388773], [-8.120668, 38.39634], [-8.122723, 38.399296], [-8.121437, 38.400268], [-8.117783, 38.402699], [-8.111068, 38.407843], [-8.108009, 38.409741], [-8.090591, 38.424236], [-8.086066, 38.446897], [-8.086394, 38.4504], [-8.070852, 38.464709], [-8.067607, 38.46966], [-8.064681, 38.471758], [-8.056686, 38.488557], [-8.074981, 38.509504], [-8.078532, 38.510095], [-8.089452, 38.515429], [-8.103642, 38.523299], [-8.123359, 38.544398], [-8.127743, 38.544609], [-8.129127, 38.545125], [-8.129159, 38.545156], [-8.128799, 38.548051], [-8.128428, 38.548164], [-8.120611, 38.552991], [-8.116223, 38.558822], [-8.128977, 38.584309], [-8.131219, 38.586697], [-8.133075, 38.589566], [-8.132941, 38.58976], [-8.132379, 38.590382], [-8.131445, 38.590731], [-8.13104, 38.590839], [-8.130589, 38.59092], [-8.125977, 38.591604], [-8.123791, 38.592084], [-8.123139, 38.592186], [-8.122658, 38.592213], [-8.122441, 38.592219], [-8.121385, 38.592147], [-8.11919, 38.591711], [-8.116208, 38.591256], [-8.115394, 38.591074], [-8.11446, 38.590695], [-8.093713, 38.595599], [-8.104462, 38.62454], [-8.109855, 38.625585], [-8.112633, 38.626789], [-8.11549, 38.628029], [-8.117612, 38.629075], [-8.11854, 38.629573], [-8.119379, 38.630053], [-8.121058, 38.631065], [-8.122441, 38.631958], [-8.143575, 38.633696], [-8.147133, 38.634242], [-8.163739, 38.639319], [-8.180908, 38.642358], [-8.181409, 38.642358], [-8.184518, 38.642514], [-8.184337, 38.646109], [-8.164611, 38.666351], [-8.157028, 38.675533]]], "type": "Polygon"}, "id": "0", "properties": {"area_km2": 1153.7, "minutos": 30, "motor": "OpenRouteService", "recortada_por_portugal": true}, "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+            geo_json_1ca6ab241a9fb6f260e943575d04dab0.bindTooltip(
+                `<div>
+                     Isócrona de 30 min (referência)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            geo_json_1ca6ab241a9fb6f260e943575d04dab0.addTo(map_4b41b9d6805d9ad35d6eb16e8811e08c);
+        
+    
+            var feature_group_70af6e5377af0de61d3579472c311045 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            feature_group_70af6e5377af0de61d3579472c311045.addTo(map_4b41b9d6805d9ad35d6eb16e8811e08c);
+        
+    
+            var marker_cluster_64854725a2546a421e61e207eddaa209 = L.markerClusterGroup(
+                {
+  "disableClusteringAtZoom": 16,
+  "maxClusterRadius": 35,
+  "spiderfyOnMaxZoom": true,
+}
+            );
+        
+    
+            var marker_e76cbf1c9a006640ba905268527d4878 = L.marker(
+                [38.573791, -7.91386],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_7852ff98810a9ab788d929ffeb00fe4c = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP001 \u00b7 11 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_bfa97d6ebc54ff4d0ae0337f56093d75 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_ccb38a69f574bf1328872bda4fd46af5 = $(`<div id="html_ccb38a69f574bf1328872bda4fd46af5" style="width: 100.0%; height: 100.0%;"><b>P001</b> — incluído (≤ 30 min)<br>Travessa das Anjinhas, 7000-548 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão) (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.449 km · 11.22 min (condições reais) · 7.15 min (sem trânsito)<br><b>Doente → hospital:</b> 1.551 km · 10.13 min (condições reais) · 6.2 min (sem trânsito)</div>`)[0];
+                popup_bfa97d6ebc54ff4d0ae0337f56093d75.setContent(html_ccb38a69f574bf1328872bda4fd46af5);
+            
+        
+
+        marker_e76cbf1c9a006640ba905268527d4878.bindPopup(popup_bfa97d6ebc54ff4d0ae0337f56093d75)
+        ;
+
+        
+    
+    
+            marker_e76cbf1c9a006640ba905268527d4878.bindTooltip(
+                `<div>
+                     P001: Travessa das Anjinhas, 7000-548 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e76cbf1c9a006640ba905268527d4878.setIcon(div_icon_7852ff98810a9ab788d929ffeb00fe4c);
+            
+    
+            var marker_374aa5d693087de468359852849cdebd = L.marker(
+                [38.577679, -7.919015],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_13e4930ef1070f8f127c8f944d5117a8 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP002 \u00b7 11 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_575952126dac65f6882ffddd590eb871 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_776bf146f1f8568fc2019049e16f9464 = $(`<div id="html_776bf146f1f8568fc2019049e16f9464" style="width: 100.0%; height: 100.0%;"><b>P002</b> — incluído (≤ 30 min)<br>Rua de Arraiolos, 7000-862 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.593 km · 10.59 min (condições reais) · 6.6 min (sem trânsito)<br><b>Doente → hospital:</b> 2.376 km · 10.56 min (condições reais) · 6.57 min (sem trânsito)</div>`)[0];
+                popup_575952126dac65f6882ffddd590eb871.setContent(html_776bf146f1f8568fc2019049e16f9464);
+            
+        
+
+        marker_374aa5d693087de468359852849cdebd.bindPopup(popup_575952126dac65f6882ffddd590eb871)
+        ;
+
+        
+    
+    
+            marker_374aa5d693087de468359852849cdebd.bindTooltip(
+                `<div>
+                     P002: Rua de Arraiolos, 7000-862 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_374aa5d693087de468359852849cdebd.setIcon(div_icon_13e4930ef1070f8f127c8f944d5117a8);
+            
+    
+            var marker_7fedd51b918c4e47aa13e3c1f454a72d = L.marker(
+                [38.568995, -7.926342],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_2f9a731a3b1136a5c1890cfea56de652 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP003 \u00b7 16 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_e4ce894cd5ed49e4e5f00f69f1ae7262 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_f6c96b609009ca96b4793d11d6b5c087 = $(`<div id="html_f6c96b609009ca96b4793d11d6b5c087" style="width: 100.0%; height: 100.0%;"><b>P003</b> — incluído (≤ 30 min)<br>Rua Luís Inácio Nunes, 7000-306 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.612 km · 15.68 min (condições reais) · 11.03 min (sem trânsito)<br><b>Doente → hospital:</b> 3.319 km · 15.24 min (condições reais) · 10.64 min (sem trânsito)</div>`)[0];
+                popup_e4ce894cd5ed49e4e5f00f69f1ae7262.setContent(html_f6c96b609009ca96b4793d11d6b5c087);
+            
+        
+
+        marker_7fedd51b918c4e47aa13e3c1f454a72d.bindPopup(popup_e4ce894cd5ed49e4e5f00f69f1ae7262)
+        ;
+
+        
+    
+    
+            marker_7fedd51b918c4e47aa13e3c1f454a72d.bindTooltip(
+                `<div>
+                     P003: Rua Luís Inácio Nunes, 7000-306 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7fedd51b918c4e47aa13e3c1f454a72d.setIcon(div_icon_2f9a731a3b1136a5c1890cfea56de652);
+            
+    
+            var marker_159329c70c0176ff278dc38800d07602 = L.marker(
+                [38.573636, -7.910485],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_634e8dcd3da08aebe3a61df8efbfca7b = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP004 \u00b7 11 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_57881d86c489cbe07a0b3fb3cf6e6a72 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_5831e445508635d1eb87be3f1cbe8030 = $(`<div id="html_5831e445508635d1eb87be3f1cbe8030" style="width: 100.0%; height: 100.0%;"><b>P004</b> — incluído (≤ 30 min)<br>Rua do Cano, 7000-596 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão) (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.715 km · 10.89 min (condições reais) · 6.86 min (sem trânsito)<br><b>Doente → hospital:</b> 1.26 km · 8.8 min (condições reais) · 5.04 min (sem trânsito)</div>`)[0];
+                popup_57881d86c489cbe07a0b3fb3cf6e6a72.setContent(html_5831e445508635d1eb87be3f1cbe8030);
+            
+        
+
+        marker_159329c70c0176ff278dc38800d07602.bindPopup(popup_57881d86c489cbe07a0b3fb3cf6e6a72)
+        ;
+
+        
+    
+    
+            marker_159329c70c0176ff278dc38800d07602.bindTooltip(
+                `<div>
+                     P004: Rua do Cano, 7000-596 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_159329c70c0176ff278dc38800d07602.setIcon(div_icon_634e8dcd3da08aebe3a61df8efbfca7b);
+            
+    
+            var marker_eaac5d32633bccd442ebf42f6204839f = L.marker(
+                [38.562954, -7.924798],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_014b6e455916b7e03f7e76ab553772cd = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP005 \u00b7 16 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_fb95ef4bdbd2c39f95c454c37157f6a5 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_38a5ebb4bc71658953c51189ecbcdb79 = $(`<div id="html_38a5ebb4bc71658953c51189ecbcdb79" style="width: 100.0%; height: 100.0%;"><b>P005</b> — incluído (≤ 30 min)<br>Rua Nossa Senhora de Fátima à Torregela, 7005-567 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.756 km · 15.66 min (condições reais) · 11.01 min (sem trânsito)<br><b>Doente → hospital:</b> 2.875 km · 12.35 min (condições reais) · 8.13 min (sem trânsito)</div>`)[0];
+                popup_fb95ef4bdbd2c39f95c454c37157f6a5.setContent(html_38a5ebb4bc71658953c51189ecbcdb79);
+            
+        
+
+        marker_eaac5d32633bccd442ebf42f6204839f.bindPopup(popup_fb95ef4bdbd2c39f95c454c37157f6a5)
+        ;
+
+        
+    
+    
+            marker_eaac5d32633bccd442ebf42f6204839f.bindTooltip(
+                `<div>
+                     P005: Rua Nossa Senhora de Fátima à Torregela, 7005-567 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_eaac5d32633bccd442ebf42f6204839f.setIcon(div_icon_014b6e455916b7e03f7e76ab553772cd);
+            
+    
+            var marker_c14a5c2fd4fa9c43ca43b8601d5f2dcb = L.marker(
+                [38.566559, -7.900131],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_572cba13094852df43ecf9c1087b53a8 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP006 \u00b7 8 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_7f277c218c6a8cafa1c457d88d73a160 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_b76217323cedf8464867b61695b4d478 = $(`<div id="html_b76217323cedf8464867b61695b4d478" style="width: 100.0%; height: 100.0%;"><b>P006</b> — incluído (≤ 30 min)<br>Rua de Dom Manuel da Conceição Santos, 7005-451 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.338 km · 8.29 min (condições reais) · 4.6 min (sem trânsito)<br><b>Doente → hospital:</b> 0.781 km · 6.67 min (condições reais) · 3.19 min (sem trânsito)</div>`)[0];
+                popup_7f277c218c6a8cafa1c457d88d73a160.setContent(html_b76217323cedf8464867b61695b4d478);
+            
+        
+
+        marker_c14a5c2fd4fa9c43ca43b8601d5f2dcb.bindPopup(popup_7f277c218c6a8cafa1c457d88d73a160)
+        ;
+
+        
+    
+    
+            marker_c14a5c2fd4fa9c43ca43b8601d5f2dcb.bindTooltip(
+                `<div>
+                     P006: Rua de Dom Manuel da Conceição Santos, 7005-451 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c14a5c2fd4fa9c43ca43b8601d5f2dcb.setIcon(div_icon_572cba13094852df43ecf9c1087b53a8);
+            
+    
+            var marker_acca8ef0ba861d5ee076001be12a5321 = L.marker(
+                [38.560306, -7.912464],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_d936360a23410465abbec76c48d96ef5 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP007 \u00b7 13 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_d77b2a3268d823d1a9c9a8fb2b2bd3c3 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_bfd26c28d630c8d5ab4ba3689ead57ae = $(`<div id="html_bfd26c28d630c8d5ab4ba3689ead57ae" style="width: 100.0%; height: 100.0%;"><b>P007</b> — incluído (≤ 30 min)<br>Rua José Rosmaninho, 7005-500 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.894 km · 12.83 min (condições reais) · 8.55 min (sem trânsito)<br><b>Doente → hospital:</b> 2.088 km · 10.23 min (condições reais) · 6.29 min (sem trânsito)</div>`)[0];
+                popup_d77b2a3268d823d1a9c9a8fb2b2bd3c3.setContent(html_bfd26c28d630c8d5ab4ba3689ead57ae);
+            
+        
+
+        marker_acca8ef0ba861d5ee076001be12a5321.bindPopup(popup_d77b2a3268d823d1a9c9a8fb2b2bd3c3)
+        ;
+
+        
+    
+    
+            marker_acca8ef0ba861d5ee076001be12a5321.bindTooltip(
+                `<div>
+                     P007: Rua José Rosmaninho, 7005-500 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_acca8ef0ba861d5ee076001be12a5321.setIcon(div_icon_d936360a23410465abbec76c48d96ef5);
+            
+    
+            var marker_33c20a9d4aa1ec200f9988e59151fbc6 = L.marker(
+                [38.570721, -7.901594],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_7db045169567da6992b229916ed4a2e5 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP008 \u00b7 5 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_17777f97dc040fe9a3dab53df15b4f0e = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_da0bfc98d6ac94ad9e885d9bd0560823 = $(`<div id="html_da0bfc98d6ac94ad9e885d9bd0560823" style="width: 100.0%; height: 100.0%;"><b>P008</b> — incluído (≤ 30 min)<br>Avenida São João de Deus, 7005-181 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 0.55 km · 5.43 min (condições reais) · 2.11 min (sem trânsito)<br><b>Doente → hospital:</b> 0.59 km · 5.16 min (condições reais) · 1.88 min (sem trânsito)</div>`)[0];
+                popup_17777f97dc040fe9a3dab53df15b4f0e.setContent(html_da0bfc98d6ac94ad9e885d9bd0560823);
+            
+        
+
+        marker_33c20a9d4aa1ec200f9988e59151fbc6.bindPopup(popup_17777f97dc040fe9a3dab53df15b4f0e)
+        ;
+
+        
+    
+    
+            marker_33c20a9d4aa1ec200f9988e59151fbc6.bindTooltip(
+                `<div>
+                     P008: Avenida São João de Deus, 7005-181 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_33c20a9d4aa1ec200f9988e59151fbc6.setIcon(div_icon_7db045169567da6992b229916ed4a2e5);
+            
+    
+            var marker_e95b38ef37a1fe93c830dc65c152a928 = L.marker(
+                [38.563004, -7.919472],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_5e0e8c722c38b2fed7a31891a6566fc7 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP009 \u00b7 15 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_0188b5ec37b8270fca742fe4eea54762 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_06d421815f458edd28ce13089306d4ba = $(`<div id="html_06d421815f458edd28ce13089306d4ba" style="width: 100.0%; height: 100.0%;"><b>P009</b> — incluído (≤ 30 min)<br>Rua Frei Luís de Granada, 7005-496 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.393 km · 14.93 min (condições reais) · 10.37 min (sem trânsito)<br><b>Doente → hospital:</b> 2.254 km · 10.61 min (condições reais) · 6.62 min (sem trânsito)</div>`)[0];
+                popup_0188b5ec37b8270fca742fe4eea54762.setContent(html_06d421815f458edd28ce13089306d4ba);
+            
+        
+
+        marker_e95b38ef37a1fe93c830dc65c152a928.bindPopup(popup_0188b5ec37b8270fca742fe4eea54762)
+        ;
+
+        
+    
+    
+            marker_e95b38ef37a1fe93c830dc65c152a928.bindTooltip(
+                `<div>
+                     P009: Rua Frei Luís de Granada, 7005-496 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e95b38ef37a1fe93c830dc65c152a928.setIcon(div_icon_5e0e8c722c38b2fed7a31891a6566fc7);
+            
+    
+            var marker_05f071cffdea0e29a8f66fcec530a006 = L.marker(
+                [38.564421, -7.910456],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_50b403e9aef08cc09d71f1b96f54b513 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP010 \u00b7 10 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_f15ac5a0de8635f149a3b85fc735b060 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_257ee24c4e674b618645627f42e96330 = $(`<div id="html_257ee24c4e674b618645627f42e96330" style="width: 100.0%; height: 100.0%;"><b>P010</b> — incluído (≤ 30 min)<br>Rua Diana de Liz, 7005-413 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.901 km · 10.03 min (condições reais) · 6.11 min (sem trânsito)<br><b>Doente → hospital:</b> 1.133 km · 8.0 min (condições reais) · 4.35 min (sem trânsito)</div>`)[0];
+                popup_f15ac5a0de8635f149a3b85fc735b060.setContent(html_257ee24c4e674b618645627f42e96330);
+            
+        
+
+        marker_05f071cffdea0e29a8f66fcec530a006.bindPopup(popup_f15ac5a0de8635f149a3b85fc735b060)
+        ;
+
+        
+    
+    
+            marker_05f071cffdea0e29a8f66fcec530a006.bindTooltip(
+                `<div>
+                     P010: Rua Diana de Liz, 7005-413 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_05f071cffdea0e29a8f66fcec530a006.setIcon(div_icon_50b403e9aef08cc09d71f1b96f54b513);
+            
+    
+            var marker_c757c133e36918b67b41b77cf3ef25b9 = L.marker(
+                [38.574014, -7.916269],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_feac5aa8934c11e63ee6915358bdfdef = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP011 \u00b7 11 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_e70035ecf737f0f86b9b3da3631591ab = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_f08ec6c3ad7d9bfb2342b0f6d54c82e4 = $(`<div id="html_f08ec6c3ad7d9bfb2342b0f6d54c82e4" style="width: 100.0%; height: 100.0%;"><b>P011</b> — incluído (≤ 30 min)<br>Beco da Horta da Porta, 7000-930 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.584 km · 11.16 min (condições reais) · 7.1 min (sem trânsito)<br><b>Doente → hospital:</b> 2.263 km · 10.82 min (condições reais) · 6.8 min (sem trânsito)</div>`)[0];
+                popup_e70035ecf737f0f86b9b3da3631591ab.setContent(html_f08ec6c3ad7d9bfb2342b0f6d54c82e4);
+            
+        
+
+        marker_c757c133e36918b67b41b77cf3ef25b9.bindPopup(popup_e70035ecf737f0f86b9b3da3631591ab)
+        ;
+
+        
+    
+    
+            marker_c757c133e36918b67b41b77cf3ef25b9.bindTooltip(
+                `<div>
+                     P011: Beco da Horta da Porta, 7000-930 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c757c133e36918b67b41b77cf3ef25b9.setIcon(div_icon_feac5aa8934c11e63ee6915358bdfdef);
+            
+    
+            var marker_008e996a6d567b4871ffc598787a4c06 = L.marker(
+                [38.570371, -7.913794],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_c0dbd5aae1fd4c26d6ea73f43dd29a27 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP012 \u00b7 13 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_e3378ad8fedc19ad546a5dddd0cec9cb = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_9157d5953f7a9859ca6f37aee185f900 = $(`<div id="html_9157d5953f7a9859ca6f37aee185f900" style="width: 100.0%; height: 100.0%;"><b>P012</b> — incluído (≤ 30 min)<br>Travessa de Diogo Botelho, 7000-554 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão) (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.63 km · 12.64 min (condições reais) · 8.38 min (sem trânsito)<br><b>Doente → hospital:</b> 1.946 km · 10.51 min (condições reais) · 6.53 min (sem trânsito)</div>`)[0];
+                popup_e3378ad8fedc19ad546a5dddd0cec9cb.setContent(html_9157d5953f7a9859ca6f37aee185f900);
+            
+        
+
+        marker_008e996a6d567b4871ffc598787a4c06.bindPopup(popup_e3378ad8fedc19ad546a5dddd0cec9cb)
+        ;
+
+        
+    
+    
+            marker_008e996a6d567b4871ffc598787a4c06.bindTooltip(
+                `<div>
+                     P012: Travessa de Diogo Botelho, 7000-554 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_008e996a6d567b4871ffc598787a4c06.setIcon(div_icon_c0dbd5aae1fd4c26d6ea73f43dd29a27);
+            
+    
+            var marker_9225375d571f8f162bc942375f800bd4 = L.marker(
+                [38.568267, -7.93191],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_b36e90c536fd5671d02596310bbb7e2c = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP013 \u00b7 14 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_56248044e73dc931b3a421a3859ec909 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_2b619efd0fbbf1d45c4a92eae91587a9 = $(`<div id="html_2b619efd0fbbf1d45c4a92eae91587a9" style="width: 100.0%; height: 100.0%;"><b>P013</b> — incluído (≤ 30 min)<br>Avenida Cartaxo Júnior, 7000-465 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 4.665 km · 14.43 min (condições reais) · 9.94 min (sem trânsito)<br><b>Doente → hospital:</b> 3.67 km · 12.92 min (condições reais) · 8.63 min (sem trânsito)</div>`)[0];
+                popup_56248044e73dc931b3a421a3859ec909.setContent(html_2b619efd0fbbf1d45c4a92eae91587a9);
+            
+        
+
+        marker_9225375d571f8f162bc942375f800bd4.bindPopup(popup_56248044e73dc931b3a421a3859ec909)
+        ;
+
+        
+    
+    
+            marker_9225375d571f8f162bc942375f800bd4.bindTooltip(
+                `<div>
+                     P013: Avenida Cartaxo Júnior, 7000-465 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_9225375d571f8f162bc942375f800bd4.setIcon(div_icon_b36e90c536fd5671d02596310bbb7e2c);
+            
+    
+            var marker_78a6b420cc42bc6e245ebb1c914ceaeb = L.marker(
+                [38.57175, -7.896686],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_7a89b60cba07151b1cf465c61ec6eec7 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP014 \u00b7 9 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_cafcd3a75cf8466ff4193d0a5b0500f1 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_20558bcc8fea0cd77dabef4826a09e00 = $(`<div id="html_20558bcc8fea0cd77dabef4826a09e00" style="width: 100.0%; height: 100.0%;"><b>P014</b> — incluído (≤ 30 min)<br>Rua de Santo António, 7005-402 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.159 km · 8.58 min (condições reais) · 4.85 min (sem trânsito)<br><b>Doente → hospital:</b> 1.213 km · 8.66 min (condições reais) · 4.92 min (sem trânsito)</div>`)[0];
+                popup_cafcd3a75cf8466ff4193d0a5b0500f1.setContent(html_20558bcc8fea0cd77dabef4826a09e00);
+            
+        
+
+        marker_78a6b420cc42bc6e245ebb1c914ceaeb.bindPopup(popup_cafcd3a75cf8466ff4193d0a5b0500f1)
+        ;
+
+        
+    
+    
+            marker_78a6b420cc42bc6e245ebb1c914ceaeb.bindTooltip(
+                `<div>
+                     P014: Rua de Santo António, 7005-402 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_78a6b420cc42bc6e245ebb1c914ceaeb.setIcon(div_icon_7a89b60cba07151b1cf465c61ec6eec7);
+            
+    
+            var marker_0610028924b56e9949fb3eab7b9389b7 = L.marker(
+                [38.559953, -7.909108],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_1c205f27ea4110c1bce6370afc80cd0c = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP015 \u00b7 12 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_1070e63a9913377ed4b10ba9f0e468d6 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_8841ff45e5404c0028c7f24defea038a = $(`<div id="html_8841ff45e5404c0028c7f24defea038a" style="width: 100.0%; height: 100.0%;"><b>P015</b> — incluído (≤ 30 min)<br>Rua Henrique de Menezes, 7005-507 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.479 km · 12.34 min (condições reais) · 8.12 min (sem trânsito)<br><b>Doente → hospital:</b> 1.691 km · 10.11 min (condições reais) · 6.18 min (sem trânsito)</div>`)[0];
+                popup_1070e63a9913377ed4b10ba9f0e468d6.setContent(html_8841ff45e5404c0028c7f24defea038a);
+            
+        
+
+        marker_0610028924b56e9949fb3eab7b9389b7.bindPopup(popup_1070e63a9913377ed4b10ba9f0e468d6)
+        ;
+
+        
+    
+    
+            marker_0610028924b56e9949fb3eab7b9389b7.bindTooltip(
+                `<div>
+                     P015: Rua Henrique de Menezes, 7005-507 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0610028924b56e9949fb3eab7b9389b7.setIcon(div_icon_1c205f27ea4110c1bce6370afc80cd0c);
+            
+    
+            var marker_ae8fe4ef72c33634024cc58259244473 = L.marker(
+                [38.570004, -7.913834],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_bf482531d160ce347c5d5452aa816ccf = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP016 \u00b7 13 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_fc5e0b256d068a450e8464184228c369 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_a96f61db9d008f23c4508912780523dc = $(`<div id="html_a96f61db9d008f23c4508912780523dc" style="width: 100.0%; height: 100.0%;"><b>P016</b> — incluído (≤ 30 min)<br>Travessa da Palmeira, 7000-546 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão) (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.613 km · 12.57 min (condições reais) · 8.32 min (sem trânsito)<br><b>Doente → hospital:</b> 1.973 km · 10.62 min (condições reais) · 6.63 min (sem trânsito)</div>`)[0];
+                popup_fc5e0b256d068a450e8464184228c369.setContent(html_a96f61db9d008f23c4508912780523dc);
+            
+        
+
+        marker_ae8fe4ef72c33634024cc58259244473.bindPopup(popup_fc5e0b256d068a450e8464184228c369)
+        ;
+
+        
+    
+    
+            marker_ae8fe4ef72c33634024cc58259244473.bindTooltip(
+                `<div>
+                     P016: Travessa da Palmeira, 7000-546 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ae8fe4ef72c33634024cc58259244473.setIcon(div_icon_bf482531d160ce347c5d5452aa816ccf);
+            
+    
+            var marker_00bc4ac9136f28af285079841497e613 = L.marker(
+                [38.573219, -7.898892],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_f8f98a7bb5ec82de79fb66951dad3b44 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP017 \u00b7 7 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_fcca316ce1d4672c83ee78ee600413f0 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_bcc7e85baf2730aed2687e7bcc198fe0 = $(`<div id="html_bcc7e85baf2730aed2687e7bcc198fe0" style="width: 100.0%; height: 100.0%;"><b>P017</b> — incluído (≤ 30 min)<br>Ecopista Ramal de Mora, 7005-634 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 0.902 km · 7.26 min (condições reais) · 3.7 min (sem trânsito)<br><b>Doente → hospital:</b> 1.181 km · 7.78 min (condições reais) · 4.16 min (sem trânsito)</div>`)[0];
+                popup_fcca316ce1d4672c83ee78ee600413f0.setContent(html_bcc7e85baf2730aed2687e7bcc198fe0);
+            
+        
+
+        marker_00bc4ac9136f28af285079841497e613.bindPopup(popup_fcca316ce1d4672c83ee78ee600413f0)
+        ;
+
+        
+    
+    
+            marker_00bc4ac9136f28af285079841497e613.bindTooltip(
+                `<div>
+                     P017: Ecopista Ramal de Mora, 7005-634 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_00bc4ac9136f28af285079841497e613.setIcon(div_icon_f8f98a7bb5ec82de79fb66951dad3b44);
+            
+    
+            var marker_de1e6d52d1c883b3916f7fe7a97336bc = L.marker(
+                [38.566263, -7.898846],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_010edcb0a317efc7912fbc375fd11050 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP018 \u00b7 9 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_ce666c75b1342744a72100a3b59d7976 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_26796d3c1603c53de2b36ec15bc4cde2 = $(`<div id="html_26796d3c1603c53de2b36ec15bc4cde2" style="width: 100.0%; height: 100.0%;"><b>P018</b> — incluído (≤ 30 min)<br>Largo Cantinho de Nossa Senhora das Graças, 7005-197 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.401 km · 9.01 min (condições reais) · 5.23 min (sem trânsito)<br><b>Doente → hospital:</b> 0.885 km · 7.14 min (condições reais) · 3.6 min (sem trânsito)</div>`)[0];
+                popup_ce666c75b1342744a72100a3b59d7976.setContent(html_26796d3c1603c53de2b36ec15bc4cde2);
+            
+        
+
+        marker_de1e6d52d1c883b3916f7fe7a97336bc.bindPopup(popup_ce666c75b1342744a72100a3b59d7976)
+        ;
+
+        
+    
+    
+            marker_de1e6d52d1c883b3916f7fe7a97336bc.bindTooltip(
+                `<div>
+                     P018: Largo Cantinho de Nossa Senhora das Graças, 7005-197 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_de1e6d52d1c883b3916f7fe7a97336bc.setIcon(div_icon_010edcb0a317efc7912fbc375fd11050);
+            
+    
+            var marker_e453636cb86e8a44400dfaaa12fa3280 = L.marker(
+                [38.562528, -7.911683],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_8ff632e82376079980c2ce0408b38268 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP019 \u00b7 11 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_11b94156096d2deadaadf58a9ee74cd0 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_8499bff13cc4aa5024bcb47f21e141d3 = $(`<div id="html_8499bff13cc4aa5024bcb47f21e141d3" style="width: 100.0%; height: 100.0%;"><b>P019</b> — incluído (≤ 30 min)<br>Rua Fernanda Seno, 7005-485 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.256 km · 11.31 min (condições reais) · 7.23 min (sem trânsito)<br><b>Doente → hospital:</b> 1.619 km · 8.67 min (condições reais) · 4.93 min (sem trânsito)</div>`)[0];
+                popup_11b94156096d2deadaadf58a9ee74cd0.setContent(html_8499bff13cc4aa5024bcb47f21e141d3);
+            
+        
+
+        marker_e453636cb86e8a44400dfaaa12fa3280.bindPopup(popup_11b94156096d2deadaadf58a9ee74cd0)
+        ;
+
+        
+    
+    
+            marker_e453636cb86e8a44400dfaaa12fa3280.bindTooltip(
+                `<div>
+                     P019: Rua Fernanda Seno, 7005-485 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e453636cb86e8a44400dfaaa12fa3280.setIcon(div_icon_8ff632e82376079980c2ce0408b38268);
+            
+    
+            var marker_c405b2b6c636919d60da583fc68a7da8 = L.marker(
+                [38.571954, -7.927737],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_365d2a08e9eec014196620d88e5ba4ad = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP020 \u00b7 14 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_d2a642c611d9d89a650d15efbc13ecc1 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_5381fb121599341b82087fc165b130ca = $(`<div id="html_5381fb121599341b82087fc165b130ca" style="width: 100.0%; height: 100.0%;"><b>P020</b> — incluído (≤ 30 min)<br>Rua Samora Machel, 7000-394 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 4.128 km · 14.22 min (condições reais) · 9.76 min (sem trânsito)<br><b>Doente → hospital:</b> 3.722 km · 14.06 min (condições reais) · 9.62 min (sem trânsito)</div>`)[0];
+                popup_d2a642c611d9d89a650d15efbc13ecc1.setContent(html_5381fb121599341b82087fc165b130ca);
+            
+        
+
+        marker_c405b2b6c636919d60da583fc68a7da8.bindPopup(popup_d2a642c611d9d89a650d15efbc13ecc1)
+        ;
+
+        
+    
+    
+            marker_c405b2b6c636919d60da583fc68a7da8.bindTooltip(
+                `<div>
+                     P020: Rua Samora Machel, 7000-394 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c405b2b6c636919d60da583fc68a7da8.setIcon(div_icon_365d2a08e9eec014196620d88e5ba4ad);
+            
+    
+            var marker_ce7fc04232c1f3caa70aac5f7ed6a15f = L.marker(
+                [38.570484, -7.89996],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_15ed674e6a735a6c24ed1e92e83bea26 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP021 \u00b7 7 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_6fc33319251c2eb19000f76ff86d2b52 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_029190369e63bd43cb0da7bd909612b9 = $(`<div id="html_029190369e63bd43cb0da7bd909612b9" style="width: 100.0%; height: 100.0%;"><b>P021</b> — incluído (≤ 30 min)<br>Largo Nossa Senhora da Conceição, 7005-225 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 0.762 km · 6.75 min (condições reais) · 3.26 min (sem trânsito)<br><b>Doente → hospital:</b> 0.76 km · 6.56 min (condições reais) · 3.1 min (sem trânsito)</div>`)[0];
+                popup_6fc33319251c2eb19000f76ff86d2b52.setContent(html_029190369e63bd43cb0da7bd909612b9);
+            
+        
+
+        marker_ce7fc04232c1f3caa70aac5f7ed6a15f.bindPopup(popup_6fc33319251c2eb19000f76ff86d2b52)
+        ;
+
+        
+    
+    
+            marker_ce7fc04232c1f3caa70aac5f7ed6a15f.bindTooltip(
+                `<div>
+                     P021: Largo Nossa Senhora da Conceição, 7005-225 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ce7fc04232c1f3caa70aac5f7ed6a15f.setIcon(div_icon_15ed674e6a735a6c24ed1e92e83bea26);
+            
+    
+            var marker_fe9b7e43d392ea4f1e2b2f2a2b2a8a00 = L.marker(
+                [38.57561, -7.921118],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_2c3f1af158133847e4b87a6244996602 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP022 \u00b7 12 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_8f566028c6b17bd02fd84c8c0f87183f = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_0c42fa778538f8486e63bb4b35359e0c = $(`<div id="html_0c42fa778538f8486e63bb4b35359e0c" style="width: 100.0%; height: 100.0%;"><b>P022</b> — incluído (≤ 30 min)<br>Rua Doutor Hernani Cidade, 7000-888 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.979 km · 12.36 min (condições reais) · 8.14 min (sem trânsito)<br><b>Doente → hospital:</b> 2.705 km · 12.69 min (condições reais) · 8.43 min (sem trânsito)</div>`)[0];
+                popup_8f566028c6b17bd02fd84c8c0f87183f.setContent(html_0c42fa778538f8486e63bb4b35359e0c);
+            
+        
+
+        marker_fe9b7e43d392ea4f1e2b2f2a2b2a8a00.bindPopup(popup_8f566028c6b17bd02fd84c8c0f87183f)
+        ;
+
+        
+    
+    
+            marker_fe9b7e43d392ea4f1e2b2f2a2b2a8a00.bindTooltip(
+                `<div>
+                     P022: Rua Doutor Hernani Cidade, 7000-888 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_fe9b7e43d392ea4f1e2b2f2a2b2a8a00.setIcon(div_icon_2c3f1af158133847e4b87a6244996602);
+            
+    
+            var marker_3c943e9f7ea160bc538bfa43a1a81ace = L.marker(
+                [38.531451, -8.022803],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_6388e80ee9052b0abc0c750ab1c986bc = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP023 \u00b7 27 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_767c223a20d3c5ac571412490169ca89 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_ee39b6cb5faa7288db7c65c23a9e130c = $(`<div id="html_ee39b6cb5faa7288db7c65c23a9e130c" style="width: 100.0%; height: 100.0%;"><b>P023</b> — incluído (≤ 30 min)<br>Rua Moinho do Pinheiro, 7000-093 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Nossa Senhora da Tourega e Nossa Senhora de Guadalupe (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 14.425 km · 26.76 min (condições reais) · 20.66 min (sem trânsito)<br><b>Doente → hospital:</b> 13.524 km · 23.84 min (condições reais) · 18.12 min (sem trânsito)</div>`)[0];
+                popup_767c223a20d3c5ac571412490169ca89.setContent(html_ee39b6cb5faa7288db7c65c23a9e130c);
+            
+        
+
+        marker_3c943e9f7ea160bc538bfa43a1a81ace.bindPopup(popup_767c223a20d3c5ac571412490169ca89)
+        ;
+
+        
+    
+    
+            marker_3c943e9f7ea160bc538bfa43a1a81ace.bindTooltip(
+                `<div>
+                     P023: Rua Moinho do Pinheiro, 7000-093 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_3c943e9f7ea160bc538bfa43a1a81ace.setIcon(div_icon_6388e80ee9052b0abc0c750ab1c986bc);
+            
+    
+            var marker_a4c0841a64cfc94e51073d0d6424b00f = L.marker(
+                [38.571554, -7.927495],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_ec2373f517366a89c8cdc7904355c607 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP024 \u00b7 14 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_658eb1fe422b55f7923d6c8396b1d115 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_a7026993f78ccceb7e9f641ce4a737b8 = $(`<div id="html_a7026993f78ccceb7e9f641ce4a737b8" style="width: 100.0%; height: 100.0%;"><b>P024</b> — incluído (≤ 30 min)<br>Rua Samora Machel, 7000-394 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 4.145 km · 14.29 min (condições reais) · 9.82 min (sem trânsito)<br><b>Doente → hospital:</b> 3.762 km · 14.07 min (condições reais) · 9.63 min (sem trânsito)</div>`)[0];
+                popup_658eb1fe422b55f7923d6c8396b1d115.setContent(html_a7026993f78ccceb7e9f641ce4a737b8);
+            
+        
+
+        marker_a4c0841a64cfc94e51073d0d6424b00f.bindPopup(popup_658eb1fe422b55f7923d6c8396b1d115)
+        ;
+
+        
+    
+    
+            marker_a4c0841a64cfc94e51073d0d6424b00f.bindTooltip(
+                `<div>
+                     P024: Rua Samora Machel, 7000-394 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a4c0841a64cfc94e51073d0d6424b00f.setIcon(div_icon_ec2373f517366a89c8cdc7904355c607);
+            
+    
+            var marker_8fd285b948567990ec279d74d542883e = L.marker(
+                [38.571637, -7.894091],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_8bc32c341a40a29890819d49aa13d8f4 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP025 \u00b7 10 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_8217919c6495a5a8b6dda65f7d039f52 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_0031a0ee8169defdcea91fa911192906 = $(`<div id="html_0031a0ee8169defdcea91fa911192906" style="width: 100.0%; height: 100.0%;"><b>P025</b> — incluído (≤ 30 min)<br>Rua Ramiro Correia, 7005-593 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.589 km · 10.03 min (condições reais) · 6.11 min (sem trânsito)<br><b>Doente → hospital:</b> 1.53 km · 9.35 min (condições reais) · 5.52 min (sem trânsito)</div>`)[0];
+                popup_8217919c6495a5a8b6dda65f7d039f52.setContent(html_0031a0ee8169defdcea91fa911192906);
+            
+        
+
+        marker_8fd285b948567990ec279d74d542883e.bindPopup(popup_8217919c6495a5a8b6dda65f7d039f52)
+        ;
+
+        
+    
+    
+            marker_8fd285b948567990ec279d74d542883e.bindTooltip(
+                `<div>
+                     P025: Rua Ramiro Correia, 7005-593 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_8fd285b948567990ec279d74d542883e.setIcon(div_icon_8bc32c341a40a29890819d49aa13d8f4);
+            
+    
+            var marker_4236d9dafb645a42c08816b2415370a8 = L.marker(
+                [38.567751, -7.933156],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_5fec4da59cc09682aefacfd5b534f33d = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP026 \u00b7 15 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_ae205f7b94e75bec558d10068aa66766 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_2f23dade7c84a413764a42def099a617 = $(`<div id="html_2f23dade7c84a413764a42def099a617" style="width: 100.0%; height: 100.0%;"><b>P026</b> — incluído (≤ 30 min)<br>Rua Crónica Eborense, 7000-691 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 4.838 km · 14.98 min (condições reais) · 10.42 min (sem trânsito)<br><b>Doente → hospital:</b> 3.681 km · 13.22 min (condições reais) · 8.89 min (sem trânsito)</div>`)[0];
+                popup_ae205f7b94e75bec558d10068aa66766.setContent(html_2f23dade7c84a413764a42def099a617);
+            
+        
+
+        marker_4236d9dafb645a42c08816b2415370a8.bindPopup(popup_ae205f7b94e75bec558d10068aa66766)
+        ;
+
+        
+    
+    
+            marker_4236d9dafb645a42c08816b2415370a8.bindTooltip(
+                `<div>
+                     P026: Rua Crónica Eborense, 7000-691 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4236d9dafb645a42c08816b2415370a8.setIcon(div_icon_5fec4da59cc09682aefacfd5b534f33d);
+            
+    
+            var marker_ae36d55b951be834b090672029a08dda = L.marker(
+                [38.615339, -7.89876],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_be1c9e6124bfc4dce0611e33ffb31633 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP027 \u00b7 18 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_9a23501f823a5555ecd7a5d22fb31440 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_e01b457001f8bd180c891ecf0e9bb84c = $(`<div id="html_e01b457001f8bd180c891ecf0e9bb84c" style="width: 100.0%; height: 100.0%;"><b>P027</b> — incluído (≤ 30 min)<br>Rua dos Anjos, 7005-458 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: Canaviais (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 6.811 km · 17.56 min (condições reais) · 12.66 min (sem trânsito)<br><b>Doente → hospital:</b> 6.494 km · 18.79 min (condições reais) · 13.73 min (sem trânsito)</div>`)[0];
+                popup_9a23501f823a5555ecd7a5d22fb31440.setContent(html_e01b457001f8bd180c891ecf0e9bb84c);
+            
+        
+
+        marker_ae36d55b951be834b090672029a08dda.bindPopup(popup_9a23501f823a5555ecd7a5d22fb31440)
+        ;
+
+        
+    
+    
+            marker_ae36d55b951be834b090672029a08dda.bindTooltip(
+                `<div>
+                     P027: Rua dos Anjos, 7005-458 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ae36d55b951be834b090672029a08dda.setIcon(div_icon_be1c9e6124bfc4dce0611e33ffb31633);
+            
+    
+            var marker_4bfc44cfcbd7783bc4730ac0dbdcab36 = L.marker(
+                [38.575947, -7.91769],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_8619ee2fdd93307309ae5ceb2a100e41 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP028 \u00b7 11 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_8fb255a829f7709f9b7a0ce8bfe9930d = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_9c59f4800004fa98e82e121adf65caf9 = $(`<div id="html_9c59f4800004fa98e82e121adf65caf9" style="width: 100.0%; height: 100.0%;"><b>P028</b> — incluído (≤ 30 min)<br>Rua Padre Manuel Fialho, 7000-924 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.506 km · 10.8 min (condições reais) · 6.78 min (sem trânsito)<br><b>Doente → hospital:</b> 2.286 km · 10.76 min (condições reais) · 6.75 min (sem trânsito)</div>`)[0];
+                popup_8fb255a829f7709f9b7a0ce8bfe9930d.setContent(html_9c59f4800004fa98e82e121adf65caf9);
+            
+        
+
+        marker_4bfc44cfcbd7783bc4730ac0dbdcab36.bindPopup(popup_8fb255a829f7709f9b7a0ce8bfe9930d)
+        ;
+
+        
+    
+    
+            marker_4bfc44cfcbd7783bc4730ac0dbdcab36.bindTooltip(
+                `<div>
+                     P028: Rua Padre Manuel Fialho, 7000-924 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4bfc44cfcbd7783bc4730ac0dbdcab36.setIcon(div_icon_8619ee2fdd93307309ae5ceb2a100e41);
+            
+    
+            var marker_5552eaf0f747a4b332dfa849f38c5f12 = L.marker(
+                [38.596358, -7.904926],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_87501ee1241f45dcd48cb38ef239bef3 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP029 \u00b7 15 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_a0ed47783edb338bab4fe7581bcb9ec3 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_77ceec2ce2148ae6d273a748a1e3a4d4 = $(`<div id="html_77ceec2ce2148ae6d273a748a1e3a4d4" style="width: 100.0%; height: 100.0%;"><b>P029</b> — incluído (≤ 30 min)<br>Estrada das Quintinhas das Coronheiras, 7005-425 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: Canaviais (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 4.476 km · 15.36 min (condições reais) · 10.75 min (sem trânsito)<br><b>Doente → hospital:</b> 4.241 km · 15.11 min (condições reais) · 10.53 min (sem trânsito)</div>`)[0];
+                popup_a0ed47783edb338bab4fe7581bcb9ec3.setContent(html_77ceec2ce2148ae6d273a748a1e3a4d4);
+            
+        
+
+        marker_5552eaf0f747a4b332dfa849f38c5f12.bindPopup(popup_a0ed47783edb338bab4fe7581bcb9ec3)
+        ;
+
+        
+    
+    
+            marker_5552eaf0f747a4b332dfa849f38c5f12.bindTooltip(
+                `<div>
+                     P029: Estrada das Quintinhas das Coronheiras, 7005-425 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_5552eaf0f747a4b332dfa849f38c5f12.setIcon(div_icon_87501ee1241f45dcd48cb38ef239bef3);
+            
+    
+            var marker_26735df3591cc1e58aca6d1431396de1 = L.marker(
+                [38.586492, -7.914757],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_b8a1f540fdf0ed23bad8a3f3bd6c738f = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP030 \u00b7 12 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_efb8b0d4e2abf6463181d37524932a0d = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_ab141560b927632536000a10a2dfc7e7 = $(`<div id="html_ab141560b927632536000a10a2dfc7e7" style="width: 100.0%; height: 100.0%;"><b>P030</b> — incluído (≤ 30 min)<br>Rua Embaixador Assis Chateaubrian, 7005-475 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.982 km · 12.08 min (condições reais) · 7.9 min (sem trânsito)<br><b>Doente → hospital:</b> 2.825 km · 12.03 min (condições reais) · 7.85 min (sem trânsito)</div>`)[0];
+                popup_efb8b0d4e2abf6463181d37524932a0d.setContent(html_ab141560b927632536000a10a2dfc7e7);
+            
+        
+
+        marker_26735df3591cc1e58aca6d1431396de1.bindPopup(popup_efb8b0d4e2abf6463181d37524932a0d)
+        ;
+
+        
+    
+    
+            marker_26735df3591cc1e58aca6d1431396de1.bindTooltip(
+                `<div>
+                     P030: Rua Embaixador Assis Chateaubrian, 7005-475 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_26735df3591cc1e58aca6d1431396de1.setIcon(div_icon_b8a1f540fdf0ed23bad8a3f3bd6c738f);
+            
+    
+            var marker_7f6f19bab7c09d8ae336d31bcdbc9988 = L.marker(
+                [38.576787, -7.922804],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_e0eaf8c0f99353997bd6aa4c0c4f830f = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP031 \u00b7 12 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_0c47d4df63c41319d6e73beacbfe497b = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_18cd048f2cdad560159bad3dfff0aabe = $(`<div id="html_18cd048f2cdad560159bad3dfff0aabe" style="width: 100.0%; height: 100.0%;"><b>P031</b> — incluído (≤ 30 min)<br>Avenida Doutor Francisco Sá Carneiro, 7000-757 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.989 km · 12.41 min (condições reais) · 8.18 min (sem trânsito)<br><b>Doente → hospital:</b> 2.771 km · 12.37 min (condições reais) · 8.15 min (sem trânsito)</div>`)[0];
+                popup_0c47d4df63c41319d6e73beacbfe497b.setContent(html_18cd048f2cdad560159bad3dfff0aabe);
+            
+        
+
+        marker_7f6f19bab7c09d8ae336d31bcdbc9988.bindPopup(popup_0c47d4df63c41319d6e73beacbfe497b)
+        ;
+
+        
+    
+    
+            marker_7f6f19bab7c09d8ae336d31bcdbc9988.bindTooltip(
+                `<div>
+                     P031: Avenida Doutor Francisco Sá Carneiro, 7000-757 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7f6f19bab7c09d8ae336d31bcdbc9988.setIcon(div_icon_e0eaf8c0f99353997bd6aa4c0c4f830f);
+            
+    
+            var marker_340d48b0c41404c1206a54b2cb91c98c = L.marker(
+                [38.56933, -7.912692],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_90f2a514cc42d8c0f8a071327491b228 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP032 \u00b7 12 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_d7ac35fbf1294276a563fec42e6ccc12 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_ef8fe60c94b546e180402422c08e9dc7 = $(`<div id="html_ef8fe60c94b546e180402422c08e9dc7" style="width: 100.0%; height: 100.0%;"><b>P032</b> — incluído (≤ 30 min)<br>Travessa da Palmeira, 7000-546 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão) (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.468 km · 11.9 min (condições reais) · 7.74 min (sem trânsito)<br><b>Doente → hospital:</b> 1.23 km · 8.66 min (condições reais) · 4.92 min (sem trânsito)</div>`)[0];
+                popup_d7ac35fbf1294276a563fec42e6ccc12.setContent(html_ef8fe60c94b546e180402422c08e9dc7);
+            
+        
+
+        marker_340d48b0c41404c1206a54b2cb91c98c.bindPopup(popup_d7ac35fbf1294276a563fec42e6ccc12)
+        ;
+
+        
+    
+    
+            marker_340d48b0c41404c1206a54b2cb91c98c.bindTooltip(
+                `<div>
+                     P032: Travessa da Palmeira, 7000-546 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_340d48b0c41404c1206a54b2cb91c98c.setIcon(div_icon_90f2a514cc42d8c0f8a071327491b228);
+            
+    
+            var marker_24e8cd1a213b6124018414f6ce506d55 = L.marker(
+                [38.571778, -7.911261],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_e688c2f813308b211ab1498250a2d55e = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP033 \u00b7 12 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_574f4333d58364119a01e3211c358c9c = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_0f4baf10fad967e9dbd7246df26e8c21 = $(`<div id="html_0f4baf10fad967e9dbd7246df26e8c21" style="width: 100.0%; height: 100.0%;"><b>P033</b> — incluído (≤ 30 min)<br>Rua de Santa Catarina, 7000-516 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão) (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.019 km · 12.29 min (condições reais) · 8.08 min (sem trânsito)<br><b>Doente → hospital:</b> 1.662 km · 10.65 min (condições reais) · 6.65 min (sem trânsito)</div>`)[0];
+                popup_574f4333d58364119a01e3211c358c9c.setContent(html_0f4baf10fad967e9dbd7246df26e8c21);
+            
+        
+
+        marker_24e8cd1a213b6124018414f6ce506d55.bindPopup(popup_574f4333d58364119a01e3211c358c9c)
+        ;
+
+        
+    
+    
+            marker_24e8cd1a213b6124018414f6ce506d55.bindTooltip(
+                `<div>
+                     P033: Rua de Santa Catarina, 7000-516 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_24e8cd1a213b6124018414f6ce506d55.setIcon(div_icon_e688c2f813308b211ab1498250a2d55e);
+            
+    
+            var marker_dbadf8111512de7a68a979ee8d1e2c67 = L.marker(
+                [38.566954, -7.895593],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_5c9f402b23fc51705a2c1d3ca46f6655 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP034 \u00b7 10 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_f4894bba466db54f7e4181ec60bfecf2 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_f44ea71545523d259921ede592dcb11e = $(`<div id="html_f44ea71545523d259921ede592dcb11e" style="width: 100.0%; height: 100.0%;"><b>P034</b> — incluído (≤ 30 min)<br>Avenida Heróis do Ultramar, 7005-161 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.586 km · 9.73 min (condições reais) · 5.85 min (sem trânsito)<br><b>Doente → hospital:</b> 0.989 km · 7.48 min (condições reais) · 3.9 min (sem trânsito)</div>`)[0];
+                popup_f4894bba466db54f7e4181ec60bfecf2.setContent(html_f44ea71545523d259921ede592dcb11e);
+            
+        
+
+        marker_dbadf8111512de7a68a979ee8d1e2c67.bindPopup(popup_f4894bba466db54f7e4181ec60bfecf2)
+        ;
+
+        
+    
+    
+            marker_dbadf8111512de7a68a979ee8d1e2c67.bindTooltip(
+                `<div>
+                     P034: Avenida Heróis do Ultramar, 7005-161 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_dbadf8111512de7a68a979ee8d1e2c67.setIcon(div_icon_5c9f402b23fc51705a2c1d3ca46f6655);
+            
+    
+            var marker_15b88a7375a358f7ad709ef8226ccc54 = L.marker(
+                [38.567666, -7.88844],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_068515142973587f2af41dd2069f73fe = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP035 \u00b7 11 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_ff68c4b0328e45996e93259f40643b4b = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_7c663b21740674f5d381af204fbd76cb = $(`<div id="html_7c663b21740674f5d381af204fbd76cb" style="width: 100.0%; height: 100.0%;"><b>P035</b> — incluído (≤ 30 min)<br>Estrada dos Aliados, 7005-670 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.045 km · 11.06 min (condições reais) · 7.01 min (sem trânsito)<br><b>Doente → hospital:</b> 1.448 km · 8.82 min (condições reais) · 5.06 min (sem trânsito)</div>`)[0];
+                popup_ff68c4b0328e45996e93259f40643b4b.setContent(html_7c663b21740674f5d381af204fbd76cb);
+            
+        
+
+        marker_15b88a7375a358f7ad709ef8226ccc54.bindPopup(popup_ff68c4b0328e45996e93259f40643b4b)
+        ;
+
+        
+    
+    
+            marker_15b88a7375a358f7ad709ef8226ccc54.bindTooltip(
+                `<div>
+                     P035: Estrada dos Aliados, 7005-670 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_15b88a7375a358f7ad709ef8226ccc54.setIcon(div_icon_068515142973587f2af41dd2069f73fe);
+            
+    
+            var marker_6a91e30670d09e475dfd5f0eecf7e0a8 = L.marker(
+                [38.567916, -7.89679],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_4f76d3c680796fb9a4c30b5554a0074e = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP036 \u00b7 9 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_1454bedb2f650890583247300a49e82c = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_7be36ca25607c728a98600d4a6bc1a93 = $(`<div id="html_7be36ca25607c728a98600d4a6bc1a93" style="width: 100.0%; height: 100.0%;"><b>P036</b> — incluído (≤ 30 min)<br>Rua Doutor Manuel Carvalho Moniz, 7005-796 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.291 km · 8.51 min (condições reais) · 4.79 min (sem trânsito)<br><b>Doente → hospital:</b> 0.694 km · 6.27 min (condições reais) · 2.84 min (sem trânsito)</div>`)[0];
+                popup_1454bedb2f650890583247300a49e82c.setContent(html_7be36ca25607c728a98600d4a6bc1a93);
+            
+        
+
+        marker_6a91e30670d09e475dfd5f0eecf7e0a8.bindPopup(popup_1454bedb2f650890583247300a49e82c)
+        ;
+
+        
+    
+    
+            marker_6a91e30670d09e475dfd5f0eecf7e0a8.bindTooltip(
+                `<div>
+                     P036: Rua Doutor Manuel Carvalho Moniz, 7005-796 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6a91e30670d09e475dfd5f0eecf7e0a8.setIcon(div_icon_4f76d3c680796fb9a4c30b5554a0074e);
+            
+    
+            var marker_f4e3c09d4c75582d805a612d4b78b437 = L.marker(
+                [38.569842, -7.919237],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_308e381751c631165846c27101c21e2a = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP037 \u00b7 13 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_a6380aabd64b4a353fe5053ffbacf3ee = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_d68d4b9916e2185c456df55eba3aedb2 = $(`<div id="html_d68d4b9916e2185c456df55eba3aedb2" style="width: 100.0%; height: 100.0%;"><b>P037</b> — incluído (≤ 30 min)<br>Avenida dos Salesianos, 7000-726 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.247 km · 13.12 min (condições reais) · 8.8 min (sem trânsito)<br><b>Doente → hospital:</b> 2.24 km · 11.23 min (condições reais) · 7.16 min (sem trânsito)</div>`)[0];
+                popup_a6380aabd64b4a353fe5053ffbacf3ee.setContent(html_d68d4b9916e2185c456df55eba3aedb2);
+            
+        
+
+        marker_f4e3c09d4c75582d805a612d4b78b437.bindPopup(popup_a6380aabd64b4a353fe5053ffbacf3ee)
+        ;
+
+        
+    
+    
+            marker_f4e3c09d4c75582d805a612d4b78b437.bindTooltip(
+                `<div>
+                     P037: Avenida dos Salesianos, 7000-726 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f4e3c09d4c75582d805a612d4b78b437.setIcon(div_icon_308e381751c631165846c27101c21e2a);
+            
+    
+            var marker_9530d27f87adf9831a4379ac219689a6 = L.marker(
+                [38.569236, -7.933132],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_e41c8baebcbab111dbeaed1d69c27af3 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP038 \u00b7 15 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_3b6de338d9b6049f6497b47f2d9182ce = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_d8b1d3cbf8cb711c2e1fc960493d0945 = $(`<div id="html_d8b1d3cbf8cb711c2e1fc960493d0945" style="width: 100.0%; height: 100.0%;"><b>P038</b> — incluído (≤ 30 min)<br>Rua Crónica Eborense, 7000-691 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 4.654 km · 14.9 min (condições reais) · 10.35 min (sem trânsito)<br><b>Doente → hospital:</b> 3.891 km · 13.9 min (condições reais) · 9.48 min (sem trânsito)</div>`)[0];
+                popup_3b6de338d9b6049f6497b47f2d9182ce.setContent(html_d8b1d3cbf8cb711c2e1fc960493d0945);
+            
+        
+
+        marker_9530d27f87adf9831a4379ac219689a6.bindPopup(popup_3b6de338d9b6049f6497b47f2d9182ce)
+        ;
+
+        
+    
+    
+            marker_9530d27f87adf9831a4379ac219689a6.bindTooltip(
+                `<div>
+                     P038: Rua Crónica Eborense, 7000-691 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_9530d27f87adf9831a4379ac219689a6.setIcon(div_icon_e41c8baebcbab111dbeaed1d69c27af3);
+            
+    
+            var marker_2ebc8b2b40beea6fcdb7e736b6bbabe9 = L.marker(
+                [38.716044, -7.974651],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_eae5abb72431d58d41e624d63da57577 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP039 \u00b7 29 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_cc6a6f972863101865ceb6e1f1cf13a2 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_f034833143ae93ae2228b62b2d93e4c3 = $(`<div id="html_f034833143ae93ae2228b62b2d93e4c3" style="width: 100.0%; height: 100.0%;"><b>P039</b> — incluído (≤ 30 min)<br>Rua do Valbom, 7040-113 Arraiolos<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: Arraiolos (Arraiolos)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 21.948 km · 28.94 min (condições reais) · 22.56 min (sem trânsito)<br><b>Doente → hospital:</b> 21.742 km · 29.12 min (condições reais) · 22.71 min (sem trânsito)</div>`)[0];
+                popup_cc6a6f972863101865ceb6e1f1cf13a2.setContent(html_f034833143ae93ae2228b62b2d93e4c3);
+            
+        
+
+        marker_2ebc8b2b40beea6fcdb7e736b6bbabe9.bindPopup(popup_cc6a6f972863101865ceb6e1f1cf13a2)
+        ;
+
+        
+    
+    
+            marker_2ebc8b2b40beea6fcdb7e736b6bbabe9.bindTooltip(
+                `<div>
+                     P039: Rua do Valbom, 7040-113 Arraiolos
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2ebc8b2b40beea6fcdb7e736b6bbabe9.setIcon(div_icon_eae5abb72431d58d41e624d63da57577);
+            
+    
+            var marker_e21b3e5034b6fcdec194cc26c49c5a3a = L.marker(
+                [38.569487, -7.932737],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_44cacde35d95990327ca8cad6c0865c2 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP040 \u00b7 15 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_4bcea8638a2a4286f4aa69e99752b3f3 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_fcbd700537bd8703a00702f1b6f99f6a = $(`<div id="html_fcbd700537bd8703a00702f1b6f99f6a" style="width: 100.0%; height: 100.0%;"><b>P040</b> — incluído (≤ 30 min)<br>Rua Progresso do Alentejo, 7000-460 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 4.597 km · 14.64 min (condições reais) · 10.12 min (sem trânsito)<br><b>Doente → hospital:</b> 3.937 km · 13.64 min (condições reais) · 9.25 min (sem trânsito)</div>`)[0];
+                popup_4bcea8638a2a4286f4aa69e99752b3f3.setContent(html_fcbd700537bd8703a00702f1b6f99f6a);
+            
+        
+
+        marker_e21b3e5034b6fcdec194cc26c49c5a3a.bindPopup(popup_4bcea8638a2a4286f4aa69e99752b3f3)
+        ;
+
+        
+    
+    
+            marker_e21b3e5034b6fcdec194cc26c49c5a3a.bindTooltip(
+                `<div>
+                     P040: Rua Progresso do Alentejo, 7000-460 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e21b3e5034b6fcdec194cc26c49c5a3a.setIcon(div_icon_44cacde35d95990327ca8cad6c0865c2);
+            
+    
+            var marker_4d2b9d146d6c32b516b9373474577624 = L.marker(
+                [38.576469, -7.920628],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_40e2a3e74079e5b647b1740044d3ff6d = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP041 \u00b7 12 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_b466ba7696726f260fe4af49abc0f8ec = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_1a0992e6e9fe7af2441c2c3f0111743a = $(`<div id="html_1a0992e6e9fe7af2441c2c3f0111743a" style="width: 100.0%; height: 100.0%;"><b>P041</b> — incluído (≤ 30 min)<br>Praceta da Sé, 7000-820 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.943 km · 12.2 min (condições reais) · 8.0 min (sem trânsito)<br><b>Doente → hospital:</b> 2.669 km · 12.52 min (condições reais) · 8.28 min (sem trânsito)</div>`)[0];
+                popup_b466ba7696726f260fe4af49abc0f8ec.setContent(html_1a0992e6e9fe7af2441c2c3f0111743a);
+            
+        
+
+        marker_4d2b9d146d6c32b516b9373474577624.bindPopup(popup_b466ba7696726f260fe4af49abc0f8ec)
+        ;
+
+        
+    
+    
+            marker_4d2b9d146d6c32b516b9373474577624.bindTooltip(
+                `<div>
+                     P041: Praceta da Sé, 7000-820 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4d2b9d146d6c32b516b9373474577624.setIcon(div_icon_40e2a3e74079e5b647b1740044d3ff6d);
+            
+    
+            var marker_3c8811688f75b8453aba18ec8bf6e2ea = L.marker(
+                [38.565523, -7.926609],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_6f105c6865a0feb87860c8f3a955e8cd = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP042 \u00b7 18 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_b33279991071685e8bc4c8a79705c393 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_2cb8816ce10dba14545385b9f90db670 = $(`<div id="html_2cb8816ce10dba14545385b9f90db670" style="width: 100.0%; height: 100.0%;"><b>P042</b> — incluído (≤ 30 min)<br>Rua Doutor Fernando José Soares Pinheiro, 7000-411 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 5.568 km · 17.69 min (condições reais) · 12.77 min (sem trânsito)<br><b>Doente → hospital:</b> 2.914 km · 13.37 min (condições reais) · 9.02 min (sem trânsito)</div>`)[0];
+                popup_b33279991071685e8bc4c8a79705c393.setContent(html_2cb8816ce10dba14545385b9f90db670);
+            
+        
+
+        marker_3c8811688f75b8453aba18ec8bf6e2ea.bindPopup(popup_b33279991071685e8bc4c8a79705c393)
+        ;
+
+        
+    
+    
+            marker_3c8811688f75b8453aba18ec8bf6e2ea.bindTooltip(
+                `<div>
+                     P042: Rua Doutor Fernando José Soares Pinheiro, 7000-411 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_3c8811688f75b8453aba18ec8bf6e2ea.setIcon(div_icon_6f105c6865a0feb87860c8f3a955e8cd);
+            
+    
+            var marker_27491c54f0d7e45a844cbc60cf53be01 = L.marker(
+                [38.574453, -7.912853],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_27f4d7ae4393a7fda8c5c0748ad6c021 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP043 \u00b7 10 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_c45a7825339cb00b46f899bea684a4c2 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_ff61c5bb9e47e68a19e5e9267eba7fca = $(`<div id="html_ff61c5bb9e47e68a19e5e9267eba7fca" style="width: 100.0%; height: 100.0%;"><b>P043</b> — incluído (≤ 30 min)<br>Rua Cândido dos Reis, 7000-582 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão) (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.352 km · 10.36 min (condições reais) · 6.4 min (sem trânsito)<br><b>Doente → hospital:</b> 1.449 km · 9.67 min (condições reais) · 5.8 min (sem trânsito)</div>`)[0];
+                popup_c45a7825339cb00b46f899bea684a4c2.setContent(html_ff61c5bb9e47e68a19e5e9267eba7fca);
+            
+        
+
+        marker_27491c54f0d7e45a844cbc60cf53be01.bindPopup(popup_c45a7825339cb00b46f899bea684a4c2)
+        ;
+
+        
+    
+    
+            marker_27491c54f0d7e45a844cbc60cf53be01.bindTooltip(
+                `<div>
+                     P043: Rua Cândido dos Reis, 7000-582 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_27491c54f0d7e45a844cbc60cf53be01.setIcon(div_icon_27f4d7ae4393a7fda8c5c0748ad6c021);
+            
+    
+            var marker_60f8b88af6483d0f322fde0d99e76966 = L.marker(
+                [38.58965, -7.90189],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_e537de379bf4fad5b4aad88fcebbc38a = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP044 \u00b7 13 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_fc5ccc5f8db1ae07af8ae97e2abe4a17 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_968ed390f2629c750782e7caea3c9896 = $(`<div id="html_968ed390f2629c750782e7caea3c9896" style="width: 100.0%; height: 100.0%;"><b>P044</b> — incluído (≤ 30 min)<br>Rua Onofre da Silva, 7005-571 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.849 km · 12.73 min (condições reais) · 8.46 min (sem trânsito)<br><b>Doente → hospital:</b> 3.426 km · 11.77 min (condições reais) · 7.63 min (sem trânsito)</div>`)[0];
+                popup_fc5ccc5f8db1ae07af8ae97e2abe4a17.setContent(html_968ed390f2629c750782e7caea3c9896);
+            
+        
+
+        marker_60f8b88af6483d0f322fde0d99e76966.bindPopup(popup_fc5ccc5f8db1ae07af8ae97e2abe4a17)
+        ;
+
+        
+    
+    
+            marker_60f8b88af6483d0f322fde0d99e76966.bindTooltip(
+                `<div>
+                     P044: Rua Onofre da Silva, 7005-571 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_60f8b88af6483d0f322fde0d99e76966.setIcon(div_icon_e537de379bf4fad5b4aad88fcebbc38a);
+            
+    
+            var marker_d00fa6ca565eda9babcba9f62e4095fd = L.marker(
+                [38.570495, -7.894188],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_7b92d9ce0b8df63a9103773c3beccc25 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP045 \u00b7 9 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_442dc73f97f485859bc41be7fabd7aef = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_861c65107d6416334345e861e45ca760 = $(`<div id="html_861c65107d6416334345e861e45ca760" style="width: 100.0%; height: 100.0%;"><b>P045</b> — incluído (≤ 30 min)<br>Rua do Poço Entre Vinhas, 7005-438 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.3 km · 8.7 min (condições reais) · 4.96 min (sem trânsito)<br><b>Doente → hospital:</b> 1.257 km · 8.39 min (condições reais) · 4.69 min (sem trânsito)</div>`)[0];
+                popup_442dc73f97f485859bc41be7fabd7aef.setContent(html_861c65107d6416334345e861e45ca760);
+            
+        
+
+        marker_d00fa6ca565eda9babcba9f62e4095fd.bindPopup(popup_442dc73f97f485859bc41be7fabd7aef)
+        ;
+
+        
+    
+    
+            marker_d00fa6ca565eda9babcba9f62e4095fd.bindTooltip(
+                `<div>
+                     P045: Rua do Poço Entre Vinhas, 7005-438 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d00fa6ca565eda9babcba9f62e4095fd.setIcon(div_icon_7b92d9ce0b8df63a9103773c3beccc25);
+            
+    
+            var marker_4b73c8bdca48a2c4a107dfc9659a981c = L.marker(
+                [38.569613, -7.897666],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_613ae7c621352376e2074e7bfbed4985 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP046 \u00b7 8 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_7bd02a36d52ac3e32165b76202c084bd = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_86ae99caf0e3a1c8a371515bc472dba1 = $(`<div id="html_86ae99caf0e3a1c8a371515bc472dba1" style="width: 100.0%; height: 100.0%;"><b>P046</b> — incluído (≤ 30 min)<br>Avenida Dona Leonor de Oliveira Fernandes, 7005-144 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 0.946 km · 7.6 min (condições reais) · 4.0 min (sem trânsito)<br><b>Doente → hospital:</b> 0.812 km · 6.81 min (condições reais) · 3.31 min (sem trânsito)</div>`)[0];
+                popup_7bd02a36d52ac3e32165b76202c084bd.setContent(html_86ae99caf0e3a1c8a371515bc472dba1);
+            
+        
+
+        marker_4b73c8bdca48a2c4a107dfc9659a981c.bindPopup(popup_7bd02a36d52ac3e32165b76202c084bd)
+        ;
+
+        
+    
+    
+            marker_4b73c8bdca48a2c4a107dfc9659a981c.bindTooltip(
+                `<div>
+                     P046: Avenida Dona Leonor de Oliveira Fernandes, 7005-144 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4b73c8bdca48a2c4a107dfc9659a981c.setIcon(div_icon_613ae7c621352376e2074e7bfbed4985);
+            
+    
+            var marker_1a5b5f16cc93eff280e96786e52230fd = L.marker(
+                [38.586914, -7.905585],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_5a09b0a424c0ba5f0a0cbb1bdaf22446 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP047 \u00b7 12 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_b87ea87b2bf0000d0d2bc95786903825 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_cbc52a028fcc436fa7edcd26d1173626 = $(`<div id="html_cbc52a028fcc436fa7edcd26d1173626" style="width: 100.0%; height: 100.0%;"><b>P047</b> — incluído (≤ 30 min)<br>Rua Júlio Reis Pereira, 7005-540 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.438 km · 12.36 min (condições reais) · 8.14 min (sem trânsito)<br><b>Doente → hospital:</b> 3.203 km · 12.11 min (condições reais) · 7.92 min (sem trânsito)</div>`)[0];
+                popup_b87ea87b2bf0000d0d2bc95786903825.setContent(html_cbc52a028fcc436fa7edcd26d1173626);
+            
+        
+
+        marker_1a5b5f16cc93eff280e96786e52230fd.bindPopup(popup_b87ea87b2bf0000d0d2bc95786903825)
+        ;
+
+        
+    
+    
+            marker_1a5b5f16cc93eff280e96786e52230fd.bindTooltip(
+                `<div>
+                     P047: Rua Júlio Reis Pereira, 7005-540 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1a5b5f16cc93eff280e96786e52230fd.setIcon(div_icon_5a09b0a424c0ba5f0a0cbb1bdaf22446);
+            
+    
+            var marker_6d80b05b91e5c0b66a77795d485ddac6 = L.marker(
+                [38.592608, -7.914619],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_9f7df8115eeaf234b4f4311aa24e28c2 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP048 \u00b7 13 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_531229fbf306d9eaa9e9563bbd735a5a = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_1a40767ac45e3c531a4db80f83a99d2c = $(`<div id="html_1a40767ac45e3c531a4db80f83a99d2c" style="width: 100.0%; height: 100.0%;"><b>P048</b> — incluído (≤ 30 min)<br>Rua Vasco Santana, 7005-635 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.569 km · 12.82 min (condições reais) · 8.54 min (sem trânsito)<br><b>Doente → hospital:</b> 3.412 km · 12.75 min (condições reais) · 8.48 min (sem trânsito)</div>`)[0];
+                popup_531229fbf306d9eaa9e9563bbd735a5a.setContent(html_1a40767ac45e3c531a4db80f83a99d2c);
+            
+        
+
+        marker_6d80b05b91e5c0b66a77795d485ddac6.bindPopup(popup_531229fbf306d9eaa9e9563bbd735a5a)
+        ;
+
+        
+    
+    
+            marker_6d80b05b91e5c0b66a77795d485ddac6.bindTooltip(
+                `<div>
+                     P048: Rua Vasco Santana, 7005-635 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6d80b05b91e5c0b66a77795d485ddac6.setIcon(div_icon_9f7df8115eeaf234b4f4311aa24e28c2);
+            
+    
+            var marker_66b033884a9bc85d7df9dd5c3a6d7ec6 = L.marker(
+                [38.611655, -7.919535],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_459b500340cd2cecde7b638968e37f09 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP049 \u00b7 16 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_5a5186cc4c9a86a64ad4f5638f87118a = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_4130a7895e4e7a559e8c0610bf7c7bf0 = $(`<div id="html_4130a7895e4e7a559e8c0610bf7c7bf0" style="width: 100.0%; height: 100.0%;"><b>P049</b> — incluído (≤ 30 min)<br>Estrada da Igrejinha, 7005-875 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: Canaviais (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 6.004 km · 16.45 min (condições reais) · 11.7 min (sem trânsito)<br><b>Doente → hospital:</b> 5.863 km · 16.48 min (condições reais) · 11.72 min (sem trânsito)</div>`)[0];
+                popup_5a5186cc4c9a86a64ad4f5638f87118a.setContent(html_4130a7895e4e7a559e8c0610bf7c7bf0);
+            
+        
+
+        marker_66b033884a9bc85d7df9dd5c3a6d7ec6.bindPopup(popup_5a5186cc4c9a86a64ad4f5638f87118a)
+        ;
+
+        
+    
+    
+            marker_66b033884a9bc85d7df9dd5c3a6d7ec6.bindTooltip(
+                `<div>
+                     P049: Estrada da Igrejinha, 7005-875 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_66b033884a9bc85d7df9dd5c3a6d7ec6.setIcon(div_icon_459b500340cd2cecde7b638968e37f09);
+            
+    
+            var marker_144fa46bcaab2e213fcce9cd871f3068 = L.marker(
+                [38.567323, -7.90278],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_12523524180b657b3f3ad5fd5a449f30 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP050 \u00b7 8 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_a4a8d0a87d7455cca19db64c9c08d9c6 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_97aec136a1c41be4860345821b2cd824 = $(`<div id="html_97aec136a1c41be4860345821b2cd824" style="width: 100.0%; height: 100.0%;"><b>P050</b> — incluído (≤ 30 min)<br>Rua do Chafariz D'el Rei, 7009-504 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.242 km · 7.77 min (condições reais) · 4.15 min (sem trânsito)<br><b>Doente → hospital:</b> 0.168 km · 3.77 min (condições reais) · 0.67 min (sem trânsito)</div>`)[0];
+                popup_a4a8d0a87d7455cca19db64c9c08d9c6.setContent(html_97aec136a1c41be4860345821b2cd824);
+            
+        
+
+        marker_144fa46bcaab2e213fcce9cd871f3068.bindPopup(popup_a4a8d0a87d7455cca19db64c9c08d9c6)
+        ;
+
+        
+    
+    
+            marker_144fa46bcaab2e213fcce9cd871f3068.bindTooltip(
+                `<div>
+                     P050: Rua do Chafariz D'el Rei, 7009-504 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_144fa46bcaab2e213fcce9cd871f3068.setIcon(div_icon_12523524180b657b3f3ad5fd5a449f30);
+            
+    
+            var marker_d598fc9783d246559878b07da28d3c3e = L.marker(
+                [38.588893, -7.907087],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_9a0a22819537ea01b13a3801267b8c37 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP051 \u00b7 13 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_1fbdac42c1f8ae49e86d8243f134c791 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_817e769b675be1ebae0bc648c0e97e95 = $(`<div id="html_817e769b675be1ebae0bc648c0e97e95" style="width: 100.0%; height: 100.0%;"><b>P051</b> — incluído (≤ 30 min)<br>Rua José Régio, 7005-537 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.54 km · 13.1 min (condições reais) · 8.78 min (sem trânsito)<br><b>Doente → hospital:</b> 3.581 km · 12.59 min (condições reais) · 8.34 min (sem trânsito)</div>`)[0];
+                popup_1fbdac42c1f8ae49e86d8243f134c791.setContent(html_817e769b675be1ebae0bc648c0e97e95);
+            
+        
+
+        marker_d598fc9783d246559878b07da28d3c3e.bindPopup(popup_1fbdac42c1f8ae49e86d8243f134c791)
+        ;
+
+        
+    
+    
+            marker_d598fc9783d246559878b07da28d3c3e.bindTooltip(
+                `<div>
+                     P051: Rua José Régio, 7005-537 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d598fc9783d246559878b07da28d3c3e.setIcon(div_icon_9a0a22819537ea01b13a3801267b8c37);
+            
+    
+            var marker_2df7f12dcf09ebbcfc4815a755dd229d = L.marker(
+                [38.555639, -7.923011],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_c61777b89065c8792ee4556a3e5e086d = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP052 \u00b7 16 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_b1c430723267f110abf251cbf1ac8945 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_7f138eea104b78fff4a7ddd25300dc89 = $(`<div id="html_7f138eea104b78fff4a7ddd25300dc89" style="width: 100.0%; height: 100.0%;"><b>P052</b> — incluído (≤ 30 min)<br>Rua Frei Miguel, 7005-498 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 5.195 km · 16.25 min (condições reais) · 11.52 min (sem trânsito)<br><b>Doente → hospital:</b> 4.239 km · 13.19 min (condições reais) · 8.86 min (sem trânsito)</div>`)[0];
+                popup_b1c430723267f110abf251cbf1ac8945.setContent(html_7f138eea104b78fff4a7ddd25300dc89);
+            
+        
+
+        marker_2df7f12dcf09ebbcfc4815a755dd229d.bindPopup(popup_b1c430723267f110abf251cbf1ac8945)
+        ;
+
+        
+    
+    
+            marker_2df7f12dcf09ebbcfc4815a755dd229d.bindTooltip(
+                `<div>
+                     P052: Rua Frei Miguel, 7005-498 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2df7f12dcf09ebbcfc4815a755dd229d.setIcon(div_icon_c61777b89065c8792ee4556a3e5e086d);
+            
+    
+            var marker_979d9fcd208c0a91069d71c2f5e3b768 = L.marker(
+                [38.571692, -7.912842],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_fdbcc33c56f4caeaf578b154751807a5 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP053 \u00b7 13 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_9aac524b7eb0e871f26f8515200fe1a3 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_95dc3590489bd5bfb95f64efc80b8050 = $(`<div id="html_95dc3590489bd5bfb95f64efc80b8050" style="width: 100.0%; height: 100.0%;"><b>P053</b> — incluído (≤ 30 min)<br>Rua da Cal Branca, 7000-511 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão) (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.014 km · 13.41 min (condições reais) · 9.05 min (sem trânsito)<br><b>Doente → hospital:</b> 2.227 km · 11.8 min (condições reais) · 7.65 min (sem trânsito)</div>`)[0];
+                popup_9aac524b7eb0e871f26f8515200fe1a3.setContent(html_95dc3590489bd5bfb95f64efc80b8050);
+            
+        
+
+        marker_979d9fcd208c0a91069d71c2f5e3b768.bindPopup(popup_9aac524b7eb0e871f26f8515200fe1a3)
+        ;
+
+        
+    
+    
+            marker_979d9fcd208c0a91069d71c2f5e3b768.bindTooltip(
+                `<div>
+                     P053: Rua da Cal Branca, 7000-511 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_979d9fcd208c0a91069d71c2f5e3b768.setIcon(div_icon_fdbcc33c56f4caeaf578b154751807a5);
+            
+    
+            var marker_f5a08b01b6879fdada1450995dfc46b7 = L.marker(
+                [38.616886, -7.898477],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_2fbb0066a4eed4661915d032e2a671b3 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP054 \u00b7 19 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_b0dde1283cacabcea2768fade8f0c23f = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_b66466af2a293a27930583171eb2e1a2 = $(`<div id="html_b66466af2a293a27930583171eb2e1a2" style="width: 100.0%; height: 100.0%;"><b>P054</b> — incluído (≤ 30 min)<br>Rua dos Caçadores, 7005-459 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: Canaviais (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 7.191 km · 19.31 min (condições reais) · 14.18 min (sem trânsito)<br><b>Doente → hospital:</b> 6.432 km · 18.5 min (condições reais) · 13.48 min (sem trânsito)</div>`)[0];
+                popup_b0dde1283cacabcea2768fade8f0c23f.setContent(html_b66466af2a293a27930583171eb2e1a2);
+            
+        
+
+        marker_f5a08b01b6879fdada1450995dfc46b7.bindPopup(popup_b0dde1283cacabcea2768fade8f0c23f)
+        ;
+
+        
+    
+    
+            marker_f5a08b01b6879fdada1450995dfc46b7.bindTooltip(
+                `<div>
+                     P054: Rua dos Caçadores, 7005-459 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f5a08b01b6879fdada1450995dfc46b7.setIcon(div_icon_2fbb0066a4eed4661915d032e2a671b3);
+            
+    
+            var marker_34ab41368c5af07cc60ba13afff69c3a = L.marker(
+                [38.571172, -7.903862],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_b7ab6b84e7c8848c72101f00c2ba7195 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP055 \u00b7 5 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_881e8c2e02dffc286fd39cad2806a765 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_8e0ba824e12237bfff8b5727125c1015 = $(`<div id="html_8e0ba824e12237bfff8b5727125c1015" style="width: 100.0%; height: 100.0%;"><b>P055</b> — incluído (≤ 30 min)<br>Travessa das Façanhas, 7000-950 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão) (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 0.366 km · 4.68 min (condições reais) · 1.46 min (sem trânsito)<br><b>Doente → hospital:</b> 0.684 km · 6.15 min (condições reais) · 2.74 min (sem trânsito)</div>`)[0];
+                popup_881e8c2e02dffc286fd39cad2806a765.setContent(html_8e0ba824e12237bfff8b5727125c1015);
+            
+        
+
+        marker_34ab41368c5af07cc60ba13afff69c3a.bindPopup(popup_881e8c2e02dffc286fd39cad2806a765)
+        ;
+
+        
+    
+    
+            marker_34ab41368c5af07cc60ba13afff69c3a.bindTooltip(
+                `<div>
+                     P055: Travessa das Façanhas, 7000-950 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_34ab41368c5af07cc60ba13afff69c3a.setIcon(div_icon_b7ab6b84e7c8848c72101f00c2ba7195);
+            
+    
+            var marker_e0d2ff50485b46d6b8119d822d4693bd = L.marker(
+                [38.579445, -7.910498],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_fdc9da45c23162260d08e10e09f60179 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP056 \u00b7 9 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_6b73bf081371344a8c984c37210e12a3 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_3f632799fba87ba1485501b70cfadfd1 = $(`<div id="html_3f632799fba87ba1485501b70cfadfd1" style="width: 100.0%; height: 100.0%;"><b>P056</b> — incluído (≤ 30 min)<br>Rua Ferragial do Poço Novo, 7005-208 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.053 km · 9.06 min (condições reais) · 5.27 min (sem trânsito)<br><b>Doente → hospital:</b> 1.899 km · 9.75 min (condições reais) · 5.87 min (sem trânsito)</div>`)[0];
+                popup_6b73bf081371344a8c984c37210e12a3.setContent(html_3f632799fba87ba1485501b70cfadfd1);
+            
+        
+
+        marker_e0d2ff50485b46d6b8119d822d4693bd.bindPopup(popup_6b73bf081371344a8c984c37210e12a3)
+        ;
+
+        
+    
+    
+            marker_e0d2ff50485b46d6b8119d822d4693bd.bindTooltip(
+                `<div>
+                     P056: Rua Ferragial do Poço Novo, 7005-208 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e0d2ff50485b46d6b8119d822d4693bd.setIcon(div_icon_fdc9da45c23162260d08e10e09f60179);
+            
+    
+            var marker_2bc9a89cd89f40d6fbc507ae13fead72 = L.marker(
+                [38.573426, -7.919809],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_e4bc43f4a588efde30e0e960f1de4c35 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP057 \u00b7 11 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_de3eb0dc2342b8d9fbb2419e22feacaf = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_1e93393e26fc849b082f9a1b1744ea68 = $(`<div id="html_1e93393e26fc849b082f9a1b1744ea68" style="width: 100.0%; height: 100.0%;"><b>P057</b> — incluído (≤ 30 min)<br>Avenida Engenheiro Arantes e Oliveira, 7000-758 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.806 km · 11.36 min (condições reais) · 7.27 min (sem trânsito)<br><b>Doente → hospital:</b> 2.583 km · 11.4 min (condições reais) · 7.3 min (sem trânsito)</div>`)[0];
+                popup_de3eb0dc2342b8d9fbb2419e22feacaf.setContent(html_1e93393e26fc849b082f9a1b1744ea68);
+            
+        
+
+        marker_2bc9a89cd89f40d6fbc507ae13fead72.bindPopup(popup_de3eb0dc2342b8d9fbb2419e22feacaf)
+        ;
+
+        
+    
+    
+            marker_2bc9a89cd89f40d6fbc507ae13fead72.bindTooltip(
+                `<div>
+                     P057: Avenida Engenheiro Arantes e Oliveira, 7000-758 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2bc9a89cd89f40d6fbc507ae13fead72.setIcon(div_icon_e4bc43f4a588efde30e0e960f1de4c35);
+            
+    
+            var marker_0ed00ce181f67df88b1259c858de2d65 = L.marker(
+                [38.580304, -7.925126],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_899efc4ba0d7806b9d817ac6da798db0 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP058 \u00b7 13 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_53f0986aaffc10c52ee1f1f59182df78 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_84e45b73125789a98d20c80d528be6cc = $(`<div id="html_84e45b73125789a98d20c80d528be6cc" style="width: 100.0%; height: 100.0%;"><b>P058</b> — incluído (≤ 30 min)<br>Rua da Pedreira, 7000-708 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.352 km · 13.06 min (condições reais) · 8.75 min (sem trânsito)<br><b>Doente → hospital:</b> 3.129 km · 13.05 min (condições reais) · 8.74 min (sem trânsito)</div>`)[0];
+                popup_53f0986aaffc10c52ee1f1f59182df78.setContent(html_84e45b73125789a98d20c80d528be6cc);
+            
+        
+
+        marker_0ed00ce181f67df88b1259c858de2d65.bindPopup(popup_53f0986aaffc10c52ee1f1f59182df78)
+        ;
+
+        
+    
+    
+            marker_0ed00ce181f67df88b1259c858de2d65.bindTooltip(
+                `<div>
+                     P058: Rua da Pedreira, 7000-708 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0ed00ce181f67df88b1259c858de2d65.setIcon(div_icon_899efc4ba0d7806b9d817ac6da798db0);
+            
+    
+            var marker_8e2295ba679dcd93d6f171478643213f = L.marker(
+                [38.565547, -7.898715],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_a043533c4f09aa3fdcfec6a0f6dd9974 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP059 \u00b7 9 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_6b32980503246de05b7fc5bf67b20f53 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_42adfde16906e6f6c42fa7abd17271cf = $(`<div id="html_42adfde16906e6f6c42fa7abd17271cf" style="width: 100.0%; height: 100.0%;"><b>P059</b> — incluído (≤ 30 min)<br>Rua Sebastião da Gama, 7005-609 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.422 km · 9.12 min (condições reais) · 5.32 min (sem trânsito)<br><b>Doente → hospital:</b> 0.778 km · 6.65 min (condições reais) · 3.17 min (sem trânsito)</div>`)[0];
+                popup_6b32980503246de05b7fc5bf67b20f53.setContent(html_42adfde16906e6f6c42fa7abd17271cf);
+            
+        
+
+        marker_8e2295ba679dcd93d6f171478643213f.bindPopup(popup_6b32980503246de05b7fc5bf67b20f53)
+        ;
+
+        
+    
+    
+            marker_8e2295ba679dcd93d6f171478643213f.bindTooltip(
+                `<div>
+                     P059: Rua Sebastião da Gama, 7005-609 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_8e2295ba679dcd93d6f171478643213f.setIcon(div_icon_a043533c4f09aa3fdcfec6a0f6dd9974);
+            
+    
+            var marker_64a3afe70f911b4b3dbe73970f02334e = L.marker(
+                [38.566102, -7.896964],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_8add665427e93b0ce60ac83a42f6af72 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP060 \u00b7 10 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_ed2c84ed37a7392c685d542e1d1b62fc = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_8985d1f5e9b59abca0ca8e4169fc8be9 = $(`<div id="html_8985d1f5e9b59abca0ca8e4169fc8be9" style="width: 100.0%; height: 100.0%;"><b>P060</b> — incluído (≤ 30 min)<br>Avenida Heróis do Ultramar, 7005-161 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.538 km · 9.65 min (condições reais) · 5.78 min (sem trânsito)<br><b>Doente → hospital:</b> 0.942 km · 7.4 min (condições reais) · 3.83 min (sem trânsito)</div>`)[0];
+                popup_ed2c84ed37a7392c685d542e1d1b62fc.setContent(html_8985d1f5e9b59abca0ca8e4169fc8be9);
+            
+        
+
+        marker_64a3afe70f911b4b3dbe73970f02334e.bindPopup(popup_ed2c84ed37a7392c685d542e1d1b62fc)
+        ;
+
+        
+    
+    
+            marker_64a3afe70f911b4b3dbe73970f02334e.bindTooltip(
+                `<div>
+                     P060: Avenida Heróis do Ultramar, 7005-161 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_64a3afe70f911b4b3dbe73970f02334e.setIcon(div_icon_8add665427e93b0ce60ac83a42f6af72);
+            
+    
+            var marker_232163c83a9e9955d2f2eb112794aca1 = L.marker(
+                [38.580076, -7.924955],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_949cc4892ddfbe5975456b17bb514f9c = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP061 \u00b7 13 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_06ede568a96f031fc682ae2954ca7982 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_ea70f783b2837b0248ea6993e63c81db = $(`<div id="html_ea70f783b2837b0248ea6993e63c81db" style="width: 100.0%; height: 100.0%;"><b>P061</b> — incluído (≤ 30 min)<br>Rua da Pedreira, 7000-708 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.323 km · 12.94 min (condições reais) · 8.64 min (sem trânsito)<br><b>Doente → hospital:</b> 3.099 km · 12.91 min (condições reais) · 8.62 min (sem trânsito)</div>`)[0];
+                popup_06ede568a96f031fc682ae2954ca7982.setContent(html_ea70f783b2837b0248ea6993e63c81db);
+            
+        
+
+        marker_232163c83a9e9955d2f2eb112794aca1.bindPopup(popup_06ede568a96f031fc682ae2954ca7982)
+        ;
+
+        
+    
+    
+            marker_232163c83a9e9955d2f2eb112794aca1.bindTooltip(
+                `<div>
+                     P061: Rua da Pedreira, 7000-708 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_232163c83a9e9955d2f2eb112794aca1.setIcon(div_icon_949cc4892ddfbe5975456b17bb514f9c);
+            
+    
+            var marker_4580269bd2efb363aa3ca1c9cb99c31d = L.marker(
+                [38.567118, -7.884243],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_11f6b1448c48f7c337ed6d190d685d78 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP062 \u00b7 13 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_ad9c00cbc8b1a5b02d94c3c6be25d8e6 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_b7c343b5edc8ea2e848c781ac220f020 = $(`<div id="html_b7c343b5edc8ea2e848c781ac220f020" style="width: 100.0%; height: 100.0%;"><b>P062</b> — incluído (≤ 30 min)<br>Rua da Boavista, 7005-856 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.471 km · 12.81 min (condições reais) · 8.53 min (sem trânsito)<br><b>Doente → hospital:</b> 1.874 km · 10.57 min (condições reais) · 6.58 min (sem trânsito)</div>`)[0];
+                popup_ad9c00cbc8b1a5b02d94c3c6be25d8e6.setContent(html_b7c343b5edc8ea2e848c781ac220f020);
+            
+        
+
+        marker_4580269bd2efb363aa3ca1c9cb99c31d.bindPopup(popup_ad9c00cbc8b1a5b02d94c3c6be25d8e6)
+        ;
+
+        
+    
+    
+            marker_4580269bd2efb363aa3ca1c9cb99c31d.bindTooltip(
+                `<div>
+                     P062: Rua da Boavista, 7005-856 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4580269bd2efb363aa3ca1c9cb99c31d.setIcon(div_icon_11f6b1448c48f7c337ed6d190d685d78);
+            
+    
+            var marker_84b5128af2c4dcb470432aae5391bb76 = L.marker(
+                [38.576712, -7.898857],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_39262089a971865c3e1ef542c6da791c = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP063 \u00b7 8 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_6f67b97ddb1578d35133034502d92625 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_a9684adde365a32cce82b13605afd3f7 = $(`<div id="html_a9684adde365a32cce82b13605afd3f7" style="width: 100.0%; height: 100.0%;"><b>P063</b> — incluído (≤ 30 min)<br>Quinta do Boleto, 7005-266 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.206 km · 8.05 min (condições reais) · 4.39 min (sem trânsito)<br><b>Doente → hospital:</b> 1.457 km · 8.45 min (condições reais) · 4.74 min (sem trânsito)</div>`)[0];
+                popup_6f67b97ddb1578d35133034502d92625.setContent(html_a9684adde365a32cce82b13605afd3f7);
+            
+        
+
+        marker_84b5128af2c4dcb470432aae5391bb76.bindPopup(popup_6f67b97ddb1578d35133034502d92625)
+        ;
+
+        
+    
+    
+            marker_84b5128af2c4dcb470432aae5391bb76.bindTooltip(
+                `<div>
+                     P063: Quinta do Boleto, 7005-266 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_84b5128af2c4dcb470432aae5391bb76.setIcon(div_icon_39262089a971865c3e1ef542c6da791c);
+            
+    
+            var marker_18fc60c9e7e2b3758e9af4d44cb7608e = L.marker(
+                [38.592412, -7.907785],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_379999af46373af4fd843a95dc2a6caf = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP064 \u00b7 13 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_03e4b54ef0b821bef113fc7dd650cc27 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_eb52452799b0e40ce2a8f8ce1c253b38 = $(`<div id="html_eb52452799b0e40ce2a8f8ce1c253b38" style="width: 100.0%; height: 100.0%;"><b>P064</b> — incluído (≤ 30 min)<br>Rua da Bela Vista, 7005-346 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.826 km · 13.35 min (condições reais) · 9.0 min (sem trânsito)<br><b>Doente → hospital:</b> 3.719 km · 13.34 min (condições reais) · 8.99 min (sem trânsito)</div>`)[0];
+                popup_03e4b54ef0b821bef113fc7dd650cc27.setContent(html_eb52452799b0e40ce2a8f8ce1c253b38);
+            
+        
+
+        marker_18fc60c9e7e2b3758e9af4d44cb7608e.bindPopup(popup_03e4b54ef0b821bef113fc7dd650cc27)
+        ;
+
+        
+    
+    
+            marker_18fc60c9e7e2b3758e9af4d44cb7608e.bindTooltip(
+                `<div>
+                     P064: Rua da Bela Vista, 7005-346 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_18fc60c9e7e2b3758e9af4d44cb7608e.setIcon(div_icon_379999af46373af4fd843a95dc2a6caf);
+            
+    
+            var marker_58a495ca5f16eb8625de53badf44660a = L.marker(
+                [38.562923, -7.918938],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_cde7bc820186cef9077cdca7bb4092a9 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP065 \u00b7 13 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_ac153720c5b4607a29b18715c5edb04d = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_e2c8d7bb600f269afef7cae5528f4d02 = $(`<div id="html_e2c8d7bb600f269afef7cae5528f4d02" style="width: 100.0%; height: 100.0%;"><b>P065</b> — incluído (≤ 30 min)<br>Rua João Cutileiro, 7005-206 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 2.999 km · 12.9 min (condições reais) · 8.61 min (sem trânsito)<br><b>Doente → hospital:</b> 2.1 km · 9.66 min (condições reais) · 5.79 min (sem trânsito)</div>`)[0];
+                popup_ac153720c5b4607a29b18715c5edb04d.setContent(html_e2c8d7bb600f269afef7cae5528f4d02);
+            
+        
+
+        marker_58a495ca5f16eb8625de53badf44660a.bindPopup(popup_ac153720c5b4607a29b18715c5edb04d)
+        ;
+
+        
+    
+    
+            marker_58a495ca5f16eb8625de53badf44660a.bindTooltip(
+                `<div>
+                     P065: Rua João Cutileiro, 7005-206 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_58a495ca5f16eb8625de53badf44660a.setIcon(div_icon_cde7bc820186cef9077cdca7bb4092a9);
+            
+    
+            var marker_02ee83f25efd794928d7f31fc1950027 = L.marker(
+                [38.567646, -7.924163],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_a48c05c033526aedeb4995a70684c977 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP066 \u00b7 14 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_7dbbd11a45e9daa8b43792c3cead62a8 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_5c177a9ee955d695a5b5d22d81645716 = $(`<div id="html_5c177a9ee955d695a5b5d22d81645716" style="width: 100.0%; height: 100.0%;"><b>P066</b> — incluído (≤ 30 min)<br>Rua 26 de Fevereiro, 7000-378 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.315 km · 14.3 min (condições reais) · 9.83 min (sem trânsito)<br><b>Doente → hospital:</b> 2.721 km · 12.19 min (condições reais) · 7.99 min (sem trânsito)</div>`)[0];
+                popup_7dbbd11a45e9daa8b43792c3cead62a8.setContent(html_5c177a9ee955d695a5b5d22d81645716);
+            
+        
+
+        marker_02ee83f25efd794928d7f31fc1950027.bindPopup(popup_7dbbd11a45e9daa8b43792c3cead62a8)
+        ;
+
+        
+    
+    
+            marker_02ee83f25efd794928d7f31fc1950027.bindTooltip(
+                `<div>
+                     P066: Rua 26 de Fevereiro, 7000-378 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_02ee83f25efd794928d7f31fc1950027.setIcon(div_icon_a48c05c033526aedeb4995a70684c977);
+            
+    
+            var marker_8d3ee496a1bf022458b9385a1eb27046 = L.marker(
+                [38.565607, -7.932072],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_117b4282b54b5ecdd36081995aaa4da6 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP067 \u00b7 15 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_47cb5fbb2f1a20c1c2fa8ef60b00b080 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_cee18f33d1d385aebc76fbd6da4d13d6 = $(`<div id="html_cee18f33d1d385aebc76fbd6da4d13d6" style="width: 100.0%; height: 100.0%;"><b>P067</b> — incluído (≤ 30 min)<br>Rua Doutor Fernando José Soares Pinheiro, 7000-411 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 5.066 km · 15.39 min (condições reais) · 10.77 min (sem trânsito)<br><b>Doente → hospital:</b> 3.388 km · 15.56 min (condições reais) · 10.92 min (sem trânsito)</div>`)[0];
+                popup_47cb5fbb2f1a20c1c2fa8ef60b00b080.setContent(html_cee18f33d1d385aebc76fbd6da4d13d6);
+            
+        
+
+        marker_8d3ee496a1bf022458b9385a1eb27046.bindPopup(popup_47cb5fbb2f1a20c1c2fa8ef60b00b080)
+        ;
+
+        
+    
+    
+            marker_8d3ee496a1bf022458b9385a1eb27046.bindTooltip(
+                `<div>
+                     P067: Rua Doutor Fernando José Soares Pinheiro, 7000-411 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_8d3ee496a1bf022458b9385a1eb27046.setIcon(div_icon_117b4282b54b5ecdd36081995aaa4da6);
+            
+    
+            var marker_481b7bd40bdf5e6fe267b8ddd5c2ddb5 = L.marker(
+                [38.565746, -7.898523],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_4f8564f74cc2a973b9ccc4b869a96836 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP068 \u00b7 9 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_1590c2b12bc83a461e51e46519caea42 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_301a77195f9717caad7d75e30ff1e5e3 = $(`<div id="html_301a77195f9717caad7d75e30ff1e5e3" style="width: 100.0%; height: 100.0%;"><b>P068</b> — incluído (≤ 30 min)<br>Rua Sebastião da Gama, 7005-609 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.394 km · 8.98 min (condições reais) · 5.2 min (sem trânsito)<br><b>Doente → hospital:</b> 0.806 km · 6.77 min (condições reais) · 3.28 min (sem trânsito)</div>`)[0];
+                popup_1590c2b12bc83a461e51e46519caea42.setContent(html_301a77195f9717caad7d75e30ff1e5e3);
+            
+        
+
+        marker_481b7bd40bdf5e6fe267b8ddd5c2ddb5.bindPopup(popup_1590c2b12bc83a461e51e46519caea42)
+        ;
+
+        
+    
+    
+            marker_481b7bd40bdf5e6fe267b8ddd5c2ddb5.bindTooltip(
+                `<div>
+                     P068: Rua Sebastião da Gama, 7005-609 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_481b7bd40bdf5e6fe267b8ddd5c2ddb5.setIcon(div_icon_4f8564f74cc2a973b9ccc4b869a96836);
+            
+    
+            var marker_29fd48ce810e97daebc040cc17650b4e = L.marker(
+                [38.562237, -7.92342],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_0204c8a8f47b67770c5a4aac21460f03 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP069 \u00b7 15 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_57155be00cab08f3782831481c180d9f = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_c612d0736807e2c9f7b7b9c9d4bbe419 = $(`<div id="html_c612d0736807e2c9f7b7b9c9d4bbe419" style="width: 100.0%; height: 100.0%;"><b>P069</b> — incluído (≤ 30 min)<br>Rua de Braga, 7005-388 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Malagueira e Horta das Figueiras (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 3.816 km · 15.4 min (condições reais) · 10.78 min (sem trânsito)<br><b>Doente → hospital:</b> 2.917 km · 12.14 min (condições reais) · 7.95 min (sem trânsito)</div>`)[0];
+                popup_57155be00cab08f3782831481c180d9f.setContent(html_c612d0736807e2c9f7b7b9c9d4bbe419);
+            
+        
+
+        marker_29fd48ce810e97daebc040cc17650b4e.bindPopup(popup_57155be00cab08f3782831481c180d9f)
+        ;
+
+        
+    
+    
+            marker_29fd48ce810e97daebc040cc17650b4e.bindTooltip(
+                `<div>
+                     P069: Rua de Braga, 7005-388 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_29fd48ce810e97daebc040cc17650b4e.setIcon(div_icon_0204c8a8f47b67770c5a4aac21460f03);
+            
+    
+            var marker_39253a431c52cef414d5826227623e94 = L.marker(
+                [38.567715, -7.897427],
+                {
+}
+            ).addTo(marker_cluster_64854725a2546a421e61e207eddaa209);
+        
+    
+            var div_icon_2ef8c3858a44a711253c19dc4284be08 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;align-items:center;white-space:nowrap;\"\u003e\u003cspan style=\"width:12px;height:12px;border-radius:50%;background:#1a9850;border:2px solid white;box-shadow:0 0 2px #333;\"\u003e\u003c/span\u003e\u003cspan style=\"margin-left:3px;background:#1a9850;color:white;border-radius:3px;padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);\"\u003eP070 \u00b7 8 min\u003c/span\u003e\u003c/div\u003e",
+  "iconSize": [110, 16],
+  "iconAnchor": [8, 8],
+  "className": "empty",
+});
+        
+    
+        var popup_c9f7923b5cc570f34225547f409d1b74 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_212198603eff5e5f25a97402030080b3 = $(`<div id="html_212198603eff5e5f25a97402030080b3" style="width: 100.0%; height: 100.0%;"><b>P070</b> — incluído (≤ 30 min)<br>Avenida Dona Leonor de Oliveira Fernandes, 7005-144 Évora<br><small>Localizado em: <br>Precisão: indicada pelo utilizador · coordenadas indicadas no ficheiro<br>BGRI: União das freguesias de Bacelo e Senhora da Saúde (Évora)<br>Verificação da morada: <b>OK</b></small><br><br><b>Hospital → doente:</b> 1.254 km · 8.34 min (condições reais) · 4.64 min (sem trânsito)<br><b>Doente → hospital:</b> 0.684 km · 6.22 min (condições reais) · 2.8 min (sem trânsito)</div>`)[0];
+                popup_c9f7923b5cc570f34225547f409d1b74.setContent(html_212198603eff5e5f25a97402030080b3);
+            
+        
+
+        marker_39253a431c52cef414d5826227623e94.bindPopup(popup_c9f7923b5cc570f34225547f409d1b74)
+        ;
+
+        
+    
+    
+            marker_39253a431c52cef414d5826227623e94.bindTooltip(
+                `<div>
+                     P070: Avenida Dona Leonor de Oliveira Fernandes, 7005-144 Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_39253a431c52cef414d5826227623e94.setIcon(div_icon_2ef8c3858a44a711253c19dc4284be08);
+            
+    
+            marker_cluster_64854725a2546a421e61e207eddaa209.addTo(map_4b41b9d6805d9ad35d6eb16e8811e08c);
+        
+    
+            var marker_20e394541e0eb4d08acb6a0cc29ade88 = L.marker(
+                [38.5688861, -7.9031778],
+                {
+  "zIndexOffset": -1000,
+}
+            ).addTo(map_4b41b9d6805d9ad35d6eb16e8811e08c);
+        
+    
+            var div_icon_2f4ed31870185bff76fbc10972700590 = L.divIcon({
+  "html": "\u003cdiv style=\"width:22px;height:22px;border-radius:4px;background:#c0392b;color:white;font:bold 15px Arial;text-align:center;line-height:22px;border:2px solid white;box-shadow:0 0 3px #333;\"\u003eH\u003c/div\u003e",
+  "iconSize": [22, 22],
+  "iconAnchor": [11, 11],
+  "className": "empty",
+});
+        
+    
+        var popup_5e9213c10fcdbe5686391e04b0630fc1 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_74b6c76b9e48dbf6fb37c3fc6990abd0 = $(`<div id="html_74b6c76b9e48dbf6fb37c3fc6990abd0" style="width: 100.0%; height: 100.0%;"><b>ULS do Alentejo Central – Hospital do Espírito Santo de Évora (Hospitalização Domiciliária)</b><br>Largo do Senhor da Pobreza, 7000-811 Évora</div>`)[0];
+                popup_5e9213c10fcdbe5686391e04b0630fc1.setContent(html_74b6c76b9e48dbf6fb37c3fc6990abd0);
+            
+        
+
+        marker_20e394541e0eb4d08acb6a0cc29ade88.bindPopup(popup_5e9213c10fcdbe5686391e04b0630fc1)
+        ;
+
+        
+    
+    
+            marker_20e394541e0eb4d08acb6a0cc29ade88.bindTooltip(
+                `<div>
+                     Hospital do Espírito Santo de Évora
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_20e394541e0eb4d08acb6a0cc29ade88.setIcon(div_icon_2f4ed31870185bff76fbc10972700590);
+            
+    
+            map_4b41b9d6805d9ad35d6eb16e8811e08c.fitBounds(
+                [[38.5688861, -7.9031778], [38.573791, -7.91386], [38.577679, -7.919015], [38.568995, -7.926342], [38.573636, -7.910485], [38.562954, -7.924798], [38.566559, -7.900131], [38.560306, -7.912464], [38.570721, -7.901594], [38.563004, -7.919472], [38.564421, -7.910456], [38.574014, -7.916269], [38.570371, -7.913794], [38.568267, -7.93191], [38.57175, -7.896686], [38.559953, -7.909108], [38.570004, -7.913834], [38.573219, -7.898892], [38.566263, -7.898846], [38.562528, -7.911683], [38.571954, -7.927737], [38.570484, -7.89996], [38.57561, -7.921118], [38.531451, -8.022803], [38.571554, -7.927495], [38.571637, -7.894091], [38.567751, -7.933156], [38.615339, -7.89876], [38.575947, -7.91769], [38.596358, -7.904926], [38.586492, -7.914757], [38.576787, -7.922804], [38.56933, -7.912692], [38.571778, -7.911261], [38.566954, -7.895593], [38.567666, -7.88844], [38.567916, -7.89679], [38.569842, -7.919237], [38.569236, -7.933132], [38.716044, -7.974651], [38.569487, -7.932737], [38.576469, -7.920628], [38.565523, -7.926609], [38.574453, -7.912853], [38.58965, -7.90189], [38.570495, -7.894188], [38.569613, -7.897666], [38.586914, -7.905585], [38.592608, -7.914619], [38.611655, -7.919535], [38.567323, -7.90278], [38.588893, -7.907087], [38.555639, -7.923011], [38.571692, -7.912842], [38.616886, -7.898477], [38.571172, -7.903862], [38.579445, -7.910498], [38.573426, -7.919809], [38.580304, -7.925126], [38.565547, -7.898715], [38.566102, -7.896964], [38.580076, -7.924955], [38.567118, -7.884243], [38.576712, -7.898857], [38.592412, -7.907785], [38.562923, -7.918938], [38.567646, -7.924163], [38.565607, -7.932072], [38.565746, -7.898523], [38.562237, -7.92342], [38.567715, -7.897427]],
+                {"paddingBottomRight": [40, 40], "paddingTopLeft": [320, 40]}
+            );
+        
+    
+            var layer_control_292ee8fc91e96d6cbfa7c384d0729a29_layers = {
+                base_layers : {
+                    "OpenStreetMap" : tile_layer_1af6f3406b0e40c980325473181f79c2,
+                },
+                overlays :  {
+                    "Is\u00f3crona 30 min (OpenRouteService, sem tr\u00e2nsito)" : geo_json_1ca6ab241a9fb6f260e943575d04dab0,
+                    "Percursos hospital \u2192 doente (OpenRouteService/OSM)" : feature_group_70af6e5377af0de61d3579472c311045,
+                    "Doentes" : marker_cluster_64854725a2546a421e61e207eddaa209,
+                },
+            };
+            let layer_control_292ee8fc91e96d6cbfa7c384d0729a29 = L.control.layers(
+                layer_control_292ee8fc91e96d6cbfa7c384d0729a29_layers.base_layers,
+                layer_control_292ee8fc91e96d6cbfa7c384d0729a29_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_4b41b9d6805d9ad35d6eb16e8811e08c);
+
+        
+</script>
+</html>

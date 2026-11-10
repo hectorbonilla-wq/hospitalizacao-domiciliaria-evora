@@ -1,0 +1,101 @@
+﻿id_doente;latitude;longitude;morada;codigo_postal;localidade;concelho;subseccao_sorteada;municipio_bgri;freguesia_bgri;populacao_65_mais_subseccao;tempo_fluxo_livre_min;tempo_condicoes_reais_min;dentro_dos_30min
+P001;38,573791;-7,91386;Travessa das Anjinhas;7000-548;Évora;Évora;07052300303;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);8;7,15;11,23;True
+P002;38,577679;-7,919015;Rua de Arraiolos;7000-862;Évora;Évora;07052401203;Évora;União das freguesias de Malagueira e Horta das Figueiras;53;6,6;10,59;True
+P003;38,568995;-7,926342;Rua Luís Inácio Nunes;7000-306;Évora;Évora;07052400406;Évora;União das freguesias de Malagueira e Horta das Figueiras;17;11,03;15,69;True
+P004;38,573636;-7,910485;Rua do Cano;7000-596;Évora;Évora;07052300205;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);2;6,86;10,89;True
+P005;38,562954;-7,924798;Rua Nossa Senhora de Fátima à Torregela;7005-567;Évora;Évora;07052400504;Évora;União das freguesias de Malagueira e Horta das Figueiras;25;11,01;15,66;True
+P006;38,566559;-7,900131;Rua de Dom Manuel da Conceição Santos;7005-451;Évora;Évora;07052200206;Évora;União das freguesias de Bacelo e Senhora da Saúde;44;4,6;8,28;True
+P007;38,560306;-7,912464;Rua José Rosmaninho;7005-500;Évora;Évora;07052401511;Évora;União das freguesias de Malagueira e Horta das Figueiras;45;8,55;12,84;True
+P008;38,570721;-7,901594;Avenida São João de Deus;7005-181;Évora;Évora;07052201505;Évora;União das freguesias de Bacelo e Senhora da Saúde;34;2,11;5,42;True
+P009;38,563004;-7,919472;Rua Frei Luís de Granada;7005-496;Évora;Évora;07052401438;Évora;União das freguesias de Malagueira e Horta das Figueiras;16;10,37;14,92;True
+P010;38,564421;-7,910456;Rua Diana de Liz;7005-413;Évora;Évora;07052401108;Évora;União das freguesias de Malagueira e Horta das Figueiras;24;6,11;10,03;True
+P011;38,574014;-7,916269;Beco da Horta da Porta;7000-930;Évora;Évora;07052400106;Évora;União das freguesias de Malagueira e Horta das Figueiras;15;7,1;11,17;True
+P012;38,570371;-7,913794;Travessa de Diogo Botelho;7000-554;Évora;Évora;07052300514;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);3;8,38;12,64;True
+P013;38,568267;-7,93191;Avenida Cartaxo Júnior;7000-465;Évora;Évora;07052401020;Évora;União das freguesias de Malagueira e Horta das Figueiras;38;9,94;14,43;True
+P014;38,57175;-7,896686;Rua de Santo António;7005-402;Évora;Évora;07052201220;Évora;União das freguesias de Bacelo e Senhora da Saúde;27;4,85;8,58;True
+P015;38,559953;-7,909108;Rua Henrique de Menezes;7005-507;Évora;Évora;07052401508;Évora;União das freguesias de Malagueira e Horta das Figueiras;8;8,12;12,34;True
+P016;38,570004;-7,913834;Travessa da Palmeira;7000-546;Évora;Évora;07052300512;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);5;8,32;12,56;True
+P017;38,573219;-7,898892;Ecopista Ramal de Mora;7005-634;Évora;Évora;07052201511;Évora;União das freguesias de Bacelo e Senhora da Saúde;23;3,7;7,26;True
+P018;38,566263;-7,898846;Largo Cantinho de Nossa Senhora das Graças;7005-197;Évora;Évora;07052200204;Évora;União das freguesias de Bacelo e Senhora da Saúde;38;5,23;9,02;True
+P019;38,562528;-7,911683;Rua Fernanda Seno;7005-485;Évora;Évora;07052401102;Évora;União das freguesias de Malagueira e Horta das Figueiras;20;7,23;11,32;True
+P020;38,571954;-7,927737;Rua Samora Machel;7000-394;Évora;Évora;07052400315;Évora;União das freguesias de Malagueira e Horta das Figueiras;10;9,76;14,22;True
+P021;38,570484;-7,89996;Largo Nossa Senhora da Conceição;7005-225;Évora;Évora;07052201506;Évora;União das freguesias de Bacelo e Senhora da Saúde;21;3,26;6,75;True
+P022;38,57561;-7,921118;Rua Doutor Hernani Cidade;7000-888;Évora;Évora;07052400115;Évora;União das freguesias de Malagueira e Horta das Figueiras;41;8,14;12,36;True
+P023;38,531451;-8,022803;Rua Moinho do Pinheiro;7000-093;Évora;Évora;07052500135;Évora;União das freguesias de Nossa Senhora da Tourega e Nossa Senhora de Guadalupe;5;20,66;26,76;True
+P024;38,571554;-7,927495;Rua Samora Machel;7000-394;Évora;Évora;07052400307;Évora;União das freguesias de Malagueira e Horta das Figueiras;11;9,82;14,3;True
+P025;38,571637;-7,894091;Rua Ramiro Correia;7005-593;Évora;Évora;07052201104;Évora;União das freguesias de Bacelo e Senhora da Saúde;11;6,11;10,03;True
+P026;38,567751;-7,933156;Rua Crónica Eborense;7000-691;Évora;Évora;07052401008;Évora;União das freguesias de Malagueira e Horta das Figueiras;10;10,42;14,98;True
+P027;38,615339;-7,89876;Rua dos Anjos;7005-458;Évora;Évora;07051500313;Évora;Canaviais;9;12,66;17,56;True
+P028;38,575947;-7,91769;Rua Padre Manuel Fialho;7000-924;Évora;Évora;07052401201;Évora;União das freguesias de Malagueira e Horta das Figueiras;59;6,78;10,8;True
+P029;38,596358;-7,904926;Estrada das Quintinhas das Coronheiras;7005-425;Évora;Évora;07051500202;Évora;Canaviais;12;10,75;15,36;True
+P030;38,586492;-7,914757;Rua Embaixador Assis Chateaubrian;7005-475;Évora;Évora;07052200711;Évora;União das freguesias de Bacelo e Senhora da Saúde;12;7,9;12,09;True
+P031;38,576787;-7,922804;Avenida Doutor Francisco Sá Carneiro;7000-757;Évora;Évora;07052400811;Évora;União das freguesias de Malagueira e Horta das Figueiras;52;8,18;12,41;True
+P032;38,56933;-7,912692;Travessa da Palmeira;7000-546;Évora;Évora;07052300501;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);5;7,74;11,9;True
+P033;38,571778;-7,911261;Rua de Santa Catarina;7000-516;Évora;Évora;07052300411;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);4;8,08;12,29;True
+P034;38,566954;-7,895593;Avenida Heróis do Ultramar;7005-161;Évora;Évora;07052201007;Évora;União das freguesias de Bacelo e Senhora da Saúde;29;5,85;9,73;True
+P035;38,567666;-7,88844;Estrada dos Aliados;7005-670;Évora;Évora;07052201012;Évora;União das freguesias de Bacelo e Senhora da Saúde;14;7,01;11,06;True
+P036;38,567916;-7,89679;Rua Doutor Manuel Carvalho Moniz;7005-796;Évora;Évora;07052200315;Évora;União das freguesias de Bacelo e Senhora da Saúde;72;4,79;8,51;True
+P037;38,569842;-7,919237;Avenida dos Salesianos;7000-726;Évora;Évora;07052400205;Évora;União das freguesias de Malagueira e Horta das Figueiras;13;8,8;13,12;True
+P038;38,569236;-7,933132;Rua Crónica Eborense;7000-691;Évora;Évora;07052401021;Évora;União das freguesias de Malagueira e Horta das Figueiras;10;10,35;14,9;True
+P039;38,716044;-7,974651;Rua do Valbom;7040-113;Arraiolos;Évora;07020100115;Arraiolos;Arraiolos;4;22,56;28,94;True
+P040;38,569487;-7,932737;Rua Progresso do Alentejo;7000-460;Évora;Évora;07052401029;Évora;União das freguesias de Malagueira e Horta das Figueiras;5;10,12;14,63;True
+P041;38,576469;-7,920628;Praceta da Sé;7000-820;Évora;Évora;07052400807;Évora;União das freguesias de Malagueira e Horta das Figueiras;57;8,0;12,2;True
+P042;38,565523;-7,926609;Rua Doutor Fernando José Soares Pinheiro;7000-411;Évora;Évora;07052400603;Évora;União das freguesias de Malagueira e Horta das Figueiras;209;12,77;17,69;True
+P043;38,574453;-7,912853;Rua Cândido dos Reis;7000-582;Évora;Évora;07052300308;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);12;6,4;10,36;True
+P044;38,58965;-7,90189;Rua Onofre da Silva;7005-571;Évora;Évora;07052200503;Évora;União das freguesias de Bacelo e Senhora da Saúde;17;8,46;12,73;True
+P045;38,570495;-7,894188;Rua do Poço Entre Vinhas;7005-438;Évora;Évora;07052201209;Évora;União das freguesias de Bacelo e Senhora da Saúde;15;4,96;8,7;True
+P046;38,569613;-7,897666;Avenida Dona Leonor de Oliveira Fernandes;7005-144;Évora;Évora;07052200211;Évora;União das freguesias de Bacelo e Senhora da Saúde;61;4,0;7,6;True
+P047;38,586914;-7,905585;Rua Júlio Reis Pereira;7005-540;Évora;Évora;07052200911;Évora;União das freguesias de Bacelo e Senhora da Saúde;24;8,14;12,36;True
+P048;38,592608;-7,914619;Rua Vasco Santana;7005-635;Évora;Évora;07052200429;Évora;União das freguesias de Bacelo e Senhora da Saúde;13;8,54;12,82;True
+P049;38,611655;-7,919535;Estrada da Igrejinha;7005-875;Évora;Évora;07051500109;Évora;Canaviais;29;11,7;16,46;True
+P050;38,567323;-7,90278;Rua do Chafariz D'el Rei;7009-504;Évora;Évora;07052200205;Évora;União das freguesias de Bacelo e Senhora da Saúde;12;4,15;7,77;True
+P051;38,588893;-7,907087;Rua José Régio;7005-537;Évora;Évora;07052200925;Évora;União das freguesias de Bacelo e Senhora da Saúde;30;8,78;13,09;True
+P052;38,555639;-7,923011;Rua Frei Miguel;7005-498;Évora;Évora;07052401419;Évora;União das freguesias de Malagueira e Horta das Figueiras;14;11,52;16,25;True
+P053;38,571692;-7,912842;Rua da Cal Branca;7000-511;Évora;Évora;07052300406;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);9;9,05;13,41;True
+P054;38,616886;-7,898477;Rua dos Caçadores;7005-459;Évora;Évora;07051500318;Évora;Canaviais;4;14,18;19,3;True
+P055;38,571172;-7,903862;Travessa das Façanhas;7000-950;Évora;Évora;07052300720;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);16;1,46;4,68;True
+P056;38,579445;-7,910498;Rua Ferragial do Poço Novo;7005-208;Évora;Évora;07052201412;Évora;União das freguesias de Bacelo e Senhora da Saúde;15;5,27;9,06;True
+P057;38,573426;-7,919809;Avenida Engenheiro Arantes e Oliveira;7000-758;Évora;Évora;07052400105;Évora;União das freguesias de Malagueira e Horta das Figueiras;40;7,27;11,36;True
+P058;38,580304;-7,925126;Rua da Pedreira;7000-708;Évora;Évora;07052401215;Évora;União das freguesias de Malagueira e Horta das Figueiras;17;8,75;13,07;True
+P059;38,565547;-7,898715;Rua Sebastião da Gama;7005-609;Évora;Évora;07052200316;Évora;União das freguesias de Bacelo e Senhora da Saúde;56;5,32;9,11;True
+P060;38,566102;-7,896964;Avenida Heróis do Ultramar;7005-161;Évora;Évora;07052200315;Évora;União das freguesias de Bacelo e Senhora da Saúde;72;5,78;9,65;True
+P061;38,580076;-7,924955;Rua da Pedreira;7000-708;Évora;Évora;07052401215;Évora;União das freguesias de Malagueira e Horta das Figueiras;17;8,64;12,93;True
+P062;38,567118;-7,884243;Rua da Boavista;7005-856;Évora;Évora;07052201008;Évora;União das freguesias de Bacelo e Senhora da Saúde;12;8,53;12,81;True
+P063;38,576712;-7,898857;Quinta do Boleto;7005-266;Évora;Évora;07052201516;Évora;União das freguesias de Bacelo e Senhora da Saúde;19;4,39;8,05;True
+P064;38,592412;-7,907785;Rua da Bela Vista;7005-346;Évora;Évora;07052200419;Évora;União das freguesias de Bacelo e Senhora da Saúde;26;9,0;13,35;True
+P065;38,562923;-7,918938;Rua João Cutileiro;7005-206;Évora;Évora;07052400902;Évora;União das freguesias de Malagueira e Horta das Figueiras;21;8,61;12,91;True
+P066;38,567646;-7,924163;Rua 26 de Fevereiro;7000-378;Évora;Évora;07052400924;Évora;União das freguesias de Malagueira e Horta das Figueiras;23;9,83;14,3;True
+P067;38,565607;-7,932072;Rua Doutor Fernando José Soares Pinheiro;7000-411;Évora;Évora;07052401321;Évora;União das freguesias de Malagueira e Horta das Figueiras;18;10,77;15,38;True
+P068;38,565746;-7,898523;Rua Sebastião da Gama;7005-609;Évora;Évora;07052200316;Évora;União das freguesias de Bacelo e Senhora da Saúde;56;5,2;8,99;True
+P069;38,562237;-7,92342;Rua de Braga;7005-388;Évora;Évora;07052401436;Évora;União das freguesias de Malagueira e Horta das Figueiras;8;10,78;15,4;True
+P070;38,567715;-7,897427;Avenida Dona Leonor de Oliveira Fernandes;7005-144;Évora;Évora;07052200207;Évora;União das freguesias de Bacelo e Senhora da Saúde;42;4,64;8,34;True
+P071;38,574317;-7,916736;Praceta de Santa Catarina;7000-830;Évora;Évora;07052400112;Évora;União das freguesias de Malagueira e Horta das Figueiras;62;6,87;10,9;True
+P072;38,566664;-7,928409;Avenida do Escurinho;7000-372;Évora;Évora;07052400607;Évora;União das freguesias de Malagueira e Horta das Figueiras;77;11,48;16,2;True
+P073;38,586536;-7,905469;Rua Júlio Reis Pereira;7005-540;Évora;Évora;07052200904;Évora;União das freguesias de Bacelo e Senhora da Saúde;5;8,06;12,26;True
+P074;38,59186;-7,908076;Rua Dom Pedro V;7005-453;Évora;Évora;07052200419;Évora;União das freguesias de Bacelo e Senhora da Saúde;26;8,61;12,91;True
+P075;38,576841;-7,918563;Avenida Arquitectos Torralva;7000-740;Évora;Évora;07052401202;Évora;União das freguesias de Malagueira e Horta das Figueiras;17;7,13;11,2;True
+P076;38,575517;-7,910133;Rua do Escudeiro da Roda;7000-607;Évora;Évora;07052300106;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);17;7,56;11,69;True
+P077;38,570333;-7,89331;Rua da Escola;7005-354;Évora;Évora;07052201209;Évora;União das freguesias de Bacelo e Senhora da Saúde;15;5,33;9,13;True
+P078;38,565014;-7,925762;Rua Cidade de Coimbra;7005-324;Évora;Évora;07052400514;Évora;União das freguesias de Malagueira e Horta das Figueiras;30;9,72;14,18;True
+P079;38,575129;-7,910944;Largo do Chão das Covas;7000-573;Évora;Évora;07052300106;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);17;7,22;11,3;True
+P080;38,569563;-7,897644;Avenida Dona Leonor de Oliveira Fernandes;7005-144;Évora;Évora;07052201218;Évora;União das freguesias de Bacelo e Senhora da Saúde;33;4,02;7,62;True
+P081;38,591047;-7,910195;Rua do Operário;7005-435;Évora;Évora;07052200516;Évora;União das freguesias de Bacelo e Senhora da Saúde;26;7,89;12,07;True
+P082;38,576381;-7,919638;Rua Doutor Hernani Cidade;7000-888;Évora;Évora;07052400807;Évora;União das freguesias de Malagueira e Horta das Figueiras;57;7,52;11,65;True
+P083;38,623701;-7,925627;Estrada da Igrejinha;7005-875;Évora;Évora;07051500110;Évora;Canaviais;33;13,07;18,03;True
+P084;38,574871;-7,918454;Avenida Arquitectos Arrudas;7000-739;Évora;Évora;07052400111;Évora;União das freguesias de Malagueira e Horta das Figueiras;25;7,16;11,24;True
+P085;38,574159;-7,901209;Rua Doutor Domingos Rosado;7005-469;Évora;Évora;07052201512;Évora;União das freguesias de Bacelo e Senhora da Saúde;53;3,23;6,71;True
+P086;38,589977;-7,909561;Rua Tó Quim Barreto;7005-537;Évora;Évora;07052200506;Évora;União das freguesias de Bacelo e Senhora da Saúde;8;8,22;12,45;True
+P087;38,570754;-7,904572;Rua da Oliveira;7000-859;Évora;Évora;07052300714;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);3;1,57;4,8;True
+P088;38,591321;-7,918029;Rua Francisco José;7005-492;Évora;Évora;07052200104;Évora;União das freguesias de Bacelo e Senhora da Saúde;14;8,81;13,13;True
+P089;38,574239;-7,919308;Rua Alberto de Sousa;7000-840;Évora;Évora;07052400105;Évora;União das freguesias de Malagueira e Horta das Figueiras;40;7,49;11,62;True
+P090;38,573027;-7,900387;Rua José Inocêncio de Sousa;7005-533;Évora;Évora;07052201510;Évora;União das freguesias de Bacelo e Senhora da Saúde;3;3,26;6,75;True
+P091;38,574648;-7,895728;Rua António José Couvinha;7005-296;Évora;Évora;07052201117;Évora;União das freguesias de Bacelo e Senhora da Saúde;23;4,42;8,09;True
+P092;38,620087;-7,937265;CM 1081-1;7005-875;Évora;Évora;07052200128;Évora;União das freguesias de Bacelo e Senhora da Saúde;26;13,29;18,28;True
+P093;38,574671;-7,918372;Avenida Arquitectos Arrudas;7000-739;Évora;Évora;07052400109;Évora;União das freguesias de Malagueira e Horta das Figueiras;23;7,26;11,34;True
+P094;38,566954;-7,924305;Rua 26 de Fevereiro;7000-378;Évora;Évora;07052400925;Évora;União das freguesias de Malagueira e Horta das Figueiras;14;9,98;14,48;True
+P095;38,565312;-7,927203;Rua Doutor Fernando José Soares Pinheiro;7000-411;Évora;Évora;07052400603;Évora;União das freguesias de Malagueira e Horta das Figueiras;209;12,5;17,38;True
+P096;38,612934;-7,900039;Rua dos Cravos;7005-463;Évora;Évora;07051500307;Évora;Canaviais;18;11,52;16,25;True
+P097;38,575021;-7,908947;Rua do Amauriz;7000-593;Évora;Évora;07052300109;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);19;6,03;9,94;True
+P098;38,571035;-7,90242;Travessa da Olaria;7000-945;Évora;Évora;07052300726;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);7;1,16;4,33;True
+P099;38,571528;-7,914261;Largo dos Penedos;7000-506;Évora;Évora;07052300402;Évora;União das freguesias de Évora (São Mamede, Sé, São Pedro e Santo Antão);8;8,63;12,93;True
+P100;38,557616;-7,918483;Rua Hermes da Fonseca Vermelho;7005-401;Évora;Évora;07052400717;Évora;União das freguesias de Malagueira e Horta das Figueiras;2;10,75;15,36;True

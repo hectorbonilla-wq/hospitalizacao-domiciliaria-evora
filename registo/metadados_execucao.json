@@ -462,5 +462,27 @@
       }
     },
     "registado_em": "2026-11-10T16:20:57"
+  },
+  "instancias_doentes": {
+    "tamanhos": [
+      10,
+      20,
+      30,
+      40,
+      50,
+      60,
+      70,
+      80,
+      90,
+      100
+    ],
+    "semente": 2021,
+    "peso": "N_INDIVIDUOS_65_OU_MAIS",
+    "routing": "OpenRouteService (driving-car) — https://api.openrouteservice.org",
+    "candidatos_sorteados": 100,
+    "candidatos_substituidos_mais_30min": null,
+    "matriz_completa": "instancias_doentes/matriz_completa/ (hospital + todos os doentes)",
+    "nota": "Doentes fictícios em pontos de ruas reais do OpenStreetMap (sem número de porta).",
+    "registado_em": "2026-11-10T16:49:33"
   }
 }
