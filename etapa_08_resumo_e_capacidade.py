@@ -93,7 +93,15 @@ def calcular_indicadores(tabela):
     sem_rota = tabela[tabela["tempo_hospital_domicilio_min"].isna()]
     populacao_total = int(tabela["populacao_residente"].sum())
     populacao_elegivel = int(elegiveis["populacao_residente"].sum())
+    # Condições reais (estimativa): fluxo livre × fator + tempo de acesso ≤ limite
+    tempo_real = (tabela["tempo_hospital_domicilio_min"] * config.CONDICOES_REAIS_FATOR_TRANSITO
+                  + config.CONDICOES_REAIS_TEMPO_ACESSO_MIN)
+    reais = tabela[tempo_real <= config.LIMITE_TEMPO_MINUTOS]
     return {
+        "condicoes_reais_formula": (f"fluxo livre × {config.CONDICOES_REAIS_FATOR_TRANSITO} + "
+                                    f"{config.CONDICOES_REAIS_TEMPO_ACESSO_MIN} min (estimativa)"),
+        "subseccoes_elegiveis_condicoes_reais": len(reais),
+        "populacao_abrangida_condicoes_reais": int(reais["populacao_residente"].sum()),
         "subseccoes_analisadas": len(tabela),
         "subseccoes_elegiveis": len(elegiveis),
         "subseccoes_nao_elegiveis": len(nao_elegiveis),
@@ -258,6 +266,9 @@ def escrever_resumo_markdown(indicadores, sensibilidade, capacidade, por_municip
         f"| População residente total analisada (Censos 2021) | {numero(indicadores['populacao_total_analisada'])} |",
         f"| **População residente abrangida (subsecções elegíveis)** | **{numero(indicadores['populacao_residente_abrangida'])}** |",
         f"| **Percentagem da população analisada abrangida** | **{indicadores['percentagem_populacao_abrangida']} %** |",
+        f"| População abrangida em **condições reais estimadas** ({indicadores['condicoes_reais_formula']} ≤ "
+        f"{config.LIMITE_TEMPO_MINUTOS} min) | {numero(indicadores['populacao_abrangida_condicoes_reais'])} "
+        f"({numero(indicadores['subseccoes_elegiveis_condicoes_reais'])} subsecções) |",
         f"| Subsecções próximas do limite (27–33 min) | {numero(indicadores['subseccoes_proximas_do_limite_27_33min'])} |",
         f"| População nas subsecções próximas do limite | {numero(indicadores['populacao_proxima_do_limite_27_33min'])} |",
         "",
@@ -384,6 +395,8 @@ def executar_etapa_8():
     mensagem(f"   População total analisada ........ {n(indicadores['populacao_total_analisada'])}")
     mensagem(f"   POPULAÇÃO ABRANGIDA (≤ 30 min) ... {n(indicadores['populacao_residente_abrangida'])}")
     mensagem(f"   Percentagem de cobertura ......... {indicadores['percentagem_populacao_abrangida']} %")
+    mensagem(f"   Em condições reais estimadas ..... {n(indicadores['populacao_abrangida_condicoes_reais'])} "
+             f"({indicadores['condicoes_reais_formula']})")
     t = indicadores["tempo_hospital_domicilio_elegiveis_min"]
     mensagem(f"   Tempo médio por residente elegível: {t['media_ponderada_pela_populacao']} min")
     mensagem(f"   Capacidade (cenário ilustrativo, tempos médios): "

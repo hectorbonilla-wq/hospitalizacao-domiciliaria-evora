@@ -17,6 +17,7 @@
 | População residente total analisada (Censos 2021) | 240 452 |
 | **População residente abrangida (subsecções elegíveis)** | **59 756** |
 | **Percentagem da população analisada abrangida** | **24.85 %** |
+| População abrangida em **condições reais estimadas** (fluxo livre × 1.15 + 3 min (estimativa) ≤ 30 min) | 54 604 (1 510 subsecções) |
 | Subsecções próximas do limite (27–33 min) | 593 |
 | População nas subsecções próximas do limite | 14 680 |
 
@@ -73,8 +74,8 @@ O cenário seguinte usa os pressupostos editáveis em `config.py`:
 
 ## 6. Fontes e reprodutibilidade
 
-* População e geografia: INE — Censos 2021 (resultados definitivos), BGRI 2021; recolha em 2026-11-10T14:16:07 a partir de https://mapas.ine.pt/
-* Routing: OSRM (Open Source Routing Machine) — serviço /table em https://router.project-osrm.org, perfil "driving"; cálculo entre 2026-11-10T14:23:43 e 2026-11-10T14:29:10; rede OpenStreetMap; sem trânsito em tempo real
+* População e geografia: INE — Censos 2021 (resultados definitivos), BGRI 2021; recolha em 2026-11-10T14:51:05 a partir de https://mapas.ine.pt/
+* Routing: OSRM (Open Source Routing Machine) — serviço /table em https://router.project-osrm.org, perfil "driving"; cálculo entre 2026-11-10T14:51:53 e 2026-11-10T14:57:43; rede OpenStreetMap; sem trânsito em tempo real
 * Isócrona: Valhalla — serviço /isochrone em https://valhalla1.openstreetmap.de ({'versao': '3.9.1-52228c4', 'dados_osm_modificados_em': '2026-11-10'}); recortada pelo território português
 * Metadados completos (SHA-256 dos ficheiros, parâmetros, versões): `registo/metadados_execucao.json`
 

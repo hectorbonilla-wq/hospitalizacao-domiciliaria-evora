@@ -145,6 +145,27 @@ DISTANCIA_MAXIMA_ATE_ESTRADA_M = 1000
 VALHALLA_URL = "https://valhalla1.openstreetmap.de"
 VALHALLA_PERFIL = "auto"
 
+# Geocodificação (Parte B): converter MORADAS de doentes em coordenadas.
+# Serviço Nominatim (OpenStreetMap). Regras de uso do servidor público:
+# no máximo 1 pedido por segundo e identificação do programa.
+# PRIVACIDADE: as moradas são enviadas para este servidor. Para doentes reais,
+# confirme com o Encarregado de Proteção de Dados da ULS; a alternativa é
+# instalar um Nominatim próprio e mudar este endereço (ex.: http://localhost:8080).
+GEOCODIFICACAO_URL = "https://nominatim.openstreetmap.org"
+GEOCODIFICACAO_PAUSA_S = 1.1
+GEOCODIFICACAO_CABECALHOS = {"User-Agent": "estudo-cobertura-hospitalizacao-domiciliaria/1.0"}
+
+# Condições reais de circulação (ESTIMATIVA — pressupostos editáveis)
+# O OpenStreetMap/OSRM dá tempos em FLUXO LIVRE (sem trânsito). Os servidores
+# públicos não têm trânsito em tempo real (testado: o Valhalla dá o mesmo tempo
+# às 03:00 e às 08:30). Para aproximar condições reais usa-se:
+#     tempo_real = tempo_fluxo_livre × FATOR_TRANSITO + TEMPO_ACESSO_MIN
+# O tempo de acesso (estacionar, caminhar até à porta) só se soma quando a
+# origem e o destino são pontos diferentes. Calibre estes valores com tempos
+# medidos pela equipa (ex.: registos GPS da viatura).
+CONDICOES_REAIS_FATOR_TRANSITO = 1.15     # +15 % (semáforos, cruzamentos, trânsito urbano)
+CONDICOES_REAIS_TEMPO_ACESSO_MIN = 3      # minutos para estacionar e chegar à porta
+
 # ---------------------------------------------------------------------------
 # 6. Verificações de consistência
 # ---------------------------------------------------------------------------

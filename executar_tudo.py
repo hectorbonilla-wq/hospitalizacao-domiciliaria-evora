@@ -3,7 +3,8 @@ executar_tudo.py — Executa todas as etapas, por ordem
 ======================================================
 
 Utilização:
-    python executar_tudo.py                 # corre as etapas 1 a 9
+    python executar_tudo.py                 # corre as etapas 1 a 10
+    python executar_tudo.py --do-zero       # apaga dados e resultados e corre tudo de novo
     python executar_tudo.py --desde 5       # recomeça na etapa 5
     python executar_tudo.py --ate 2         # corre apenas as etapas 1 e 2
 
@@ -12,6 +13,7 @@ Cada etapa também pode ser executada sozinha, por exemplo:
 """
 
 import argparse
+import shutil
 import sys
 import time
 
@@ -24,7 +26,35 @@ from etapa_06_isocrona import executar_etapa_6
 from etapa_07_mapas_interativos import executar_etapa_7
 from etapa_08_resumo_e_capacidade import executar_etapa_8
 from etapa_09_lista_verificacao import executar_lista_verificacao
+from matriz_doentes import FICHEIRO_EXEMPLO, criar_exemplo, executar_matriz_doentes
+import config
 from utilitarios import mensagem
+
+
+def matriz_doentes_exemplo():
+    """Etapa 10 (Parte B): matriz de tempos/distâncias para os doentes de exemplo."""
+    if not FICHEIRO_EXEMPLO.exists():
+        criar_exemplo()
+    executar_matriz_doentes(FICHEIRO_EXEMPLO)
+
+
+def apagar_tudo():
+    """
+    Apaga os dados descarregados, os ficheiros intermédios, os resultados e o
+    registo, para repetir o estudo do zero. O código e o ficheiro de doentes
+    de exemplo NÃO são apagados.
+    """
+    pastas = [config.PASTA_ENTRADA, config.PASTA_PROCESSADOS, config.PASTA_TABELAS,
+              config.PASTA_MATRIZES, config.PASTA_GEOJSON, config.PASTA_MAPAS,
+              config.PASTA_RELATORIOS, config.PASTA_REGISTO,
+              config.PASTA_PROJETO / "resultados" / "doentes"]
+    for pasta in pastas:
+        if pasta.exists():
+            for item in pasta.iterdir():
+                if item.name == ".gitkeep":
+                    continue
+                shutil.rmtree(item) if item.is_dir() else item.unlink()
+    print("Dados e resultados anteriores apagados. A recomeçar do zero.")
 
 ETAPAS = {
     1: ("Descarregar dados do INE", executar_etapa_1),
@@ -36,6 +66,7 @@ ETAPAS = {
     7: ("Mapas interativos", executar_etapa_7),
     8: ("Resumo e capacidade operacional", executar_etapa_8),
     9: ("Lista de verificação", executar_lista_verificacao),
+    10: ("Parte B — matriz dos doentes (exemplo)", matriz_doentes_exemplo),
 }
 
 
@@ -47,9 +78,14 @@ def main():
         int: 0 se tudo correu bem, 1 se alguma etapa falhou.
     """
     leitor = argparse.ArgumentParser(description="Estudo de cobertura da Hospitalização Domiciliária")
-    leitor.add_argument("--desde", type=int, default=1, help="primeira etapa a executar (1–9)")
-    leitor.add_argument("--ate", type=int, default=9, help="última etapa a executar (1–9)")
+    leitor.add_argument("--desde", type=int, default=1, help="primeira etapa a executar (1–10)")
+    leitor.add_argument("--ate", type=int, default=10, help="última etapa a executar (1–10)")
+    leitor.add_argument("--do-zero", action="store_true",
+                        help="apaga dados e resultados anteriores antes de começar")
     opcoes = leitor.parse_args()
+    if opcoes.do_zero:
+        apagar_tudo()
+        opcoes.desde = 1
 
     inicio = time.time()
     for numero in range(opcoes.desde, opcoes.ate + 1):

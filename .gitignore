@@ -6,3 +6,10 @@ __pycache__/
 *.parcial
 registo/execucao.log
 .venv/
+
+# Dados de doentes reais são dados pessoais de saúde: nunca enviar para o GitHub.
+# Só o exemplo fictício e os seus resultados são partilhados.
+doentes/*
+!doentes/doentes_exemplo.csv
+resultados/doentes/*
+!resultados/doentes/doentes_exemplo/

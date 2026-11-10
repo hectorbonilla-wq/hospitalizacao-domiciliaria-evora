@@ -23,6 +23,9 @@ from etapa_04_verificar_consistencia import (contar_violacoes_triangulares,  # n
                                              distancia_linha_reta_km)
 from etapa_05_classificar_elegibilidade import classificar_tempo  # noqa: E402
 from etapa_08_resumo_e_capacidade import calcular_capacidade_operacional  # noqa: E402
+import pandas as pd  # noqa: E402
+from matriz_doentes import (aplicar_condicoes_reais, ler_doentes, matriz_quadrada,  # noqa: E402
+                            texto_da_morada)
 
 
 def test_conversao_gms_para_decimal():
@@ -86,6 +89,36 @@ def test_capacidade_operacional():
     assert resultado["cenarios"]["tempos_medios"]["visitas_por_equipa_dia"] == 6
     # pior caso: (420 − 30 − 30 + 15) / 60 = 6,25 → 6
     assert resultado["cenarios"]["pior_caso_30min"]["visitas_por_equipa_dia"] == 6
+
+
+def test_condicoes_reais():
+    """10 min em fluxo livre → 10 × 1,15 + 3 = 14,5 min; a diagonal continua a 0."""
+    livre = pd.DataFrame([[0, 10], [12, 0]], index=["HOSPITAL", "D1"], columns=["HOSPITAL", "D1"], dtype=float)
+    reais = aplicar_condicoes_reais(livre)
+    esperado = 10 * config.CONDICOES_REAIS_FATOR_TRANSITO + config.CONDICOES_REAIS_TEMPO_ACESSO_MIN
+    assert abs(reais.loc["HOSPITAL", "D1"] - esperado) < 1e-9
+    assert reais.loc["D1", "D1"] == 0 and reais.loc["HOSPITAL", "HOSPITAL"] == 0
+
+
+def test_matriz_quadrada_mesma_ordem():
+    """A matriz recortada é quadrada e tem a mesma ordem nas linhas e colunas."""
+    nomes = ["HOSPITAL", "D1", "D2", "D3"]
+    completa = pd.DataFrame(np.arange(16).reshape(4, 4), index=nomes, columns=nomes)
+    q = matriz_quadrada(completa, ["D3", "D1"])
+    assert list(q.index) == list(q.columns) == ["HOSPITAL", "D3", "D1"]
+    assert q.loc["D3", "D1"] == completa.loc["D3", "D1"]  # sentido D3 → D1 preservado
+
+
+def test_ler_doentes_e_morada(tmp_path=None):
+    """Lê um CSV com ';' e junta a morada num texto de pesquisa."""
+    import tempfile
+    pasta = Path(tempfile.mkdtemp())
+    ficheiro = pasta / "d.csv"
+    ficheiro.write_text("id_doente;morada;codigo_postal;localidade\nD1;Rua 5 de Outubro;7000-854;Évora\n",
+                        encoding="utf-8")
+    doentes = ler_doentes(ficheiro)
+    assert texto_da_morada(doentes.iloc[0]) == "Rua 5 de Outubro, 7000-854 Évora"
+    assert doentes["latitude"].isna().all()  # sem coordenadas → serão geocodificadas
 
 
 if __name__ == "__main__":

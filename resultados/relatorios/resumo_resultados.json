@@ -1,5 +1,8 @@
 {
   "indicadores": {
+    "condicoes_reais_formula": "fluxo livre × 1.15 + 3 min (estimativa)",
+    "subseccoes_elegiveis_condicoes_reais": 1510,
+    "populacao_abrangida_condicoes_reais": 54604,
     "subseccoes_analisadas": 9748,
     "subseccoes_elegiveis": 1804,
     "subseccoes_nao_elegiveis": 7944,

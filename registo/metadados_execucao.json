@@ -1,6 +1,6 @@
 {
   "etapa_01_fontes_ine": {
-    "data_recolha": "2026-11-10T14:16:07",
+    "data_recolha": "2026-11-10T14:51:05",
     "pagina_download_utilizada": "https://mapas.ine.pt/",
     "fonte": "INE — Censos 2021 (resultados definitivos) e BGRI 2021",
     "ficheiros": [
@@ -78,7 +78,7 @@
         "sha256": "66deaac0264e7ad591b6627b0dfb088cf73220f3245a069242d01392905ee7a9"
       }
     ],
-    "registado_em": "2026-11-10T14:16:07"
+    "registado_em": "2026-11-10T14:51:05"
   },
   "etapa_02_preparacao": {
     "unidade_geografica": "subsecção estatística (BGRI 2021)",
@@ -220,7 +220,7 @@
       }
     ],
     "metodo_centroide": "centroide geométrico calculado em EPSG:3763 e convertido para EPSG:4326",
-    "registado_em": "2026-11-10T14:30:05"
+    "registado_em": "2026-11-10T14:51:53"
   },
   "etapa_03_routing": {
     "servico": "OSRM (Open Source Routing Machine) — serviço /table",
@@ -247,10 +247,10 @@
       "ok": 9673,
       "ok_afastado_da_rede": 75
     },
-    "data_calculo_inicio": "2026-11-10T14:23:43",
-    "data_calculo_fim": "2026-11-10T14:29:10",
+    "data_calculo_inicio": "2026-11-10T14:51:53",
+    "data_calculo_fim": "2026-11-10T14:57:43",
     "nota": "Tempos em condições de tráfego livre (sem trânsito em tempo real).",
-    "registado_em": "2026-11-10T14:29:16"
+    "registado_em": "2026-11-10T14:57:49"
   },
   "etapa_04_consistencia": {
     "verificacoes": [
@@ -329,13 +329,13 @@
     ],
     "tamanho_amostra_triangular": 40,
     "semente_aleatoria": 2021,
-    "registado_em": "2026-11-10T14:30:07"
+    "registado_em": "2026-11-10T14:57:50"
   },
   "etapa_05_classificacao": {
     "regra": "elegível se tempo hospital → domicílio ≤ 30 min",
     "sentido_usado": "hospital → domicílio (ida)",
     "margem_proximo_do_limite_min": 3,
-    "registado_em": "2026-11-10T14:30:11"
+    "registado_em": "2026-11-10T14:57:55"
   },
   "etapa_06_isocrona": {
     "servico_isocrona": "Valhalla — serviço /isochrone",
@@ -351,7 +351,7 @@
     "concordancia_centroides_elegiveis_percent": 70.3,
     "populacao_centroides_dentro_isocrona_valhalla": 49889,
     "nota": "A isócrona é apenas ilustrativa; a elegibilidade é determinada pelo OSRM.",
-    "registado_em": "2026-11-10T14:31:54"
+    "registado_em": "2026-11-10T14:57:58"
   },
   "etapa_07_mapas": {
     "ficheiros": [
@@ -360,10 +360,13 @@
     ],
     "biblioteca": "folium 0.20.0",
     "simplificacao_poligonos_m": 10,
-    "registado_em": "2026-11-10T14:33:31"
+    "registado_em": "2026-11-10T14:58:06"
   },
   "etapa_08_resumo": {
     "indicadores": {
+      "condicoes_reais_formula": "fluxo livre × 1.15 + 3 min (estimativa)",
+      "subseccoes_elegiveis_condicoes_reais": 1510,
+      "populacao_abrangida_condicoes_reais": 54604,
       "subseccoes_analisadas": 9748,
       "subseccoes_elegiveis": 1804,
       "subseccoes_nao_elegiveis": 7944,
@@ -448,6 +451,6 @@
         }
       }
     },
-    "registado_em": "2026-11-10T14:32:14"
+    "registado_em": "2026-11-10T15:03:00"
   }
 }

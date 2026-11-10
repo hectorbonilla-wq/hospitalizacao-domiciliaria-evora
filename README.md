@@ -44,6 +44,7 @@ descarrega-os diretamente do portal oficial.
 
 1. [Instalação](#1-instalação)
 2. [Execução rápida](#2-execução-rápida)
+2B. [Parte B — Doentes por morada e matriz quadrada](#2b-parte-b--doentes-por-morada-e-matriz-quadrada)
 3. [Estrutura das pastas](#3-estrutura-das-pastas)
 4. [As etapas, uma a uma](#4-as-etapas-uma-a-uma)
 5. [Configuração (config.py) e APIs](#5-configuração-configpy-e-apis)
@@ -106,12 +107,19 @@ com pausas entre pedidos. Para uso intensivo, ver a secção 5.3 (servidor OSRM 
 python executar_tudo.py
 ```
 
-Demora cerca de **8–12 minutos** (a maior parte é o routing no OSRM). No fim, abra no navegador:
+Demora cerca de **8–12 minutos** (a maior parte é o routing no OSRM) e corre também a Parte B
+com os doentes de exemplo. No fim, abra no navegador:
 
 * `resultados/mapas/mapa_centroides.html`
 * `resultados/mapas/mapa_poligonos_bgri.html`
 
 e leia `resultados/relatorios/resumo_resultados.md`.
+
+Para repetir **tudo do zero** (apaga os dados descarregados e os resultados e volta a calcular):
+
+```bash
+python executar_tudo.py --do-zero
+```
 
 Para recomeçar a partir de uma etapa (por exemplo, depois de mudar o limite de tempo):
 
@@ -127,6 +135,109 @@ python testes/test_funcoes.py
 
 ---
 
+## 2B. Parte B — Doentes por morada e matriz quadrada
+
+Para o trabalho diário do serviço: a partir de uma **lista de doentes identificados pela morada**,
+o programa:
+
+1. **converte cada morada em coordenadas** (geocodificação com Nominatim/OpenStreetMap, só em
+   Portugal), registando o endereço encontrado e a precisão (número de porta, rua, código postal...);
+2. calcula a **distância (km) e o tempo (min) de/para o hospital** de cada doente, nos dois sentidos;
+3. **seleciona os doentes a ≤ 30 min** do hospital (tempo hospital → doente em condições reais estimadas);
+4. constrói a **matriz quadrada** hospital + doentes selecionados (todos para todos), em km e em minutos;
+5. verifica a matriz e exporta CSV, Excel e um mapa.
+
+**1) Preparar o ficheiro** `doentes/os_meus_doentes.csv` (separador `;`, abre no Excel):
+
+```text
+id_doente;morada;codigo_postal;localidade
+D01;Rua 5 de Outubro;7000-854;Évora
+D02;Praça do Município;7040-027;Arraiolos
+```
+
+Opcional: colunas `latitude;longitude` — se preenchidas, a morada não é geocodificada.
+
+**2) Executar:**
+
+```bash
+python matriz_doentes.py doentes/os_meus_doentes.csv
+```
+
+Sem argumento, usa o exemplo `doentes/doentes_exemplo.csv` (11 doentes **fictícios** em moradas de
+locais públicos, incluindo um fora dos 30 min e uma morada inexistente, para mostrar os erros).
+
+**3) Resultados** em `resultados/doentes/<nome_do_ficheiro>/`:
+
+| Ficheiro | Conteúdo |
+|---|---|
+| `tabela_doentes.csv` | uma linha por doente: morada, endereço encontrado, precisão, latitude, longitude, km e minutos (fluxo livre e condições reais) de e para o hospital, incluído/excluído e motivo |
+| `matriz_quadrada_distancias_km.csv` | matriz quadrada (hospital + doentes incluídos), em km |
+| `matriz_quadrada_tempos_condicoes_reais_min.csv` | a mesma matriz em minutos, condições reais estimadas |
+| `matriz_quadrada_tempos_fluxo_livre_min.csv` | a mesma matriz em minutos, fluxo livre (OSRM) |
+| `lista_pares_origem_destino.csv` | as matrizes em formato de lista (origem, destino, km, min) |
+| `matrizes_doentes.xlsx` | tudo num Excel, incluindo as matrizes de todos os doentes geocodificados, parâmetros e verificações |
+| `verificacoes.csv` | controlo de qualidade da matriz |
+| `mapa_doentes.html` | mapa com o hospital e os doentes (verde = incluído, laranja = excluído) |
+
+**Como ler a matriz quadrada:** a **linha é a origem** e a **coluna é o destino**. As linhas e as
+colunas têm a mesma ordem (HOSPITAL primeiro). A diagonal é 0. A→B e B→A são calculados
+separadamente e podem ser diferentes (sentidos únicos, rotundas, acessos). A etapa confirma: matriz
+quadrada, mesma ordem, sem pares em falta, diagonal nula, valores positivos, desigualdade triangular,
+pontos de encaixe em Portugal.
+
+Exemplo (tempos em condições reais, minutos):
+
+```text
+          HOSPITAL   D01   D02   D03   D04   D05
+HOSPITAL       0.0   7.1   6.5   6.4   8.4  29.4
+D01            6.9   0.0   4.8   4.9   7.3  28.1
+D02            5.1   6.9   0.0   5.6   8.5  29.3
+D03            6.9   5.0   4.8   0.0   8.2  28.9
+D04            7.8   8.6   8.5   9.5   0.0  29.6
+D05           28.8  27.4  27.3  28.2  27.5   0.0
+```
+
+**Regras de segurança da geocodificação:**
+
+* Se a morada completa não for encontrada, tenta-se o código postal + localidade (precisão
+  "código postal", com aviso).
+* Se só se encontrar a **localidade ou o concelho**, o doente é **excluído** da matriz: um ponto no
+  centro da vila pode estar a vários quilómetros do domicílio real. Corrija a morada ou indique as
+  coordenadas GPS.
+* Moradas não encontradas ficam na tabela com o motivo.
+* As pesquisas ficam guardadas em `doentes/cache_geocodificacao.csv` (não se repetem).
+
+> 🔒 **Privacidade (RGPD).** Moradas de doentes são dados de saúde. Na geocodificação, as moradas são
+> **enviadas** ao servidor Nominatim indicado em `config.py` (`GEOCODIFICACAO_URL`). Não coloque
+> nomes, diagnósticos ou outros dados no ficheiro — só um código e a morada. Para doentes reais,
+> confirme com o Encarregado de Proteção de Dados da ULS ou instale um Nominatim na instituição.
+> A pasta `doentes/` e `resultados/doentes/` estão no `.gitignore`: **nunca** são enviadas para o
+> GitHub, exceto o exemplo fictício.
+
+### Tempos em "condições reais"
+
+O OpenStreetMap e o OSRM calculam tempos em **fluxo livre** (sem trânsito). Os servidores públicos
+gratuitos **não têm trânsito em tempo real**: foi testado que o Valhalla dá exatamente o mesmo tempo
+às 03:00, às 08:30 e às 18:00. Por isso o projeto calcula também uma **estimativa de condições reais**:
+
+```text
+tempo em condições reais = tempo em fluxo livre × 1,15 + 3 min
+```
+
+* `× 1,15` (`CONDICOES_REAIS_FATOR_TRANSITO`): semáforos, cruzamentos, trânsito urbano;
+* `+ 3 min` (`CONDICOES_REAIS_TEMPO_ACESSO_MIN`): estacionar e chegar à porta (não se soma na diagonal).
+
+São **pressupostos**, não trânsito medido. Calibre-os com tempos reais da equipa (por exemplo,
+registos GPS da viatura durante algumas semanas). Para trânsito real seria preciso um serviço comercial
+(Google, HERE, TomTom), que não é OpenStreetMap e tem custos e condições próprias.
+
+* Na **Parte B**, a regra dos 30 min usa o tempo em **condições reais**.
+* Na **Parte A**, a classificação oficial usa o **fluxo livre** (como no enunciado). O resumo mostra
+  também a população abrangida em condições reais estimadas: **54 604** residentes (contra
+  59 756 em fluxo livre).
+
+---
+
 ## 3. Estrutura das pastas
 
 ```
@@ -135,7 +246,10 @@ hospitalizacao_domiciliaria_evora/
 ├── requirements.txt                  ← bibliotecas a instalar
 ├── config.py                         ← TODOS os parâmetros editáveis
 ├── utilitarios.py                    ← mensagens, downloads, metadados
-├── executar_tudo.py                  ← corre as etapas 1 a 9
+├── executar_tudo.py                  ← corre as etapas 1 a 10 (10 = Parte B, exemplo)
+├── matriz_doentes.py                 ← PARTE B: doentes por morada → matriz quadrada
+├── doentes/
+│   └── doentes_exemplo.csv           ← doentes FICTÍCIOS (os seus ficheiros ficam aqui, fora do Git)
 ├── etapa_01_descarregar_dados_ine.py
 ├── etapa_02_preparar_subseccoes.py
 ├── etapa_03_calcular_matrizes_osrm.py
@@ -163,7 +277,8 @@ hospitalizacao_domiciliaria_evora/
 │   ├── matrizes/                     ← matrizes de tempos e distâncias (ida e regresso)
 │   ├── geojson/                      ← resultados geográficos
 │   ├── mapas/                        ← mapas interativos HTML
-│   └── relatorios/                   ← resumo, verificações, sensibilidade
+│   ├── relatorios/                   ← resumo, verificações, sensibilidade
+│   └── doentes/<ficheiro>/           ← resultados da Parte B (matriz quadrada, mapa)
 └── registo/
     ├── execucao.log                  ← todas as mensagens de progresso
     └── metadados_execucao.json       ← datas, fontes, versões, parâmetros, SHA-256
