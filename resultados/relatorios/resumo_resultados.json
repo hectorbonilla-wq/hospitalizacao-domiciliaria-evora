@@ -1,60 +1,71 @@
 {
   "indicadores": {
+    "motor_routing": "OpenRouteService (driving-car) — https://api.openrouteservice.org",
+    "comparacao_motores": {
+      "OpenRouteService": {
+        "subseccoes": 1698,
+        "populacao": 57435
+      },
+      "OSRM": {
+        "subseccoes": 1804,
+        "populacao": 59756
+      }
+    },
     "condicoes_reais_formula": "fluxo livre × 1.15 + 3 min (estimativa)",
-    "subseccoes_elegiveis_condicoes_reais": 1510,
-    "populacao_abrangida_condicoes_reais": 54604,
+    "subseccoes_elegiveis_condicoes_reais": 1307,
+    "populacao_abrangida_condicoes_reais": 49875,
     "subseccoes_analisadas": 9748,
-    "subseccoes_elegiveis": 1804,
-    "subseccoes_nao_elegiveis": 7944,
-    "subseccoes_sem_tempo_calculado": 0,
+    "subseccoes_elegiveis": 1698,
+    "subseccoes_nao_elegiveis": 8050,
+    "subseccoes_sem_tempo_calculado": 1,
     "populacao_sem_tempo_calculado": 0,
-    "subseccoes_elegiveis_com_populacao": 1669,
+    "subseccoes_elegiveis_com_populacao": 1567,
     "populacao_total_analisada": 240452,
-    "populacao_residente_abrangida": 59756,
-    "percentagem_populacao_abrangida": 24.85,
-    "subseccoes_proximas_do_limite_27_33min": 593,
-    "populacao_proxima_do_limite_27_33min": 14680,
+    "populacao_residente_abrangida": 57435,
+    "percentagem_populacao_abrangida": 23.89,
+    "subseccoes_proximas_do_limite_27_33min": 372,
+    "populacao_proxima_do_limite_27_33min": 6338,
     "tempo_hospital_domicilio_elegiveis_min": {
-      "minimo": 0.12,
-      "mediana": 7.21,
-      "media": 12.39,
-      "maximo": 30.0,
-      "media_ponderada_pela_populacao": 9.49
+      "minimo": 0.18,
+      "mediana": 10.4,
+      "media": 13.79,
+      "maximo": 29.97,
+      "media_ponderada_pela_populacao": 11.39
     },
     "tempo_domicilio_hospital_elegiveis_min": {
-      "minimo": 0.39,
-      "mediana": 6.42,
-      "media": 11.87,
-      "maximo": 36.27,
-      "media_ponderada_pela_populacao": 8.95
+      "minimo": 0.48,
+      "mediana": 8.93,
+      "media": 12.93,
+      "maximo": 31.11,
+      "media_ponderada_pela_populacao": 10.51
     },
     "distancia_hospital_domicilio_elegiveis_km": {
       "minimo": 0.05,
-      "mediana": 4.51,
-      "media": 10.24,
-      "maximo": 39.08,
-      "media_ponderada_pela_populacao": 7.51
+      "mediana": 4.22,
+      "media": 8.96,
+      "maximo": 30.15,
+      "media_ponderada_pela_populacao": 6.56
     },
     "distancia_domicilio_hospital_elegiveis_km": {
       "minimo": 0.12,
-      "mediana": 3.97,
-      "media": 9.96,
-      "maximo": 45.27,
-      "media_ponderada_pela_populacao": 7.22
+      "mediana": 3.65,
+      "media": 8.58,
+      "maximo": 29.93,
+      "media_ponderada_pela_populacao": 6.13
     },
     "tempo_hospital_domicilio_todas_min": {
-      "minimo": 0.12,
-      "mediana": 51.32,
-      "media": 49.6,
-      "maximo": 148.78,
-      "media_ponderada_pela_populacao": 44.51
+      "minimo": 0.18,
+      "mediana": 52.96,
+      "media": 50.95,
+      "maximo": 133.72,
+      "media_ponderada_pela_populacao": 47.21
     },
     "distancia_hospital_domicilio_todas_km": {
       "minimo": 0.05,
-      "mediana": 55.17,
-      "media": 50.16,
-      "maximo": 112.66,
-      "media_ponderada_pela_populacao": 47.21
+      "mediana": 55.7,
+      "media": 50.39,
+      "maximo": 142.02,
+      "media_ponderada_pela_populacao": 47.63
     }
   },
   "capacidade_operacional": {
@@ -72,8 +83,8 @@
     },
     "cenarios": {
       "tempos_medios": {
-        "tempo_ida_usado_min": 9.5,
-        "tempo_regresso_usado_min": 8.9,
+        "tempo_ida_usado_min": 11.4,
+        "tempo_regresso_usado_min": 10.5,
         "visitas_por_equipa_dia": 6,
         "visitas_totais_dia": 6,
         "doentes_acompanhados_em_simultaneo": 6
@@ -90,51 +101,51 @@
   "sensibilidade": [
     {
       "limite_min": 20,
-      "subseccoes_elegiveis": 1259,
-      "populacao_abrangida": 49383,
-      "percentagem_populacao_analisada": 20.54
+      "subseccoes_elegiveis": 1206,
+      "populacao_abrangida": 48337,
+      "percentagem_populacao_analisada": 20.1
     },
     {
       "limite_min": 25,
-      "subseccoes_elegiveis": 1567,
-      "populacao_abrangida": 55665,
-      "percentagem_populacao_analisada": 23.15
+      "subseccoes_elegiveis": 1425,
+      "populacao_abrangida": 52597,
+      "percentagem_populacao_analisada": 21.87
     },
     {
       "limite_min": 27,
-      "subseccoes_elegiveis": 1635,
-      "populacao_abrangida": 56797,
-      "percentagem_populacao_analisada": 23.62
+      "subseccoes_elegiveis": 1597,
+      "populacao_abrangida": 56055,
+      "percentagem_populacao_analisada": 23.31
     },
     {
       "limite_min": 30,
-      "subseccoes_elegiveis": 1804,
-      "populacao_abrangida": 59756,
-      "percentagem_populacao_analisada": 24.85
+      "subseccoes_elegiveis": 1698,
+      "populacao_abrangida": 57435,
+      "percentagem_populacao_analisada": 23.89
     },
     {
       "limite_min": 33,
-      "subseccoes_elegiveis": 2228,
-      "populacao_abrangida": 71477,
-      "percentagem_populacao_analisada": 29.73
+      "subseccoes_elegiveis": 1968,
+      "populacao_abrangida": 62321,
+      "percentagem_populacao_analisada": 25.92
     },
     {
       "limite_min": 35,
-      "subseccoes_elegiveis": 2399,
-      "populacao_abrangida": 76872,
-      "percentagem_populacao_analisada": 31.97
+      "subseccoes_elegiveis": 2170,
+      "populacao_abrangida": 67432,
+      "percentagem_populacao_analisada": 28.04
     },
     {
       "limite_min": 40,
-      "subseccoes_elegiveis": 3123,
-      "populacao_abrangida": 97635,
-      "percentagem_populacao_analisada": 40.6
+      "subseccoes_elegiveis": 2732,
+      "populacao_abrangida": 83493,
+      "percentagem_populacao_analisada": 34.72
     },
     {
       "limite_min": 45,
-      "subseccoes_elegiveis": 3736,
-      "populacao_abrangida": 111920,
-      "percentagem_populacao_analisada": 46.55
+      "subseccoes_elegiveis": 3652,
+      "populacao_abrangida": 108611,
+      "percentagem_populacao_analisada": 45.17
     }
   ]
 }

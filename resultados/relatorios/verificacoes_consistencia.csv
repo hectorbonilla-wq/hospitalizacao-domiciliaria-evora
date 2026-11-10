@@ -1,13 +1,13 @@
 ﻿verificacao;resultado;valor;explicacao
-Subsecções sem tempo de viagem;OK;0;Estados: {'ok': 9673, 'ok_afastado_da_rede': 75}
-Centroides afastados da estrada (> 1000 m);AVISO;75;"Distância de encaixe mediana: 29 m; máxima: 1859 m"
+Subsecções sem tempo de viagem;AVISO;1;Estados: {'ok': 9665, 'ok_afastado_da_rede': 81, 'sem_rota': 1, 'ok_reencaixado': 1}
+Centroides afastados da estrada (> 1000 m);AVISO;81;"Distância de encaixe mediana: 29 m; máxima: 1857 m"
 Pontos de encaixe na estrada fora de Portugal;OK;0;Todos os destinos devem estar em território português.
-Velocidades médias implausíveis (ida);OK;0;"Mediana: 61.0 km/h; mín.: 18.0; máx.: 82.8"
-Velocidades médias implausíveis (regresso);OK;0;"Mediana: 61.8 km/h; mín.: 15.5; máx.: 86.7"
+Velocidades médias implausíveis (ida);OK;0;"Mediana: 57.5 km/h; mín.: 12.7; máx.: 88.8"
+Velocidades médias implausíveis (regresso);OK;0;"Mediana: 58.8 km/h; mín.: 12.1; máx.: 91.3"
 Distância por estrada menor que em linha reta;OK;0;Fator de sinuosidade mediano (estrada / linha reta): 1.29
-Subsecções com assimetria ida/regresso > 10 %;INFO;601;"Diferença média (regresso − ida): -0.80 min; máx. absoluta: 36.89 min. A assimetria é esperada."
-Subsecções cuja classificação mudaria se se usasse o regresso;INFO;189;A classificação oficial usa o sentido hospital → domicílio.
+Subsecções com assimetria ida/regresso > 10 %;INFO;675;"Diferença média (regresso − ida): -1.22 min; máx. absoluta: 32.16 min. A assimetria é esperada."
+Subsecções cuja classificação mudaria se se usasse o regresso;INFO;82;A classificação oficial usa o sentido hospital → domicílio.
 Diagonal da matriz (tempo de um ponto para si próprio);OK;0.0 s;Deve ser 0.
 Desigualdade triangular (tempos);OK;0 violações em 68921 trios;Maior excesso: 0.0 s (tolerância 5 s)
-Desigualdade triangular (distâncias);INFO;1608 violações em 68921 trios;"O OSRM minimiza o TEMPO e não a distância; violações nas distâncias podem ocorrer e não são um erro (maior excesso: 21475 m)."
+Desigualdade triangular (distâncias);INFO;2287 violações em 68921 trios;"O OSRM minimiza o TEMPO e não a distância; violações nas distâncias podem ocorrer e não são um erro (maior excesso: 42282 m)."
 Repetibilidade: mesma rota pedida duas vezes;OK;0.01 min;Diferença máxima entre a matriz da amostra e a etapa 3.

@@ -223,9 +223,10 @@
     "registado_em": "2026-11-10T14:51:53"
   },
   "etapa_03_routing": {
-    "servico": "OSRM (Open Source Routing Machine) — serviço /table",
-    "servidor": "https://router.project-osrm.org",
-    "perfil": "driving",
+    "servico": "OpenRouteService (driving-car) — https://api.openrouteservice.org",
+    "motor": "ors",
+    "servidor": "https://api.openrouteservice.org",
+    "perfil": "driving-car",
     "rede_rodoviaria": "OpenStreetMap (versão carregada no servidor à data do cálculo)",
     "hospital_na_rede": {
       "rua": "Rua do Valasco",
@@ -236,35 +237,36 @@
       "distancia_encaixe_m": 24.5,
       "data_version_osrm": null
     },
-    "pontos_por_pedido": 99,
-    "pausa_entre_pedidos_s": 1.0,
+    "pontos_por_pedido": 3000,
     "distancia_maxima_ate_estrada_m": 1000,
     "sentidos_calculados": [
       "hospital → domicílio",
       "domicílio → hospital"
     ],
     "estados": {
-      "ok": 9673,
-      "ok_afastado_da_rede": 75
+      "ok": 9665,
+      "ok_afastado_da_rede": 81,
+      "sem_rota": 1,
+      "ok_reencaixado": 1
     },
-    "data_calculo_inicio": "2026-11-10T14:51:53",
-    "data_calculo_fim": "2026-11-10T14:57:43",
+    "data_calculo_inicio": "2026-11-10T16:18:48",
+    "data_calculo_fim": "2026-11-10T16:19:11",
     "nota": "Tempos em condições de tráfego livre (sem trânsito em tempo real).",
-    "registado_em": "2026-11-10T14:57:49"
+    "registado_em": "2026-11-10T16:19:28"
   },
   "etapa_04_consistencia": {
     "verificacoes": [
       {
         "verificacao": "Subsecções sem tempo de viagem",
-        "resultado": "OK",
-        "valor": 0,
-        "explicacao": "Estados: {'ok': 9673, 'ok_afastado_da_rede': 75}"
+        "resultado": "AVISO",
+        "valor": 1,
+        "explicacao": "Estados: {'ok': 9665, 'ok_afastado_da_rede': 81, 'sem_rota': 1, 'ok_reencaixado': 1}"
       },
       {
         "verificacao": "Centroides afastados da estrada (> 1000 m)",
         "resultado": "AVISO",
-        "valor": 75,
-        "explicacao": "Distância de encaixe mediana: 29 m; máxima: 1859 m"
+        "valor": 81,
+        "explicacao": "Distância de encaixe mediana: 29 m; máxima: 1857 m"
       },
       {
         "verificacao": "Pontos de encaixe na estrada fora de Portugal",
@@ -276,13 +278,13 @@
         "verificacao": "Velocidades médias implausíveis (ida)",
         "resultado": "OK",
         "valor": 0,
-        "explicacao": "Mediana: 61.0 km/h; mín.: 18.0; máx.: 82.8"
+        "explicacao": "Mediana: 57.5 km/h; mín.: 12.7; máx.: 88.8"
       },
       {
         "verificacao": "Velocidades médias implausíveis (regresso)",
         "resultado": "OK",
         "valor": 0,
-        "explicacao": "Mediana: 61.8 km/h; mín.: 15.5; máx.: 86.7"
+        "explicacao": "Mediana: 58.8 km/h; mín.: 12.1; máx.: 91.3"
       },
       {
         "verificacao": "Distância por estrada menor que em linha reta",
@@ -293,13 +295,13 @@
       {
         "verificacao": "Subsecções com assimetria ida/regresso > 10 %",
         "resultado": "INFO",
-        "valor": 601,
-        "explicacao": "Diferença média (regresso − ida): -0.80 min; máx. absoluta: 36.89 min. A assimetria é esperada."
+        "valor": 675,
+        "explicacao": "Diferença média (regresso − ida): -1.22 min; máx. absoluta: 32.16 min. A assimetria é esperada."
       },
       {
         "verificacao": "Subsecções cuja classificação mudaria se se usasse o regresso",
         "resultado": "INFO",
-        "valor": 189,
+        "valor": 82,
         "explicacao": "A classificação oficial usa o sentido hospital → domicílio."
       },
       {
@@ -317,8 +319,8 @@
       {
         "verificacao": "Desigualdade triangular (distâncias)",
         "resultado": "INFO",
-        "valor": "1608 violações em 68921 trios",
-        "explicacao": "O OSRM minimiza o TEMPO e não a distância; violações nas distâncias podem ocorrer e não são um erro (maior excesso: 21475 m)."
+        "valor": "2287 violações em 68921 trios",
+        "explicacao": "O OSRM minimiza o TEMPO e não a distância; violações nas distâncias podem ocorrer e não são um erro (maior excesso: 42282 m)."
       },
       {
         "verificacao": "Repetibilidade: mesma rota pedida duas vezes",
@@ -329,29 +331,26 @@
     ],
     "tamanho_amostra_triangular": 40,
     "semente_aleatoria": 2021,
-    "registado_em": "2026-11-10T14:57:50"
+    "registado_em": "2026-11-10T16:20:41"
   },
   "etapa_05_classificacao": {
     "regra": "elegível se tempo hospital → domicílio ≤ 30 min",
     "sentido_usado": "hospital → domicílio (ida)",
     "margem_proximo_do_limite_min": 3,
-    "registado_em": "2026-11-10T14:57:55"
+    "registado_em": "2026-11-10T16:20:45"
   },
   "etapa_06_isocrona": {
-    "servico_isocrona": "Valhalla — serviço /isochrone",
-    "servidor": "https://valhalla1.openstreetmap.de",
-    "perfil": "auto",
-    "valhalla": {
-      "versao": "3.9.1-52228c4",
-      "dados_osm_modificados_em": "2026-11-10"
-    },
+    "servico_isocrona": "OpenRouteService — serviço de isócronas",
+    "servidor": "https://api.openrouteservice.org",
+    "perfil": "driving-car",
+    "valhalla": null,
     "isocrona_obtida": true,
     "isocrona_recortada_pelo_territorio_portugues": true,
-    "area_isocrona_fora_de_portugal_km2": 0.0,
-    "concordancia_centroides_elegiveis_percent": 70.3,
-    "populacao_centroides_dentro_isocrona_valhalla": 49889,
-    "nota": "A isócrona é apenas ilustrativa; a elegibilidade é determinada pelo OSRM.",
-    "registado_em": "2026-11-10T14:57:58"
+    "area_isocrona_fora_de_portugal_km2": -0.0,
+    "concordancia_centroides_elegiveis_percent": 99.8,
+    "populacao_centroides_dentro_isocrona": 58106,
+    "nota": "A isócrona é ilustrativa; a elegibilidade é determinada pela matriz da etapa 3.",
+    "registado_em": "2026-11-10T16:20:48"
   },
   "etapa_07_mapas": {
     "ficheiros": [
@@ -360,65 +359,76 @@
     ],
     "biblioteca": "folium 0.20.0",
     "simplificacao_poligonos_m": 10,
-    "registado_em": "2026-11-10T15:23:15"
+    "registado_em": "2026-11-10T16:20:56"
   },
   "etapa_08_resumo": {
     "indicadores": {
+      "motor_routing": "OpenRouteService (driving-car) — https://api.openrouteservice.org",
+      "comparacao_motores": {
+        "OpenRouteService": {
+          "subseccoes": 1698,
+          "populacao": 57435
+        },
+        "OSRM": {
+          "subseccoes": 1804,
+          "populacao": 59756
+        }
+      },
       "condicoes_reais_formula": "fluxo livre × 1.15 + 3 min (estimativa)",
-      "subseccoes_elegiveis_condicoes_reais": 1510,
-      "populacao_abrangida_condicoes_reais": 54604,
+      "subseccoes_elegiveis_condicoes_reais": 1307,
+      "populacao_abrangida_condicoes_reais": 49875,
       "subseccoes_analisadas": 9748,
-      "subseccoes_elegiveis": 1804,
-      "subseccoes_nao_elegiveis": 7944,
-      "subseccoes_sem_tempo_calculado": 0,
+      "subseccoes_elegiveis": 1698,
+      "subseccoes_nao_elegiveis": 8050,
+      "subseccoes_sem_tempo_calculado": 1,
       "populacao_sem_tempo_calculado": 0,
-      "subseccoes_elegiveis_com_populacao": 1669,
+      "subseccoes_elegiveis_com_populacao": 1567,
       "populacao_total_analisada": 240452,
-      "populacao_residente_abrangida": 59756,
-      "percentagem_populacao_abrangida": 24.85,
-      "subseccoes_proximas_do_limite_27_33min": 593,
-      "populacao_proxima_do_limite_27_33min": 14680,
+      "populacao_residente_abrangida": 57435,
+      "percentagem_populacao_abrangida": 23.89,
+      "subseccoes_proximas_do_limite_27_33min": 372,
+      "populacao_proxima_do_limite_27_33min": 6338,
       "tempo_hospital_domicilio_elegiveis_min": {
-        "minimo": 0.12,
-        "mediana": 7.21,
-        "media": 12.39,
-        "maximo": 30.0,
-        "media_ponderada_pela_populacao": 9.49
+        "minimo": 0.18,
+        "mediana": 10.4,
+        "media": 13.79,
+        "maximo": 29.97,
+        "media_ponderada_pela_populacao": 11.39
       },
       "tempo_domicilio_hospital_elegiveis_min": {
-        "minimo": 0.39,
-        "mediana": 6.42,
-        "media": 11.87,
-        "maximo": 36.27,
-        "media_ponderada_pela_populacao": 8.95
+        "minimo": 0.48,
+        "mediana": 8.93,
+        "media": 12.93,
+        "maximo": 31.11,
+        "media_ponderada_pela_populacao": 10.51
       },
       "distancia_hospital_domicilio_elegiveis_km": {
         "minimo": 0.05,
-        "mediana": 4.51,
-        "media": 10.24,
-        "maximo": 39.08,
-        "media_ponderada_pela_populacao": 7.51
+        "mediana": 4.22,
+        "media": 8.96,
+        "maximo": 30.15,
+        "media_ponderada_pela_populacao": 6.56
       },
       "distancia_domicilio_hospital_elegiveis_km": {
         "minimo": 0.12,
-        "mediana": 3.97,
-        "media": 9.96,
-        "maximo": 45.27,
-        "media_ponderada_pela_populacao": 7.22
+        "mediana": 3.65,
+        "media": 8.58,
+        "maximo": 29.93,
+        "media_ponderada_pela_populacao": 6.13
       },
       "tempo_hospital_domicilio_todas_min": {
-        "minimo": 0.12,
-        "mediana": 51.32,
-        "media": 49.6,
-        "maximo": 148.78,
-        "media_ponderada_pela_populacao": 44.51
+        "minimo": 0.18,
+        "mediana": 52.96,
+        "media": 50.95,
+        "maximo": 133.72,
+        "media_ponderada_pela_populacao": 47.21
       },
       "distancia_hospital_domicilio_todas_km": {
         "minimo": 0.05,
-        "mediana": 55.17,
-        "media": 50.16,
-        "maximo": 112.66,
-        "media_ponderada_pela_populacao": 47.21
+        "mediana": 55.7,
+        "media": 50.39,
+        "maximo": 142.02,
+        "media_ponderada_pela_populacao": 47.63
       }
     },
     "capacidade": {
@@ -436,8 +446,8 @@
       },
       "cenarios": {
         "tempos_medios": {
-          "tempo_ida_usado_min": 9.5,
-          "tempo_regresso_usado_min": 8.9,
+          "tempo_ida_usado_min": 11.4,
+          "tempo_regresso_usado_min": 10.5,
           "visitas_por_equipa_dia": 6,
           "visitas_totais_dia": 6,
           "doentes_acompanhados_em_simultaneo": 6
@@ -451,6 +461,6 @@
         }
       }
     },
-    "registado_em": "2026-11-10T15:03:00"
+    "registado_em": "2026-11-10T16:20:57"
   }
 }

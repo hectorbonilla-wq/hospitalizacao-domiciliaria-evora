@@ -11,15 +11,15 @@
 | Indicador | Valor |
 |---|---:|
 | Subsecções estatísticas analisadas | 9 748 |
-| Subsecções elegíveis (≤ 30 min) | 1 804 |
-| Subsecções não elegíveis | 7 944 |
-| Subsecções sem tempo calculado (incluídas nas não elegíveis) | 0 |
+| Subsecções elegíveis (≤ 30 min) | 1 698 |
+| Subsecções não elegíveis | 8 050 |
+| Subsecções sem tempo calculado (incluídas nas não elegíveis) | 1 |
 | População residente total analisada (Censos 2021) | 240 452 |
-| **População residente abrangida (subsecções elegíveis)** | **59 756** |
-| **Percentagem da população analisada abrangida** | **24.85 %** |
-| População abrangida em **condições reais estimadas** (fluxo livre × 1.15 + 3 min (estimativa) ≤ 30 min) | 54 604 (1 510 subsecções) |
-| Subsecções próximas do limite (27–33 min) | 593 |
-| População nas subsecções próximas do limite | 14 680 |
+| **População residente abrangida (subsecções elegíveis)** | **57 435** |
+| **Percentagem da população analisada abrangida** | **23.89 %** |
+| População abrangida em **condições reais estimadas** (fluxo livre × 1.15 + 3 min (estimativa) ≤ 30 min) | 49 875 (1 307 subsecções) |
+| Subsecções próximas do limite (27–33 min) | 372 |
+| População nas subsecções próximas do limite | 6 338 |
 
 Nota: a "população total analisada" é a de todas as subsecções com centroide a ≤ 65 km em linha reta; a percentagem depende desta escolha.
 
@@ -27,37 +27,41 @@ Nota: a "população total analisada" é a de todas as subsecções com centroid
 
 | Medida | Mínimo | Mediana | Média | Máximo | Média por residente |
 |---|---:|---:|---:|---:|---:|
-| Tempo hospital → domicílio (min) | 0.12 | 7.21 | 12.39 | 30.0 | 9.49 |
-| Tempo domicílio → hospital (min) | 0.39 | 6.42 | 11.87 | 36.27 | 8.95 |
-| Distância hospital → domicílio (km) | 0.05 | 4.51 | 10.24 | 39.08 | 7.51 |
-| Distância domicílio → hospital (km) | 0.12 | 3.97 | 9.96 | 45.27 | 7.22 |
+| Tempo hospital → domicílio (min) | 0.18 | 10.4 | 13.79 | 29.97 | 11.39 |
+| Tempo domicílio → hospital (min) | 0.48 | 8.93 | 12.93 | 31.11 | 10.51 |
+| Distância hospital → domicílio (km) | 0.05 | 4.22 | 8.96 | 30.15 | 6.56 |
+| Distância domicílio → hospital (km) | 0.12 | 3.65 | 8.58 | 29.93 | 6.13 |
 
 ## 3. Sensibilidade ao limite de tempo
 
 | Limite (min) | Subsecções | População abrangida | % da população analisada |
 |---:|---:|---:|---:|
-| 20 | 1 259 | 49 383 | 20.54 % |
-| 25 | 1 567 | 55 665 | 23.15 % |
-| 27 | 1 635 | 56 797 | 23.62 % |
-| 30 | 1 804 | 59 756 | 24.85 % |
-| 33 | 2 228 | 71 477 | 29.73 % |
-| 35 | 2 399 | 76 872 | 31.97 % |
-| 40 | 3 123 | 97 635 | 40.6 % |
-| 45 | 3 736 | 111 920 | 46.55 % |
+| 20 | 1 206 | 48 337 | 20.1 % |
+| 25 | 1 425 | 52 597 | 21.87 % |
+| 27 | 1 597 | 56 055 | 23.31 % |
+| 30 | 1 698 | 57 435 | 23.89 % |
+| 33 | 1 968 | 62 321 | 25.92 % |
+| 35 | 2 170 | 67 432 | 28.04 % |
+| 40 | 2 732 | 83 493 | 34.72 % |
+| 45 | 3 652 | 108 611 | 45.17 % |
 
-**Comparação entre motores de routing (sensibilidade):** a população com centroide dentro da isócrona de 30 min do Valhalla é 49 889 residentes (OSRM: 59 756). 70.3 % dos centroides elegíveis segundo o OSRM estão dentro da isócrona do Valhalla. O Valhalla usa velocidades mais prudentes; o resultado oficial do estudo é o do OSRM.
+**Isócrona (OpenRouteService — serviço de isócronas):** população com centroide dentro da isócrona de 30 min = 58 106 residentes; 99.8 % dos centroides elegíveis estão dentro dela. O resultado oficial é o da matriz (secção 1).
+
+**Comparação entre motores de routing (mesma população, mesmos centroides):**
+
+| Motor | Subsecções elegíveis | População abrangida |
+|---|---:|---:|
+| OpenRouteService | 1 698 | 57 435 |
+| OSRM | 1 804 | 59 756 |
 
 ## 4. População elegível por município
 
 | Município | Subsecções elegíveis | População elegível | População analisada | % do município analisado |
 |---|---:|---:|---:|---:|
-| Évora | 1526 | 53 240 | 53 577 | 99.4 % |
-| Arraiolos | 178 | 3 922 | 6 606 | 59.4 % |
-| Viana do Alentejo | 40 | 1 205 | 5 318 | 22.7 % |
-| Portel | 27 | 697 | 5 747 | 12.1 % |
-| Estremoz | 13 | 377 | 12 680 | 3.0 % |
-| Redondo | 9 | 207 | 6 286 | 3.3 % |
-| Montemor-o-Novo | 11 | 108 | 15 799 | 0.7 % |
+| Évora | 1493 | 52 717 | 53 577 | 98.4 % |
+| Arraiolos | 166 | 3 779 | 6 606 | 57.2 % |
+| Viana do Alentejo | 32 | 855 | 5 318 | 16.1 % |
+| Montemor-o-Novo | 7 | 84 | 15 799 | 0.5 % |
 
 ## 5. Capacidade operacional — CENÁRIO ILUSTRATIVO (pressupostos, não dados)
 
@@ -69,19 +73,19 @@ O cenário seguinte usa os pressupostos editáveis em `config.py`:
 
 | Caso | Ida (min) | Regresso (min) | Visitas/equipa/dia | Doentes acompanhados |
 |---|---:|---:|---:|---:|
-| Tempos médios por residente elegível | 9.5 | 8.9 | 6 | 6 |
+| Tempos médios por residente elegível | 11.4 | 10.5 | 6 | 6 |
 | Pior caso (domicílio a 30 min) | 30 | 30 | 6 | 6 |
 
 ## 6. Fontes e reprodutibilidade
 
 * População e geografia: INE — Censos 2021 (resultados definitivos), BGRI 2021; recolha em 2026-11-10T14:51:05 a partir de https://mapas.ine.pt/
-* Routing: OSRM (Open Source Routing Machine) — serviço /table em https://router.project-osrm.org, perfil "driving"; cálculo entre 2026-11-10T14:51:53 e 2026-11-10T14:57:43; rede OpenStreetMap; sem trânsito em tempo real
-* Isócrona: Valhalla — serviço /isochrone em https://valhalla1.openstreetmap.de ({'versao': '3.9.1-52228c4', 'dados_osm_modificados_em': '2026-11-10'}); recortada pelo território português
+* Routing: OpenRouteService (driving-car) — https://api.openrouteservice.org em https://api.openrouteservice.org, perfil "driving-car"; cálculo entre 2026-11-10T16:18:48 e 2026-11-10T16:19:11; rede OpenStreetMap; sem trânsito em tempo real
+* Isócrona: OpenRouteService — serviço de isócronas em https://api.openrouteservice.org (None); recortada pelo território português
 * Metadados completos (SHA-256 dos ficheiros, parâmetros, versões): `registo/metadados_execucao.json`
 
 ## 7. Limitações a ter em conta
 
 * **Centroides:** cada subsecção é representada pelo centro geométrico do polígono; os residentes não vivem todos nesse ponto. Subsecções perto dos 30 min (ver secção 3) podem ter parte dos domicílios dentro e parte fora do limite.
-* **Tempos de viagem:** estimados pelo OSRM em fluxo livre (sem trânsito, semáforos ou estacionamento); o tempo real tende a ser um pouco maior.
+* **Tempos de viagem:** estimados pelo OpenRouteService (driving-car) — https://api.openrouteservice.org em fluxo livre (sem trânsito, semáforos ou estacionamento); o tempo real tende a ser um pouco maior.
 * **Rede rodoviária:** OpenStreetMap pode ter estradas em falta ou mal classificadas.
 * **População:** residentes em 2021 (Censos); não inclui alterações posteriores.

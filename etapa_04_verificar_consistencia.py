@@ -41,7 +41,7 @@ import numpy as np
 import pandas as pd
 
 import config
-from etapa_03_calcular_matrizes_osrm import pedir_tabela_osrm
+from routing import pedir_matriz
 from utilitarios import mensagem, registar_metadados, verificar_ficheiro_existe
 
 
@@ -110,7 +110,7 @@ def construir_matriz_amostra(routing, subseccoes):
     coordenadas += list(zip(amostra["longitude"], amostra["latitude"]))
     etiquetas = ["HOSPITAL"] + list(amostra["id_subseccao"])
     try:
-        resposta = pedir_tabela_osrm(coordenadas)  # sem sources/destinations = todos
+        resposta = pedir_matriz(coordenadas)  # sem sources/destinations = todos
     except RuntimeError as erro:
         mensagem(f"   AVISO: não foi possível obter a matriz da amostra ({erro}).")
         return None

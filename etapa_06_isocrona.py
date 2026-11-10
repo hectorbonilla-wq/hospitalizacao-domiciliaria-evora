@@ -39,6 +39,7 @@ import requests
 from shapely.geometry import shape
 
 import config
+from routing import ler_chave_ors, motor_em_uso
 from utilitarios import mensagem, registar_metadados, verificar_ficheiro_existe
 
 
@@ -78,6 +79,50 @@ def pedir_isocrona_valhalla(minutos):
     return None
 
 
+def pedir_isocrona_ors(minutos):
+    """
+    Pede ao OpenRouteService a isócrona de "minutos" a partir do hospital.
+    É o MESMO motor usado na classificação (etapa 3), por isso a isócrona e a
+    classificação das subsecções são coerentes entre si.
+
+    Parâmetros:
+        minutos (int): tempo da isócrona.
+
+    Devolve:
+        GeoDataFrame ou None: polígono da isócrona (WGS84), ou None se falhar.
+    """
+    pedido = {"locations": [[config.HOSPITAL_LONGITUDE, config.HOSPITAL_LATITUDE]],
+              "range": [minutos * 60], "range_type": "time", "smoothing": 5}
+    cabecalhos = {"Authorization": ler_chave_ors(), "Content-Type": "application/json"}
+    for tentativa in range(1, 4):
+        try:
+            resposta = requests.post(f"{config.ORS_URL}/v2/isochrones/{config.ORS_PERFIL}",
+                                     json=pedido, headers=cabecalhos, timeout=120)
+            resposta.raise_for_status()
+            geometria = shape(resposta.json()["features"][0]["geometry"])
+            return gpd.GeoDataFrame({"minutos": [minutos], "motor": ["OpenRouteService"]},
+                                    geometry=[geometria], crs=config.CRS_WGS84)
+        except (requests.RequestException, ValueError, KeyError, IndexError) as erro:
+            mensagem(f"   ERRO no OpenRouteService ({tentativa}/3): {erro}")
+            time.sleep(2 ** tentativa)
+    return None
+
+
+def pedir_isocrona(minutos):
+    """
+    Escolhe o serviço de isócronas conforme o motor de routing em uso.
+
+    Parâmetros:
+        minutos (int): tempo da isócrona.
+
+    Devolve:
+        tuple (GeoDataFrame ou None, str): isócrona e nome do serviço usado.
+    """
+    if motor_em_uso() == "ors":
+        return pedir_isocrona_ors(minutos), "OpenRouteService"
+    return pedir_isocrona_valhalla(minutos), "Valhalla"
+
+
 def versao_valhalla():
     """
     Lê a versão do Valhalla e a data dos dados OSM carregados no servidor.
@@ -112,19 +157,19 @@ def executar_etapa_6():
     # B) União das subsecções elegíveis (sempre disponível)
     area = elegiveis.to_crs(config.CRS_PORTUGAL).geometry.buffer(1).union_all()
     area_elegivel = gpd.GeoDataFrame(
-        {"descricao": [f"União das subsecções elegíveis (OSRM ≤ {config.LIMITE_TEMPO_MINUTOS} min)"],
+        {"descricao": [f"União das subsecções elegíveis ({motor_em_uso().upper()} ≤ {config.LIMITE_TEMPO_MINUTOS} min)"],
          "area_km2": [round(area.area / 1e6, 1)]},
         geometry=[area], crs=config.CRS_PORTUGAL).to_crs(config.CRS_WGS84)
     area_elegivel.to_file(config.PASTA_GEOJSON / "area_subseccoes_elegiveis.geojson", driver="GeoJSON")
     mensagem(f"   Área das subsecções elegíveis: {area_elegivel['area_km2'].iloc[0]} km²")
 
-    # A) Isócrona do Valhalla
-    isocrona = pedir_isocrona_valhalla(config.LIMITE_TEMPO_MINUTOS)
+    # A) Isócrona (OpenRouteService se for o motor em uso; senão Valhalla)
+    isocrona, servico = pedir_isocrona(config.LIMITE_TEMPO_MINUTOS)
     concordancia = None
     area_fora_portugal = None
     populacao_valhalla = None
     if isocrona is None:
-        mensagem("   AVISO: isócrona do Valhalla indisponível; o mapa mostrará só a "
+        mensagem(f"   AVISO: isócrona ({servico}) indisponível; o mapa mostrará só a "
                  "área das subsecções elegíveis.")
         if config.FICHEIRO_ISOCRONA.exists():
             config.FICHEIRO_ISOCRONA.unlink()
@@ -137,8 +182,8 @@ def executar_etapa_6():
         iso_metros = isocrona.to_crs(config.CRS_PORTUGAL)
         area_original = iso_metros.area.iloc[0] / 1e6
         recortada = iso_metros.geometry.iloc[0].intersection(territorio.geometry.iloc[0])
-        area_fora_portugal = area_original - recortada.area / 1e6
-        isocrona = gpd.GeoDataFrame({"minutos": [config.LIMITE_TEMPO_MINUTOS], "motor": ["Valhalla"],
+        area_fora_portugal = max(0.0, area_original - recortada.area / 1e6)
+        isocrona = gpd.GeoDataFrame({"minutos": [config.LIMITE_TEMPO_MINUTOS], "motor": [servico],
                                      "recortada_por_portugal": [True]},
                                     geometry=[recortada], crs=config.CRS_PORTUGAL).to_crs(config.CRS_WGS84)
         mensagem(f"   Área da isócrona fora de Portugal (removida): {area_fora_portugal:.2f} km²")
@@ -157,22 +202,22 @@ def executar_etapa_6():
         # da isócrona do Valhalla (outro motor, velocidades mais prudentes).
         populacao_valhalla = int(centroides.loc[centroides.within(isocrona.geometry.iloc[0]),
                                                 "populacao_residente"].sum())
-        mensagem(f"   Isócrona Valhalla: {area_iso:.0f} km²; população com centroide "
+        mensagem(f"   Isócrona {servico}: {area_iso:.0f} km²; população com centroide "
                  f"dentro dela: {populacao_valhalla:,}".replace(",", " "))
-        mensagem(f"   Concordância: {concordancia} % dos centroides elegíveis (OSRM) estão "
-                 f"dentro da isócrona Valhalla; {dentro_nao} % dos não elegíveis também.")
+        mensagem(f"   Concordância: {concordancia} % dos centroides elegíveis ({motor_em_uso().upper()}) "
+                 f"estão dentro da isócrona {servico}; {dentro_nao} % dos não elegíveis também.")
 
     registar_metadados("etapa_06_isocrona", {
-        "servico_isocrona": "Valhalla — serviço /isochrone",
-        "servidor": config.VALHALLA_URL,
-        "perfil": config.VALHALLA_PERFIL,
-        "valhalla": versao_valhalla(),
+        "servico_isocrona": f"{servico} — serviço de isócronas",
+        "servidor": config.ORS_URL if servico == "OpenRouteService" else config.VALHALLA_URL,
+        "perfil": config.ORS_PERFIL if servico == "OpenRouteService" else config.VALHALLA_PERFIL,
+        "valhalla": versao_valhalla() if servico == "Valhalla" else None,
         "isocrona_obtida": isocrona is not None,
         "isocrona_recortada_pelo_territorio_portugues": isocrona is not None,
         "area_isocrona_fora_de_portugal_km2": None if isocrona is None else round(area_fora_portugal, 2),
         "concordancia_centroides_elegiveis_percent": concordancia,
-        "populacao_centroides_dentro_isocrona_valhalla": populacao_valhalla,
-        "nota": "A isócrona é apenas ilustrativa; a elegibilidade é determinada pelo OSRM.",
+        "populacao_centroides_dentro_isocrona": populacao_valhalla,
+        "nota": "A isócrona é ilustrativa; a elegibilidade é determinada pela matriz da etapa 3.",
     })
     mensagem("ETAPA 6 concluída.")
     return isocrona, area_elegivel

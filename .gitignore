@@ -13,3 +13,7 @@ doentes/*
 !doentes/doentes_exemplo.csv
 resultados/doentes/*
 !resultados/doentes/doentes_exemplo/
+
+# Chave pessoal do OpenRouteService: NUNCA enviar para o GitHub
+chave_openrouteservice.txt
+.env

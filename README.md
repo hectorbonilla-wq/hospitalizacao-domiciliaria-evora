@@ -7,8 +7,8 @@ Santo de Évora** (Largo do Senhor da Pobreza, 7000-811 Évora).
 * **Coordenadas do hospital (GPS):** 38º34'07.99" N | 7º54'11.44" W → **38.5688861, −7.9031778**
 * **Fonte populacional (obrigatória):** INE — Censos 2021 (resultados definitivos) e BGRI 2021,
   ao nível da **subsecção estatística**
-* **Rede rodoviária:** OpenStreetMap, com routing **OSRM** (tempos e distâncias) e **Valhalla**
-  (apenas para desenhar a isócrona)
+* **Rede rodoviária:** OpenStreetMap, com routing **OpenRouteService** (tempos, distâncias e
+  isócrona; precisa de chave gratuita) — ou o **OSRM** público, sem chave, como alternativa
 * **Âmbito territorial:** **apenas Portugal**
 
 > ⚠️ **População elegível ≠ doentes acompanhados.** O estudo calcula quantos *residentes* vivem
@@ -93,11 +93,36 @@ Se o `pip` não conseguir instalar o `geopandas` no Windows, use o Anaconda:
 | Serviço | Para quê | Endereço (em `config.py`) |
 |---|---|---|
 | INE — mapas.ine.pt | BGRI 2021 e Ficheiro Síntese dos Censos 2021 | `INE_PAGINAS_DOWNLOAD`, `INE_URL_BASE` |
-| OSRM | tempos e distâncias de automóvel | `OSRM_URL = https://router.project-osrm.org` |
+| OpenRouteService | tempos, distâncias, isócrona e geocodificação (com chave) | `ORS_URL = https://api.openrouteservice.org` |
+| OSRM | alternativa sem chave para tempos e distâncias | `OSRM_URL = https://router.project-osrm.org` |
 | Valhalla | isócrona de 30 min (só para o mapa) | `VALHALLA_URL = https://valhalla1.openstreetmap.de` |
 
 Os servidores públicos têm limites de utilização (≈ 1 pedido por segundo). O programa respeita-os
 com pausas entre pedidos. Para uso intensivo, ver a secção 5.3 (servidor OSRM próprio).
+
+### Chave do OpenRouteService (recomendado)
+
+O projeto usa por omissão o **OpenRouteService** (`MOTOR_ROUTING = "ors"` em `config.py`): a mesma
+rede OpenStreetMap, mas com matrizes grandes (até ~3500 percursos por pedido), isócronas e
+geocodificação de moradas.
+
+1. Crie uma conta gratuita em https://openrouteservice.org/dev/#/signup e copie a chave ("API key").
+2. Guarde a chave **num destes dois sítios** (nunca em `config.py`, que vai para o GitHub):
+   * ficheiro `chave_openrouteservice.txt` na pasta do projeto, só com a chave lá dentro
+     (este ficheiro está no `.gitignore` e nunca é enviado para o GitHub); **ou**
+   * variável de ambiente `ORS_API_KEY`.
+
+```bash
+echo "A_SUA_CHAVE" > chave_openrouteservice.txt
+```
+
+Sem chave, o programa avisa e usa automaticamente o OSRM público. O plano gratuito do
+OpenRouteService tem quotas diárias (cerca de 50 pedidos de matriz por dia nesta conta, além dos de
+geocodificação e isócronas). O estudo completo usa cerca de 10 pedidos de matriz. A etapa 3 guarda os
+resultados e não repete pedidos já feitos.
+
+> 🔐 Trate a chave como uma palavra-passe: não a cole em mensagens, e-mails ou ficheiros partilhados.
+> Se ela tiver sido exposta, gere uma nova no painel do OpenRouteService e apague a antiga.
 
 ---
 
@@ -107,7 +132,7 @@ com pausas entre pedidos. Para uso intensivo, ver a secção 5.3 (servidor OSRM 
 python executar_tudo.py
 ```
 
-Demora cerca de **8–12 minutos** (a maior parte é o routing no OSRM) e corre também a Parte B
+Demora cerca de **3–5 minutos** com o OpenRouteService (8–12 com o OSRM público) e corre também a Parte B
 com os doentes de exemplo. No fim, abra no navegador:
 
 * `resultados/mapas/mapa_centroides.html`
@@ -140,8 +165,8 @@ python testes/test_funcoes.py
 Para o trabalho diário do serviço: a partir de uma **lista de doentes identificados pela morada**,
 o programa:
 
-1. **converte cada morada em coordenadas** (geocodificação com Nominatim/OpenStreetMap, só em
-   Portugal), registando o endereço encontrado e a precisão (número de porta, rua, código postal...);
+1. **converte cada morada em coordenadas** (geocodificação com OpenRouteService e Nominatim, só em
+   Portugal) e **confirma-as** com o concelho/freguesia da BGRI 2021 e o código postal;
 2. calcula a **distância (km) e o tempo (min) de/para o hospital** de cada doente, nos dois sentidos;
 3. **seleciona os doentes a ≤ 30 min** do hospital (tempo hospital → doente em condições reais estimadas);
 4. constrói a **matriz quadrada** hospital + doentes selecionados (todos para todos), em km e em minutos;
@@ -150,6 +175,10 @@ o programa:
 > 📁 **Exemplo completo e separado:** a pasta [`exemplo_doentes_30min/`](exemplo_doentes_30min/README.md)
 > tem 9 doentes fictícios, todos a ≤ 30 min, com o ficheiro de entrada, o programa
 > (`python exemplo_doentes_30min/executar_exemplo.py`), os resultados e a explicação passo a passo.
+
+Os tempos e as distâncias dos doentes são calculados com o **OpenRouteService** (matriz
+`/v2/matrix/driving-car`, rede OpenStreetMap), ou com o OSRM se não houver chave. Cada ficheiro
+pode ter até 58 doentes com o OpenRouteService (99 com o OSRM).
 
 **1) Preparar o ficheiro** `doentes/os_meus_doentes.csv` (separador `;`, abre no Excel):
 
@@ -177,7 +206,7 @@ locais públicos, incluindo um fora dos 30 min e uma morada inexistente, para mo
 | `tabela_doentes.csv` | uma linha por doente: morada, endereço encontrado, precisão, latitude, longitude, km e minutos (fluxo livre e condições reais) de e para o hospital, incluído/excluído e motivo |
 | `matriz_quadrada_distancias_km.csv` | matriz quadrada (hospital + doentes incluídos), em km |
 | `matriz_quadrada_tempos_condicoes_reais_min.csv` | a mesma matriz em minutos, condições reais estimadas |
-| `matriz_quadrada_tempos_fluxo_livre_min.csv` | a mesma matriz em minutos, fluxo livre (OSRM) |
+| `matriz_quadrada_tempos_fluxo_livre_min.csv` | a mesma matriz em minutos, fluxo livre (OpenRouteService) |
 | `lista_pares_origem_destino.csv` | as matrizes em formato de lista (origem, destino, km, min) |
 | `matrizes_doentes.xlsx` | tudo num Excel, incluindo as matrizes de todos os doentes geocodificados, parâmetros e verificações |
 | `verificacoes.csv` | controlo de qualidade da matriz |
@@ -189,16 +218,19 @@ separadamente e podem ser diferentes (sentidos únicos, rotundas, acessos). A et
 quadrada, mesma ordem, sem pares em falta, diagonal nula, valores positivos, desigualdade triangular,
 pontos de encaixe em Portugal.
 
-Exemplo (tempos em condições reais, minutos):
+Exemplo (pasta `exemplo_doentes_30min/`, tempos em condições reais, minutos):
 
 ```text
-          HOSPITAL   D01   D02   D03   D04   D05
-HOSPITAL       0.0   7.1   6.5   6.4   8.4  29.4
-D01            6.9   0.0   4.8   4.9   7.3  28.1
-D02            5.1   6.9   0.0   5.6   8.5  29.3
-D03            6.9   5.0   4.8   0.0   8.2  28.9
-D04            7.8   8.6   8.5   9.5   0.0  29.6
-D05           28.8  27.4  27.3  28.2  27.5   0.0
+          HOSPITAL   E01   E02   E03   E04   E05   E06   E07   E08
+HOSPITAL       0.0   9.5   8.9   7.6   5.4  13.1  11.5  16.0  28.9
+E01            8.7   0.0   5.7   5.5   7.4   8.0   6.5  13.0  28.9
+E02            6.1   8.7   0.0   6.8   5.4  12.4  10.5  15.1  28.0
+E03            8.4   5.4   5.4   0.0   7.2  10.0   8.5  14.3  28.7
+E04            6.1   8.7   7.7   6.9   0.0  12.1  10.3  14.9  27.7
+E05           10.5   8.3   8.1   9.4   9.0   0.0   7.0   8.5  30.5
+E06            9.6   5.3   6.5   6.4   8.3   5.2   0.0  10.2  29.8
+E07           12.2  12.5  12.3  13.6  13.2   9.6  11.2   0.0  34.7
+E08           29.3  28.8  27.8  29.9  27.1  32.3  30.4  35.0   0.0
 ```
 
 **O mapa dos doentes** (`mapa_doentes.html`, fundo OpenStreetMap):
@@ -208,6 +240,29 @@ D05           28.8  27.4  27.3  28.2  27.5   0.0
 * doentes muito próximos aparecem **agrupados** num círculo com o número de doentes; clique para os ver;
 * a caixa no canto inferior esquerdo tem a tabela de km e minutos e lista os doentes que não puderam
   ser localizados (estes não são desenhados, para não mostrar uma posição errada).
+
+**Revisão das moradas (confirmação de que as coordenadas são as certas):**
+
+Com chave do OpenRouteService, cada morada é procurada em **dois serviços independentes**
+(geocodificador do OpenRouteService e Nominatim/OpenStreetMap). Para cada resultado o programa verifica:
+
+1. **Concelho e freguesia (BGRI 2021):** o ponto é colocado na subsecção estatística que o contém e a
+   *localidade* do ficheiro tem de corresponder ao concelho ou à freguesia dessa subsecção. Há ruas
+   com o mesmo nome em muitas terras. No exemplo, o OpenRouteService colocou a "Rua 5 de Outubro,
+   Évora" em Arcos (Estremoz) e a "Rua Serpa Pinto, Évora" em Reguengos de Monsaraz; a verificação
+   rejeitou esses resultados e ficou com os do Nominatim, que estão em Évora.
+2. **Código postal:** os 4 primeiros dígitos (CP4) indicados têm de coincidir com os do código postal
+   devolvido, quando o serviço o devolve.
+3. **Precisão:** pelo menos rua ou código postal (nunca só a localidade).
+4. **Concordância entre serviços:** se os dois encontrarem a rua mas a mais de 250 m um do outro, pede-se
+   confirmação. Se um só encontrou o centro da localidade e o outro está a mais de 3 km desse centro,
+   também se pede confirmação (pode ser uma rua com o mesmo nome noutra terra do mesmo concelho).
+
+Fica o resultado que passa mais verificações. As colunas `verificacao_morada`, `morada_confirmada`,
+`concelho_bgri`, `freguesia_bgri`, `subseccao_bgri`, `fonte_coordenadas` e
+`diferenca_entre_servicos_m` da `tabela_doentes.csv` mostram o que foi verificado. **Se aparecer
+"VERIFICAR", confirme a morada** (ou escreva as coordenadas GPS do domicílio nas colunas
+`latitude;longitude`) antes de usar o resultado.
 
 **Regras de segurança da geocodificação:**
 
@@ -228,7 +283,7 @@ D05           28.8  27.4  27.3  28.2  27.5   0.0
 
 ### Tempos em "condições reais"
 
-O OpenStreetMap e o OSRM calculam tempos em **fluxo livre** (sem trânsito). Os servidores públicos
+O OpenRouteService e o OSRM calculam tempos em **fluxo livre** (sem trânsito), com velocidades típicas por tipo de via do OpenStreetMap. Os servidores públicos
 gratuitos **não têm trânsito em tempo real**: foi testado que o Valhalla dá exatamente o mesmo tempo
 às 03:00, às 08:30 e às 18:00. Por isso o projeto calcula também uma **estimativa de condições reais**:
 
@@ -245,8 +300,8 @@ registos GPS da viatura durante algumas semanas). Para trânsito real seria prec
 
 * Na **Parte B**, a regra dos 30 min usa o tempo em **condições reais**.
 * Na **Parte A**, a classificação oficial usa o **fluxo livre** (como no enunciado). O resumo mostra
-  também a população abrangida em condições reais estimadas: **54 604** residentes (contra
-  59 756 em fluxo livre).
+  também a população abrangida em condições reais estimadas: **49 875** residentes (contra
+  57 435 em fluxo livre, OpenRouteService).
 
 ---
 
@@ -258,6 +313,8 @@ hospitalizacao_domiciliaria_evora/
 ├── requirements.txt                  ← bibliotecas a instalar
 ├── config.py                         ← TODOS os parâmetros editáveis
 ├── utilitarios.py                    ← mensagens, downloads, metadados
+├── routing.py                        ← pedidos de matrizes (OpenRouteService ou OSRM)
+├── chave_openrouteservice.txt        ← a SUA chave (criada por si; fora do Git)
 ├── executar_tudo.py                  ← corre as etapas 1 a 10 (10 = Parte B, exemplo)
 ├── matriz_doentes.py                 ← PARTE B: doentes por morada → matriz quadrada
 ├── exemplo_doentes_30min/            ← EXEMPLO separado: 9 doentes a ≤ 30 min (entrada, programa, resultados)
@@ -311,10 +368,10 @@ depois das anteriores. No início de cada ficheiro há uma explicação do objet
 |---|---|---|
 | **1** | Lê a página do INE, extrai os links oficiais e descarrega a BGRI 2021 (GeoPackage) do Alentejo e da AML, o Ficheiro Síntese (subsecção e secção) e o dicionário de variáveis. Regista data de recolha e SHA-256. | Sim |
 | **2** | Lê os polígonos das subsecções, confirma que o hospital está em Portugal, calcula centroides (em PT-TM06, metros), pré-seleciona subsecções a ≤ 65 km em linha reta, associa a população residente (`N_INDIVIDUOS`) pelo código da subsecção, faz controlos de qualidade e converte para latitude/longitude. | Não |
-| **3** | Pede ao OSRM, em blocos de 99, os tempos e distâncias **hospital → domicílio** e **domicílio → hospital** (pedidos separados). Exporta as matrizes. Pode ser interrompida e retomada. | Sim |
+| **3** | Pede ao OpenRouteService (blocos de 3000) ou ao OSRM (blocos de 99) os tempos e distâncias **hospital → domicílio** e **domicílio → hospital** (pedidos separados). Pontos sem ligação direta à rede são ligados à estrada mais próxima e recalculados. Exporta as matrizes. Pode ser interrompida e retomada. | Sim |
 | **4** | Verificações: rotas em falta, distância à estrada, pontos fora de Portugal, velocidades implausíveis, estrada ≥ linha reta, assimetria ida/regresso, **desigualdade triangular** numa matriz quadrada de amostra, diagonal nula, repetibilidade. | Sim (1 pedido) |
 | **5** | Classifica cada subsecção: **elegível** se tempo hospital → domicílio ≤ 30 min, **não elegível** caso contrário. Exporta tabela individual (CSV/Excel) e GeoJSON. | Não |
-| **6** | Obtém a isócrona de 30 min (Valhalla), recorta-a pelo território português e cria a área das subsecções elegíveis. Mede a concordância OSRM/Valhalla. | Sim |
+| **6** | Obtém a isócrona de 30 min (OpenRouteService; Valhalla se não houver chave), recorta-a pelo território português e cria a área das subsecções elegíveis. Mede a concordância com a classificação. | Sim |
 | **7** | Cria os mapas interativos HTML. | Não (para criar); sim, para ver o fundo do mapa |
 | **8** | Calcula o resumo, a sensibilidade ao limite de tempo, a população por município e o cenário de capacidade operacional. | Não |
 | **9** | Lista de verificação automática (ficheiros, somas, regras, metadados). | Não |
@@ -429,88 +486,73 @@ Os ficheiros GeoJSON abrem no QGIS (gratuito), em geojson.io ou em qualquer SIG.
 
 ## 7. Exemplo de execução
 
-Execução real de 10/11/2026 (excerto do ecrã; o registo completo fica em `registo/execucao.log`):
+Execução real de 10/11/2026 com o **OpenRouteService** (excerto; o registo completo fica em
+`registo/execucao.log`):
 
 ```text
-ETAPA 1 — Descarregar dados oficiais do INE (BGRI 2021 / Censos 2021)
-   A ler a página do INE: https://mapas.ine.pt/download/index2021.phtml
-   A página respondeu com o código 404; a tentar a seguinte.
-   A ler a página do INE: https://mapas.ine.pt/
-   Encontrados 342 ficheiros na página.
-   A descarregar (1/4): https://mapas.ine.pt/download/filesGPG/2021/nuts2/BGRI21_ALENTEJO.zip
-   Concluído: BGRI21_ALENTEJO.zip (55.5 MB)
-   ...
 ETAPA 2 — Preparar subsecções estatísticas (polígonos, centroides, população)
-   Total de polígonos lidos: 51 942
    OK: o hospital está em Portugal, na subsecção 07052300732 (município 0705).
    Cobertura do círculo de 65 km: 96.94 % (em falta a leste — Espanha: 405.1 km²; a oeste: 0.0 km²)
-   OK: todo o território português dentro do círculo está coberto.
    Subsecções com centroide a ≤ 65 km em linha reta: 9748
    Controlo: 0 subsecções com população diferente entre o Ficheiro Síntese e o GeoPackage (esperado: 0).
    Controlo de totais municipais: 16 municípios completos verificados, 0 com diferenças (esperado: 0).
-   População residente total na área pré-selecionada: 240 452
-ETAPA 3 — Distâncias e tempos de viagem na rede rodoviária (OSRM)
-   Subsecções a calcular: 9748 em 99 blocos de até 99.
-   Progresso: bloco 10/99
-   ...
-   Estados do cálculo: {'ok': 9673, 'ok_afastado_da_rede': 75}
+ETAPA 3 — Distâncias e tempos de viagem na rede rodoviária (OpenStreetMap)
+   Motor de routing: OpenRouteService (driving-car) — https://api.openrouteservice.org
+   Subsecções a calcular: 9748 em 4 blocos de até 3000 (2 pedidos por bloco: ida e regresso).
+   2 subsecções sem ligação direta à rede: a ligar à estrada mais próxima...
+   Resolvidas na segunda tentativa: 1 de 2
+   Estados do cálculo: {'ok': 9665, 'ok_afastado_da_rede': 81, 'sem_rota': 1, 'ok_reencaixado': 1}
 ETAPA 4 — Verificações de consistência
-   [  OK   ] Subsecções sem tempo de viagem: 0
-   [ AVISO ] Centroides afastados da estrada (> 1000 m): 75
    [  OK   ] Pontos de encaixe na estrada fora de Portugal: 0
-   [  OK   ] Velocidades médias implausíveis (ida): 0
    [  OK   ] Distância por estrada menor que em linha reta: 0
-   [ INFO  ] Subsecções com assimetria ida/regresso > 10 %: 601
-   [ INFO  ] Subsecções cuja classificação mudaria se se usasse o regresso: 189
-   [  OK   ] Diagonal da matriz (tempo de um ponto para si próprio): 0.0 s
    [  OK   ] Desigualdade triangular (tempos): 0 violações em 68921 trios
-   [ INFO  ] Desigualdade triangular (distâncias): 1608 violações em 68921 trios
-   [  OK   ] Repetibilidade: mesma rota pedida duas vezes: 0.01 min
 ETAPA 5 — Classificação de elegibilidade (≤ 30 min)
-   Subsecções analisadas: 9748 | elegíveis: 1804 | não elegíveis: 7944
-   População nas subsecções elegíveis: 59 756
+   Subsecções analisadas: 9748 | elegíveis: 1698 | não elegíveis: 8050
+   População nas subsecções elegíveis: 57 435
 ETAPA 6 — Isócrona de 30 minutos
-   Área da isócrona fora de Portugal (removida): 0.00 km²
    OK: nenhum percurso de 30 min a partir do hospital sai de Portugal.
-   Isócrona Valhalla: 278 km²; população com centroide dentro dela: 49 889
+   Isócrona OpenRouteService: 1154 km²; população com centroide dentro dela: 58 106
+   Concordância: 99.8 % dos centroides elegíveis (ORS) estão dentro da isócrona OpenRouteService
 ETAPA 8 — Resumo dos resultados e capacidade operacional
-   Subsecções analisadas ............ 9 748
-   Subsecções elegíveis ............. 1 804
-   Subsecções não elegíveis ......... 7 944
-   População total analisada ........ 240 452
-   POPULAÇÃO ABRANGIDA (≤ 30 min) ... 59 756
-   Percentagem de cobertura ......... 24.85 %
-   Tempo médio por residente elegível: 9.49 min
-   Capacidade (cenário ilustrativo, tempos médios): 6 doentes/dia
+   POPULAÇÃO ABRANGIDA (≤ 30 min) ... 57 435
+   Percentagem de cobertura ......... 23.89 %
+   Em condições reais estimadas ..... 49 875
+   Tempo médio por residente elegível: 11.39 min
 ETAPA 9 — Lista de verificação final
    Resultado: 36/36 verificações OK.
 ```
 
-### Principais resultados desta execução
+### Principais resultados — população a ≤ 30 min do hospital
+
+A partir das coordenadas do hospital (38.5688861, −7.9031778), calculou-se o tempo de automóvel até
+ao centroide de **cada uma das 9 748 subsecções estatísticas** da BGRI 2021 num raio físico de 65 km.
+A população abrangida é a soma dos residentes (Censos 2021) das subsecções a ≤ 30 min.
 
 | Indicador | Valor |
 |---|---:|
-| Subsecções analisadas / elegíveis / não elegíveis | 9 748 / 1 804 / 7 944 |
+| Subsecções analisadas / elegíveis / não elegíveis | 9 748 / 1 698 / 8 050 |
 | População total analisada (≤ 65 km em linha reta) | 240 452 |
-| **População residente abrangida (≤ 30 min, OSRM)** | **59 756 (24,85 %)** |
-| Tempo médio hospital → domicílio, por residente elegível | 9,5 min (7,5 km) |
-| População em subsecções entre 27 e 33 min | 14 680 |
-| Sensibilidade: com 27 min / 33 min | 56 797 / 71 477 |
-| Comparação: centroides dentro da isócrona Valhalla | 49 889 |
+| **População residente a ≤ 30 min (OpenRouteService, sem trânsito)** | **57 435 (23,89 %)** |
+| População a ≤ 30 min em condições reais estimadas (× 1,15 + 3 min) | 49 875 |
+| Tempo médio hospital → domicílio, por residente elegível | 11,4 min (6,6 km) |
+| População em subsecções entre 27 e 33 min | 6 338 |
+| Sensibilidade: com 27 min / 33 min | 56 055 / 62 321 |
+| Isócrona de 30 min do OpenRouteService (centroides dentro) | 58 106 (concordância 99,8 %) |
+| Comparação: mesmo cálculo com o OSRM | 59 756 |
 
-Por município: Évora 53 240 (99,4 % do concelho), Arraiolos 3 922, Viana do Alentejo 1 205,
-Portel 697, Estremoz 377, Redondo 207, Montemor-o-Novo 108. A sede de concelho de Montemor-o-Novo
-fica a cerca de 32,5 min no OSRM, **logo acima do limite**: é um exemplo de como o resultado
-depende do limite e do motor de routing.
+Por município (OpenRouteService): Évora 52 717 (98,4 % do concelho), Arraiolos 3 779, Viana do
+Alentejo 855, Montemor-o-Novo 84.
 
-**Diferenças entre motores.** Os centroides elegíveis segundo o OSRM que ficam fora da isócrona do
-Valhalla estão perto da estrada (mediana: 33 m), mas a uma mediana de 3,5 km para lá do limite da
-isócrona. A diferença deve-se, portanto, às velocidades, que no Valhalla são mais prudentes, e não à
-forma da isócrona. A isócrona do Valhalla tem a forma de "corredores" ao longo das estradas porque
-fora delas nada se alcança de automóvel.
+**Porque é que o OpenRouteService dá menos 2 321 residentes do que o OSRM?** Os dois usam a mesma rede
+OpenStreetMap mas velocidades diferentes por tipo de via; o ORS é um pouco mais conservador (tempo
+médio por residente elegível 11,4 min contra 9,5 min). A diferença concentra-se nas subsecções entre
+25 e 33 min (Arraiolos, Viana do Alentejo, Portel, Redondo, Estremoz). A sede de concelho de Arraiolos,
+por exemplo, fica a ~25,5 min no ORS e ~23 min no OSRM. Os dois valores são estimativas válidas;
+o oficial deste estudo é o do motor configurado (`MOTOR_ROUTING`). Os resultados do OSRM ficam
+guardados em `dados/processados/resultados_routing_osrm.csv` para comparação.
 
-Os números acima mudam ligeiramente se o OpenStreetMap ou os servidores forem atualizados; os valores
-de cada execução ficam em `resultados/relatorios/resumo_resultados.md` e nos metadados.
+Os números mudam ligeiramente se o OpenStreetMap ou os servidores forem atualizados; os valores de
+cada execução ficam em `resultados/relatorios/resumo_resultados.md` e nos metadados.
 
 ---
 
@@ -536,7 +578,8 @@ de cada execução ficam em `resultados/relatorios/resumo_resultados.md` e nos m
   para ver os dados. A caixa de pesquisa aceita o código de 11 dígitos (por exemplo, `07052300732`).
 * **Mapa de polígonos:** mostra a forma real das subsecções. A camada "densidade populacional"
   ajuda a ver onde vivem as pessoas dentro da área elegível.
-* **Isócrona (Valhalla) vs. classificação (OSRM):** são motores diferentes; a fronteira da isócrona
+* **Isócrona vs. classificação:** com o OpenRouteService, a isócrona e a matriz vêm do mesmo motor e
+  concordam a 99,8 %. Sem chave usa-se o OSRM (matriz) e o Valhalla (isócrona), que são motores diferentes; a fronteira da isócrona
   não coincide ponto a ponto com a classificação. A concordância está nos metadados da etapa 6. O
   resultado oficial do estudo é o do **OSRM**.
 
@@ -571,7 +614,7 @@ valores reais do serviço e execute `python etapa_08_resumo_e_capacidade.py`.
 |---|---|
 | **Dados observados (oficiais)** | População residente por subsecção (Censos 2021, `N_INDIVIDUOS`); polígonos BGRI 2021; designações de município e freguesia (Ficheiro Síntese) |
 | **Dados de entrada fornecidos** | Coordenadas GPS do hospital (não geocodificadas pelo programa) |
-| **Dados calculados** | Centroides; tempos e distâncias OSRM; isócrona Valhalla; classificação |
+| **Dados calculados** | Centroides; tempos e distâncias (OpenRouteService ou OSRM); isócrona; coordenadas das moradas dos doentes (geocodificação); classificação |
 | **Aproximações** | Residentes concentrados no centroide; encaixe do centroide na estrada mais próxima; velocidades típicas por tipo de via (sem trânsito) |
 | **Pressupostos metodológicos** | Limite de 30 min aplicado à ida; raio físico de 65 km; tolerâncias das verificações |
 | **Pressupostos operacionais (ilustrativos)** | Nº de equipas e viaturas, turno, duração das visitas, deslocação entre visitas |
@@ -600,7 +643,7 @@ geométrico do polígono. Isto **não** significa que todos os residentes vivam 
   contada como elegível ou não elegível. Use a coluna `proximo_do_limite` e a tabela de
   sensibilidade para avaliar este efeito.
 
-**Encaixe na rede.** O OSRM liga cada centroide à estrada mais próxima; o troço a pé ou em caminho
+**Encaixe na rede.** O motor de routing liga cada centroide à estrada mais próxima; o troço a pé ou em caminho
 de terra entre o centroide e essa estrada não é contado (`distancia_ate_estrada_m`).
 
 **Rede rodoviária (OpenStreetMap).** Mapeada por voluntários; pode ter estradas em falta, sentidos
@@ -626,6 +669,9 @@ generalizada (simplificada) para desenho. Serve para visualizar, não para class
 | `Ficheiro em falta: … Execute primeiro: python etapa_0X…` | etapa anterior não executada | execute a etapa indicada |
 | `As coordenadas do hospital não caem em nenhuma subsecção` | coordenadas erradas, trocadas ou longitude positiva | corrija em `config.py` (Oeste = negativo) |
 | `AVISO: há território a oeste do hospital sem subsecções` | faltam regiões NUTS II | acrescente a região em `REGIOES_BGRI_NUTS2` |
+| `Chave do OpenRouteService inválida ou sem permissão` | chave errada, expirada ou com espaços | confirme `chave_openrouteservice.txt` (só a chave, numa linha) |
+| `ERRO no OpenRouteService … quota/limite de pedidos atingido (429)` | quota diária do plano gratuito esgotada | espere pelo dia seguinte (a etapa 3 retoma onde parou) ou mude `MOTOR_ROUTING = "osrm"` |
+| `AVISO: sem chave do OpenRouteService` | não há chave | crie a chave (secção 1) ou aceite o OSRM público |
 | `ERRO na API OSRM … demasiados pedidos (429)` | limite do servidor público | o programa espera e tenta de novo; aumente `OSRM_PAUSA_ENTRE_PEDIDOS_S` |
 | `Falha definitiva no OSRM` | servidor em baixo | volte a correr a etapa 3: retoma onde parou |
 | Estado `sem_rota` | centroide sem ligação à rede (ilha, albufeira) | ver `problemas_por_subseccao.csv`; a subsecção fica não elegível |
@@ -668,7 +714,7 @@ O ficheiro `registo/metadados_execucao.json` regista, para cada execução:
 
 * **Fontes INE:** página e URL de cada ficheiro, data de recolha, tamanho, **SHA-256** e data interna
   dos ficheiros no ZIP (versão publicada pelo INE);
-* **Routing:** servidor OSRM, perfil, datas de início e fim do cálculo, encaixe do hospital na rede;
+* **Routing:** motor (OpenRouteService ou OSRM), servidor, perfil, datas de início e fim do cálculo, encaixe do hospital na rede;
 * **Isócrona:** servidor e versão do Valhalla e data dos dados OSM carregados;
 * **Parâmetros:** limite de tempo, raio, tolerâncias, amostra e semente aleatória, pressupostos de
   capacidade;

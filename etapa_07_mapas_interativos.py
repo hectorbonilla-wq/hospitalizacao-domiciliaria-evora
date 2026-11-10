@@ -12,7 +12,7 @@ MAPA 1 — resultados/mapas/mapa_centroides.html
     * Um círculo por subsecção, no centroide do polígono:
         verde  = elegível (≤ 30 min);   cinzento/laranja = não elegível.
       O tamanho do círculo cresce com a população residente.
-    * Isócrona de 30 minutos (Valhalla) e área das subsecções elegíveis.
+    * Isócrona de 30 minutos (OpenRouteService ou Valhalla) e área das subsecções elegíveis.
     * Clicar num círculo mostra: identificador, designação, população,
       tempo e distância (ida e regresso) e classificação.
     * Caixa de pesquisa pelo identificador da subsecção.
@@ -37,6 +37,7 @@ import shapely
 from folium import plugins
 
 import config
+from routing import nome_motor, nome_servico_isocrona
 from utilitarios import mensagem, registar_metadados, verificar_ficheiro_existe
 
 COR_ELEGIVEL = "#1a9850"
@@ -92,7 +93,7 @@ def adicionar_hospital(mapa):
 
 def adicionar_areas_cobertura(mapa, mostrar_area_elegivel=True):
     """
-    Desenha a isócrona do Valhalla (se existir) e a área das subsecções elegíveis.
+    Desenha a isócrona (se existir) e a área das subsecções elegíveis.
 
     Parâmetros:
         mapa (folium.Map): mapa onde desenhar.
@@ -101,16 +102,16 @@ def adicionar_areas_cobertura(mapa, mostrar_area_elegivel=True):
     if config.FICHEIRO_ISOCRONA.exists():
         isocrona = gpd.read_file(config.FICHEIRO_ISOCRONA)
         folium.GeoJson(
-            isocrona, name=f"Isócrona {config.LIMITE_TEMPO_MINUTOS} min (Valhalla)",
+            isocrona, name=f"Isócrona {config.LIMITE_TEMPO_MINUTOS} min ({nome_servico_isocrona()})",
             style_function=lambda f: {"color": COR_ISOCRONA, "weight": 1.5, "opacity": 0.9,
                                       "fillColor": COR_ISOCRONA, "fillOpacity": 0.12},
-            tooltip=f"Isócrona rodoviária de {config.LIMITE_TEMPO_MINUTOS} min (Valhalla/OSM)",
+            tooltip=f"Isócrona rodoviária de {config.LIMITE_TEMPO_MINUTOS} min ({nome_servico_isocrona()}/OSM)",
         ).add_to(mapa)
     area = gpd.read_file(config.PASTA_GEOJSON / "area_subseccoes_elegiveis.geojson")
     folium.GeoJson(
-        area, name="Área das subsecções elegíveis (OSRM)", show=mostrar_area_elegivel,
+        area, name=f"Área das subsecções elegíveis ({nome_motor()})", show=mostrar_area_elegivel,
         style_function=lambda f: {"color": COR_ELEGIVEL, "weight": 2, "fillOpacity": 0.06},
-        tooltip=f"União das subsecções com tempo ≤ {config.LIMITE_TEMPO_MINUTOS} min (OSRM)",
+        tooltip=f"União das subsecções com tempo ≤ {config.LIMITE_TEMPO_MINUTOS} min ({nome_motor()})",
     ).add_to(mapa)
 
 
@@ -129,10 +130,10 @@ def adicionar_legenda(mapa, texto_extra=""):
       <b>Hospitalização Domiciliária — HESE Évora</b><br>
       <span style="color:{COR_ELEGIVEL};">&#9679;</span> Elegível (≤ {config.LIMITE_TEMPO_MINUTOS} min)<br>
       <span style="color:{COR_NAO_ELEGIVEL_SUAVE};">&#9679;</span> Não elegível (&gt; {config.LIMITE_TEMPO_MINUTOS} min)<br>
-      <span style="background:{COR_ISOCRONA};opacity:0.35;">&nbsp;&nbsp;&nbsp;&nbsp;</span> Isócrona {config.LIMITE_TEMPO_MINUTOS} min (Valhalla)<br>
+      <span style="background:{COR_ISOCRONA};opacity:0.35;">&nbsp;&nbsp;&nbsp;&nbsp;</span> Isócrona {config.LIMITE_TEMPO_MINUTOS} min ({nome_servico_isocrona()})<br>
       {texto_extra}
       <small>População: INE, Censos 2021 / BGRI 2021. Rede: © OpenStreetMap.
-      Tempos: OSRM, sem trânsito. Pontos = centroides (aproximação).</small>
+      Tempos: {nome_motor()} (rede OpenStreetMap), sem trânsito. Pontos = centroides (aproximação).</small>
     </div>"""
     mapa.get_root().html.add_child(folium.Element(html))
 

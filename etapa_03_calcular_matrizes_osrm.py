@@ -1,5 +1,6 @@
 """
-ETAPA 3 — Calcular distâncias e tempos de viagem na rede rodoviária (OSRM)
+ETAPA 3 — Calcular distâncias e tempos de viagem na rede rodoviária
+(OpenRouteService ou OSRM, ambos sobre a rede OpenStreetMap — ver config.MOTOR_ROUTING)
 ===========================================================================
 
 OBJETIVO
@@ -45,53 +46,9 @@ import pandas as pd
 import requests
 
 import config
+from routing import (descricao_motor, motor_em_uso, pedir_matriz, pontos_por_pedido,
+                     ponto_mais_proximo_na_estrada)
 from utilitarios import mensagem, registar_metadados, verificar_ficheiro_existe
-
-
-def pedir_tabela_osrm(coordenadas, sources=None, destinations=None):
-    """
-    Faz um pedido ao serviço /table do OSRM, com novas tentativas em caso de erro.
-
-    Parâmetros:
-        coordenadas (list[tuple]): lista de (longitude, latitude).
-            ATENÇÃO: o OSRM usa a ordem longitude,latitude!
-        sources (str ou None): índices das origens (ex.: "0"); None = todas.
-        destinations (str ou None): índices dos destinos; None = todos.
-
-    Devolve:
-        dict: resposta JSON do OSRM (com "durations", "distances",
-        "sources", "destinations").
-
-    Erros:
-        RuntimeError se o pedido falhar em todas as tentativas.
-    """
-    texto_coordenadas = ";".join(f"{lon:.6f},{lat:.6f}" for lon, lat in coordenadas)
-    url = f"{config.OSRM_URL}/table/v1/{config.OSRM_PERFIL}/{texto_coordenadas}"
-    parametros = {"annotations": "duration,distance"}
-    if sources is not None:
-        parametros["sources"] = sources
-    if destinations is not None:
-        parametros["destinations"] = destinations
-
-    ultimo_erro = None
-    for tentativa in range(1, config.OSRM_TENTATIVAS + 1):
-        try:
-            resposta = requests.get(url, params=parametros, timeout=config.OSRM_TIMEOUT_S,
-                                    headers=config.CABECALHOS_HTTP)
-            if resposta.status_code == 429:
-                raise requests.RequestException("demasiados pedidos (429)")
-            dados = resposta.json()
-            if dados.get("code") != "Ok":
-                raise requests.RequestException(f"OSRM respondeu {dados.get('code')}: "
-                                                f"{dados.get('message')}")
-            return dados
-        except (requests.RequestException, ValueError) as erro:
-            ultimo_erro = erro
-            espera = 2 ** tentativa
-            mensagem(f"      ERRO na API OSRM ({tentativa}/{config.OSRM_TENTATIVAS}): "
-                     f"{erro}. Nova tentativa em {espera} s.")
-            time.sleep(espera)
-    raise RuntimeError(f"Falha definitiva no OSRM: {ultimo_erro}")
 
 
 def calcular_bloco(bloco):
@@ -99,7 +56,7 @@ def calcular_bloco(bloco):
     Calcula ida e regresso entre o hospital e um bloco de subsecções.
 
     Parâmetros:
-        bloco (DataFrame): até OSRM_PONTOS_POR_PEDIDO linhas com
+        bloco (DataFrame): até pontos_por_pedido() linhas com
         "id_subseccao", "latitude" e "longitude".
 
     Devolve:
@@ -111,10 +68,8 @@ def calcular_bloco(bloco):
     agora = datetime.now().isoformat(timespec="seconds")
 
     try:
-        ida = pedir_tabela_osrm(coordenadas, sources="0")             # 1 linha
-        time.sleep(config.OSRM_PAUSA_ENTRE_PEDIDOS_S)
-        regresso = pedir_tabela_osrm(coordenadas, destinations="0")   # 1 coluna
-        time.sleep(config.OSRM_PAUSA_ENTRE_PEDIDOS_S)
+        ida = pedir_matriz(coordenadas, sources=[0])             # 1 linha: hospital → todos
+        regresso = pedir_matriz(coordenadas, destinations=[0])   # 1 coluna: todos → hospital
     except RuntimeError as erro:
         # Não interrompe o estudo: as subsecções ficam marcadas com o erro.
         return [{"id_subseccao": i, "estado_routing": "erro_api", "observacao": str(erro),
@@ -127,11 +82,11 @@ def calcular_bloco(bloco):
         tempo_regresso = regresso["durations"][posicao][0]
         distancia_regresso = regresso["distances"][posicao][0]
         encaixe = ida["destinations"][posicao].get("distance")
-        local_encaixe = ida["destinations"][posicao].get("location", [None, None])
+        local_encaixe = ida["destinations"][posicao].get("location") or [None, None]
 
         if tempo_ida is None or tempo_regresso is None:
             estado = "sem_rota"
-            observacao = "O OSRM não encontrou percurso (local sem ligação à rede)."
+            observacao = "O motor de routing não encontrou percurso (local sem ligação à rede)."
         elif encaixe is not None and encaixe > config.DISTANCIA_MAXIMA_ATE_ESTRADA_M:
             estado = "ok_afastado_da_rede"
             observacao = (f"Centroide a {encaixe:.0f} m da estrada mais próxima; o tempo "
@@ -154,6 +109,63 @@ def calcular_bloco(bloco):
             "data_calculo": agora,
         })
     return resultados
+
+
+def recalcular_sem_rota(routing, subseccoes):
+    """
+    Segunda tentativa para as subsecções sem rota.
+
+    O OpenRouteService só liga um ponto à rede se houver uma estrada a menos de
+    ~350 m; em zonas rurais alguns centroides ficam mais longe. Para esses,
+    procura-se o ponto da estrada mais próximo (OSRM /nearest, rede OSM) e
+    recalcula-se a ida e o regresso a partir desse ponto. A distância entre o
+    centroide e a estrada fica registada (o tempo desse troço não é contado).
+
+    Parâmetros:
+        routing (DataFrame): resultados da primeira passagem.
+        subseccoes (DataFrame): tabela da etapa 2.
+
+    Devolve:
+        DataFrame: routing atualizado.
+    """
+    sem_rota = routing[routing["estado_routing"] == "sem_rota"]
+    if sem_rota.empty:
+        return routing
+    mensagem(f"   {len(sem_rota)} subsecções sem ligação direta à rede: a ligar à estrada mais próxima...")
+    coordenadas = subseccoes.set_index("id_subseccao").loc[sem_rota["id_subseccao"], ["longitude", "latitude"]]
+    pontos = []
+    for id_subseccao, (lon, lat) in coordenadas.iterrows():
+        estrada = ponto_mais_proximo_na_estrada(lon, lat)
+        if estrada:
+            pontos.append((id_subseccao, estrada))
+    if not pontos:
+        return routing
+    lista = [(config.HOSPITAL_LONGITUDE, config.HOSPITAL_LATITUDE)] + [(e[0], e[1]) for _, e in pontos]
+    try:
+        ida = pedir_matriz(lista, sources=[0])
+        regresso = pedir_matriz(lista, destinations=[0])
+    except RuntimeError as erro:
+        mensagem(f"   AVISO: segunda tentativa falhou ({erro}).")
+        return routing
+    routing = routing.set_index("id_subseccao")
+    for posicao, (id_subseccao, (lon, lat, distancia)) in enumerate(pontos, start=1):
+        tempo_ida, tempo_regresso = ida["durations"][0][posicao], regresso["durations"][posicao][0]
+        if tempo_ida is None or tempo_regresso is None:
+            continue
+        routing.loc[id_subseccao, ["tempo_ida_min", "distancia_ida_km", "tempo_regresso_min",
+                                   "distancia_regresso_km", "distancia_ate_estrada_m",
+                                   "longitude_na_estrada", "latitude_na_estrada"]] = [
+            round(tempo_ida / 60, 2), round(ida["distances"][0][posicao] / 1000, 3),
+            round(tempo_regresso / 60, 2), round(regresso["distances"][posicao][0] / 1000, 3),
+            round(distancia, 1), lon, lat]
+        routing.loc[id_subseccao, "estado_routing"] = (
+            "ok_afastado_da_rede" if distancia > config.DISTANCIA_MAXIMA_ATE_ESTRADA_M else "ok_reencaixado")
+        routing.loc[id_subseccao, "observacao"] = (
+            f"Centroide a {distancia:.0f} m da estrada; calculado a partir do ponto da estrada mais "
+            "próximo (o tempo desse troço não está incluído).")
+    resolvidas = int((routing.loc[[p[0] for p in pontos], "estado_routing"] != "sem_rota").sum())
+    mensagem(f"   Resolvidas na segunda tentativa: {resolvidas} de {len(sem_rota)}")
+    return routing.reset_index()
 
 
 def obter_informacao_hospital():
@@ -223,7 +235,7 @@ def executar_etapa_3():
         DataFrame: resultados de routing (uma linha por subsecção).
     """
     mensagem("=" * 70)
-    mensagem("ETAPA 3 — Distâncias e tempos de viagem na rede rodoviária (OSRM)")
+    mensagem("ETAPA 3 — Distâncias e tempos de viagem na rede rodoviária (OpenStreetMap)")
     mensagem("=" * 70)
 
     subseccoes = pd.DataFrame(gpd.read_file(config.FICHEIRO_SUBSECCOES).drop(columns="geometry"))
@@ -241,16 +253,18 @@ def executar_etapa_3():
         mensagem(f"   Encontrados {len(ja_calculadas)} resultados anteriores (serão reutilizados).")
     em_falta = validas[~validas["id_subseccao"].isin(ja_calculadas.get("id_subseccao", []))]
 
-    total_blocos = (len(em_falta) + config.OSRM_PONTOS_POR_PEDIDO - 1) // config.OSRM_PONTOS_POR_PEDIDO
+    tamanho_bloco = pontos_por_pedido()
+    total_blocos = (len(em_falta) + tamanho_bloco - 1) // tamanho_bloco
+    mensagem(f"   Motor de routing: {descricao_motor()}")
     mensagem(f"   Subsecções a calcular: {len(em_falta)} em {total_blocos} blocos "
-             f"de até {config.OSRM_PONTOS_POR_PEDIDO}.")
+             f"de até {tamanho_bloco} (2 pedidos por bloco: ida e regresso).")
 
     novos = []
     for numero in range(total_blocos):
-        inicio = numero * config.OSRM_PONTOS_POR_PEDIDO
-        bloco = em_falta.iloc[inicio:inicio + config.OSRM_PONTOS_POR_PEDIDO]
+        inicio = numero * tamanho_bloco
+        bloco = em_falta.iloc[inicio:inicio + tamanho_bloco]
         novos.extend(calcular_bloco(bloco))
-        if (numero + 1) % 10 == 0 or numero + 1 == total_blocos:
+        if (numero + 1) % 10 == 0 or numero + 1 == total_blocos or tamanho_bloco > 500:
             mensagem(f"   Progresso: bloco {numero + 1}/{total_blocos}")
             # gravação intermédia, para poder retomar
             parcial = pd.concat([ja_calculadas, pd.DataFrame(novos)], ignore_index=True)
@@ -263,6 +277,7 @@ def executar_etapa_3():
             "observacao": "Coordenadas fora de Portugal Continental ou em falta."})],
             ignore_index=True)
     routing = routing.drop_duplicates("id_subseccao", keep="last")
+    routing = recalcular_sem_rota(routing, subseccoes)
     routing.to_csv(config.FICHEIRO_ROUTING, index=False)
 
     contagem = routing["estado_routing"].value_counts().to_dict()
@@ -270,13 +285,13 @@ def executar_etapa_3():
     exportar_matrizes(routing, subseccoes)
 
     registar_metadados("etapa_03_routing", {
-        "servico": "OSRM (Open Source Routing Machine) — serviço /table",
-        "servidor": config.OSRM_URL,
-        "perfil": config.OSRM_PERFIL,
+        "servico": descricao_motor(),
+        "motor": motor_em_uso(),
+        "servidor": config.ORS_URL if motor_em_uso() == "ors" else config.OSRM_URL,
+        "perfil": config.ORS_PERFIL if motor_em_uso() == "ors" else config.OSRM_PERFIL,
         "rede_rodoviaria": "OpenStreetMap (versão carregada no servidor à data do cálculo)",
         "hospital_na_rede": obter_informacao_hospital(),
-        "pontos_por_pedido": config.OSRM_PONTOS_POR_PEDIDO,
-        "pausa_entre_pedidos_s": config.OSRM_PAUSA_ENTRE_PEDIDOS_S,
+        "pontos_por_pedido": tamanho_bloco,
         "distancia_maxima_ate_estrada_m": config.DISTANCIA_MAXIMA_ATE_ESTRADA_M,
         "sentidos_calculados": ["hospital → domicílio", "domicílio → hospital"],
         "estados": contagem,

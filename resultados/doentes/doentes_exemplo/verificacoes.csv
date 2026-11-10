@@ -5,6 +5,6 @@ Sem pares em falta (todas as rotas calculadas);OK;0
 Diagonal = 0;OK;0.00 min
 Tempos e distâncias fora da diagonal > 0;OK;
 Desigualdade triangular (tempos);OK;0 violações em 216 trios
-Assimetria máxima A→B vs B→A (não se assume simetria);OK;1.87 min
+Assimetria máxima A→B vs B→A (não se assume simetria);OK;3.33 min
 Pontos a mais de 1000 m da estrada;OK;0
 Pontos de encaixe na estrada fora de Portugal;OK;0

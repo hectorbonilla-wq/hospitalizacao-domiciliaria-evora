@@ -16,7 +16,7 @@ ATENÇÃO — DUAS COISAS DIFERENTES
 --------------------------------
   * POPULAÇÃO GEOGRAFICAMENTE ELEGÍVEL: residentes que vivem a ≤ 30 min do
     hospital. É um resultado do estudo, baseado em dados observados (Censos)
-    e em tempos calculados (OSRM).
+    e em tempos calculados (OpenRouteService/OSRM, rede OpenStreetMap).
   * CAPACIDADE OPERACIONAL: nº de doentes que as equipas conseguem visitar
     por dia. Depende de pressupostos (nº de equipas, viaturas, duração das
     visitas...) definidos em config.py. NÃO é um dado observado.
@@ -42,6 +42,7 @@ import numpy as np
 import pandas as pd
 
 import config
+from routing import descricao_motor
 from utilitarios import ler_metadados, mensagem, registar_metadados, verificar_ficheiro_existe
 
 
@@ -97,7 +98,20 @@ def calcular_indicadores(tabela):
     tempo_real = (tabela["tempo_hospital_domicilio_min"] * config.CONDICOES_REAIS_FATOR_TRANSITO
                   + config.CONDICOES_REAIS_TEMPO_ACESSO_MIN)
     reais = tabela[tempo_real <= config.LIMITE_TEMPO_MINUTOS]
+    # Comparação com o outro motor, se já tiver sido calculado (ficheiro guardado)
+    comparacao = {}
+    for motor in ["ors", "osrm"]:
+        ficheiro = config.PASTA_PROCESSADOS / f"resultados_routing_{motor}.csv"
+        if ficheiro.exists():
+            outro = pd.read_csv(ficheiro, dtype={"id_subseccao": str})
+            juntos = tabela[["id_subseccao", "populacao_residente"]].merge(outro, on="id_subseccao")
+            dentro = juntos["tempo_ida_min"] <= config.LIMITE_TEMPO_MINUTOS
+            nome = "OpenRouteService" if motor == "ors" else "OSRM"
+            comparacao[nome] = {"subseccoes": int(dentro.sum()),
+                                "populacao": int(juntos.loc[dentro, "populacao_residente"].sum())}
     return {
+        "motor_routing": descricao_motor(),
+        "comparacao_motores": comparacao,
         "condicoes_reais_formula": (f"fluxo livre × {config.CONDICOES_REAIS_FATOR_TRANSITO} + "
                                     f"{config.CONDICOES_REAIS_TEMPO_ACESSO_MIN} min (estimativa)"),
         "subseccoes_elegiveis_condicoes_reais": len(reais),
@@ -292,14 +306,18 @@ def escrever_resumo_markdown(indicadores, sensibilidade, capacidade, por_municip
     for _, linha in sensibilidade.iterrows():
         linhas.append(f"| {int(linha['limite_min'])} | {numero(int(linha['subseccoes_elegiveis']))} | "
                       f"{numero(int(linha['populacao_abrangida']))} | {linha['percentagem_populacao_analisada']} % |")
-    if isocrona.get("populacao_centroides_dentro_isocrona_valhalla") is not None:
-        linhas += ["", "**Comparação entre motores de routing (sensibilidade):** a população com "
-                   "centroide dentro da isócrona de 30 min do Valhalla é "
-                   f"{numero(isocrona['populacao_centroides_dentro_isocrona_valhalla'])} residentes "
-                   f"(OSRM: {numero(indicadores['populacao_residente_abrangida'])}). "
-                   f"{isocrona.get('concordancia_centroides_elegiveis_percent')} % dos centroides "
-                   "elegíveis segundo o OSRM estão dentro da isócrona do Valhalla. O Valhalla usa "
-                   "velocidades mais prudentes; o resultado oficial do estudo é o do OSRM."]
+    if isocrona.get("populacao_centroides_dentro_isocrona") is not None:
+        linhas += ["", f"**Isócrona ({isocrona.get('servico_isocrona', '?')}):** população com centroide "
+                   f"dentro da isócrona de {config.LIMITE_TEMPO_MINUTOS} min = "
+                   f"{numero(isocrona['populacao_centroides_dentro_isocrona'])} residentes; "
+                   f"{isocrona.get('concordancia_centroides_elegiveis_percent')} % dos centroides elegíveis "
+                   "estão dentro dela. O resultado oficial é o da matriz (secção 1)."]
+    comparacao = indicadores.get("comparacao_motores")
+    if comparacao:
+        linhas += ["", "**Comparação entre motores de routing (mesma população, mesmos centroides):**", "",
+                   "| Motor | Subsecções elegíveis | População abrangida |", "|---|---:|---:|"]
+        for motor, valores in comparacao.items():
+            linhas.append(f"| {motor} | {numero(valores['subseccoes'])} | {numero(valores['populacao'])} |")
     linhas += ["", "## 4. População elegível por município", "",
                "| Município | Subsecções elegíveis | População elegível | População analisada | % do município analisado |",
                "|---|---:|---:|---:|---:|"]
@@ -338,7 +356,7 @@ def escrever_resumo_markdown(indicadores, sensibilidade, capacidade, por_municip
         "* **Centroides:** cada subsecção é representada pelo centro geométrico do polígono; os "
         "residentes não vivem todos nesse ponto. Subsecções perto dos 30 min (ver secção 3) podem "
         "ter parte dos domicílios dentro e parte fora do limite.",
-        "* **Tempos de viagem:** estimados pelo OSRM em fluxo livre (sem trânsito, semáforos ou "
+        f"* **Tempos de viagem:** estimados pelo {descricao_motor()} em fluxo livre (sem trânsito, semáforos ou "
         "estacionamento); o tempo real tende a ser um pouco maior.",
         "* **Rede rodoviária:** OpenStreetMap pode ter estradas em falta ou mal classificadas.",
         "* **População:** residentes em 2021 (Censos); não inclui alterações posteriores.",

@@ -125,6 +125,18 @@ APENAS_PORTUGAL = True
 # ---------------------------------------------------------------------------
 # 5. Serviços de routing (rede rodoviária OpenStreetMap)
 # ---------------------------------------------------------------------------
+# Motor usado para TODOS os tempos e distâncias do estudo:
+#   "ors"  = OpenRouteService (precisa de chave pessoal gratuita — ver README)
+#   "osrm" = servidor público do OSRM (sem chave)
+# A chave do OpenRouteService é lida do ficheiro chave_openrouteservice.txt
+# (na pasta do projeto, fora do Git) ou da variável de ambiente ORS_API_KEY.
+# NUNCA escreva a chave neste ficheiro: config.py está no GitHub.
+MOTOR_ROUTING = "ors"
+ORS_URL = "https://api.openrouteservice.org"
+ORS_PERFIL = "driving-car"          # automóvel ligeiro
+ORS_PONTOS_POR_PEDIDO = 3000        # limite do ORS: ~3500 percursos por pedido
+ORS_PAUSA_ENTRE_PEDIDOS_S = 2.0     # limite do plano gratuito: ~40 pedidos/minuto
+
 # OSRM: servidor de demonstração público. É gratuito mas tem limites de
 # utilização (cerca de 1 pedido por segundo). Para estudos frequentes,
 # recomenda-se instalar um servidor OSRM próprio (ver README).
@@ -154,6 +166,12 @@ VALHALLA_PERFIL = "auto"
 GEOCODIFICACAO_URL = "https://nominatim.openstreetmap.org"
 GEOCODIFICACAO_PAUSA_S = 1.1
 GEOCODIFICACAO_CABECALHOS = {"User-Agent": "estudo-cobertura-hospitalizacao-domiciliaria/1.0"}
+# Com chave do OpenRouteService, cada morada é procurada em DOIS serviços
+# (ORS e Nominatim). Se os dois resultados distarem mais do que isto, avisa-se.
+GEOCODIFICACAO_DIFERENCA_MAXIMA_M = 250
+# Se um serviço só encontrou o centro da localidade e o outro encontrou a rua a
+# mais desta distância desse centro, pede-se confirmação (pode ser outra terra).
+GEOCODIFICACAO_DISTANCIA_MAX_CENTRO_M = 3000
 
 # Condições reais de circulação (ESTIMATIVA — pressupostos editáveis)
 # O OpenStreetMap/OSRM dá tempos em FLUXO LIVRE (sem trânsito). Os servidores
@@ -207,7 +225,8 @@ PASTA_REGISTO = PASTA_PROJETO / "registo"
 
 # Ficheiros intermédios (passam informação de uma etapa para a seguinte)
 FICHEIRO_SUBSECCOES = PASTA_PROCESSADOS / "subseccoes_area_estudo.gpkg"
-FICHEIRO_ROUTING = PASTA_PROCESSADOS / "resultados_routing.csv"
+# Um ficheiro por motor, para se poderem comparar os resultados
+FICHEIRO_ROUTING = PASTA_PROCESSADOS / f"resultados_routing_{MOTOR_ROUTING}.csv"
 FICHEIRO_TERRITORIO = PASTA_PROCESSADOS / "territorio_portugal_area_estudo.gpkg"
 FICHEIRO_ISOCRONA = PASTA_GEOJSON / "isocrona_30min.geojson"
 FICHEIRO_METADADOS = PASTA_REGISTO / "metadados_execucao.json"

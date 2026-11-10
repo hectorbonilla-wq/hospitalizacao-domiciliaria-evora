@@ -20,7 +20,8 @@ PASSOS
      Se a morada completa não for encontrada, tenta-se só "código postal +
      localidade" e marca-se a precisão como mais baixa.
   3. VALIDAR: coordenadas dentro do território português (BGRI 2021).
-  4. CALCULAR com o OSRM (rede OpenStreetMap) os tempos e distâncias entre o
+  4. CALCULAR com o OpenRouteService (ou OSRM, ver config.MOTOR_ROUTING), sobre
+     a rede OpenStreetMap, os tempos e distâncias entre o
      hospital e TODOS os doentes, nos dois sentidos, separadamente.
   5. CONDIÇÕES REAIS (estimativa): tempo_real = fluxo_livre × fator + acesso
      (parâmetros em config.py). A regra dos 30 min usa este tempo real.
@@ -59,6 +60,7 @@ Resultados em: resultados/doentes/<nome_do_ficheiro>/
 import argparse
 import sys
 import time
+import unicodedata
 from datetime import datetime
 from pathlib import Path
 
@@ -71,14 +73,18 @@ import requests
 
 import config
 from etapa_02_preparar_subseccoes import validar_coordenadas
-from etapa_03_calcular_matrizes_osrm import pedir_tabela_osrm
-from etapa_04_verificar_consistencia import contar_violacoes_triangulares
+from routing import descricao_motor, ler_chave_ors, nome_motor, obter_percurso, pedir_matriz
+from etapa_04_verificar_consistencia import contar_violacoes_triangulares, distancia_linha_reta_km
 from utilitarios import mensagem
 
 PASTA_DOENTES = config.PASTA_PROJETO / "doentes"
 FICHEIRO_EXEMPLO = PASTA_DOENTES / "doentes_exemplo.csv"
 FICHEIRO_CACHE_GEOCODIFICACAO = PASTA_DOENTES / "cache_geocodificacao.csv"
-MAXIMO_DOENTES = 99   # hospital + 99 doentes = 100 pontos (um pedido ao OSRM público)
+# Máximo de doentes por ficheiro (uma única matriz todos-para-todos):
+#   OpenRouteService: (doentes + 1)² ≤ 3500 percursos → 58 doentes
+#   OSRM público: 100 pontos → 99 doentes
+MAXIMO_DOENTES_ORS = 58
+MAXIMO_DOENTES_OSRM = 99
 
 # Tipos de resultado do Nominatim e a precisão correspondente
 PRECISAO_POR_TIPO = {
@@ -130,8 +136,9 @@ def ler_doentes(caminho):
     repetidos = doentes.loc[doentes["id_doente"].duplicated(), "id_doente"].tolist()
     if repetidos:
         raise ValueError(f"Identificadores de doente repetidos: {repetidos}")
-    if len(doentes) > MAXIMO_DOENTES:
-        raise ValueError(f"O ficheiro tem {len(doentes)} doentes; o máximo é {MAXIMO_DOENTES}.")
+    maximo = MAXIMO_DOENTES_ORS if nome_motor() == "OpenRouteService" else MAXIMO_DOENTES_OSRM
+    if len(doentes) > maximo:
+        raise ValueError(f"O ficheiro tem {len(doentes)} doentes; o máximo é {maximo}. Divida o ficheiro.")
 
     # Coordenadas já conhecidas (aceita vírgula decimal: 38,5689)
     for coluna in ["latitude", "longitude"]:
@@ -159,20 +166,15 @@ def texto_da_morada(linha):
 
 def pesquisar_nominatim(texto):
     """
-    Pergunta ao Nominatim (OpenStreetMap) as coordenadas de um texto,
-    procurando apenas em Portugal.
+    Pergunta ao Nominatim (OpenStreetMap) as coordenadas de uma morada (só Portugal).
 
     Parâmetros:
         texto (str): morada a pesquisar.
 
     Devolve:
-        dict ou None: latitude, longitude, endereço encontrado e tipo; None se
-        não encontrar.
-
-    Erros:
-        RuntimeError se o serviço falhar repetidamente.
+        dict ou None: latitude, longitude, endereco_encontrado, tipo, codigo_postal.
     """
-    parametros = {"q": texto, "format": "jsonv2", "countrycodes": "pt", "limit": 1}
+    parametros = {"q": texto, "format": "jsonv2", "countrycodes": "pt", "limit": 1, "addressdetails": 1}
     for tentativa in range(1, 4):
         try:
             resposta = requests.get(f"{config.GEOCODIFICACAO_URL}/search", params=parametros,
@@ -183,145 +185,385 @@ def pesquisar_nominatim(texto):
             if not resultados:
                 return None
             r = resultados[0]
+            tipo = r.get("addresstype") or r.get("type", "")
             return {"latitude": float(r["lat"]), "longitude": float(r["lon"]),
                     "endereco_encontrado": r.get("display_name", ""),
-                    "tipo": r.get("addresstype") or r.get("type", "")}
+                    "precisao": PRECISAO_POR_TIPO.get(tipo, "desconhecida"),
+                    "codigo_postal": (r.get("address") or {}).get("postcode", "")}
         except (requests.RequestException, ValueError) as erro:
             mensagem(f"      ERRO no Nominatim ({tentativa}/3): {erro}")
             time.sleep(2 ** tentativa)
-    raise RuntimeError("O serviço de geocodificação não respondeu.")
+    return None
+
+
+# Precisão a partir da "camada" (layer) devolvida pelo geocodificador do OpenRouteService
+PRECISAO_POR_CAMADA_ORS = {
+    "address": "número de porta", "venue": "edifício/equipamento", "street": "rua",
+    "postalcode": "código postal", "neighbourhood": "bairro", "borough": "bairro",
+    "locality": "localidade", "localadmin": "localidade", "county": "concelho",
+    "macrocounty": "concelho", "region": "concelho",
+}
+
+
+def pesquisar_ors(texto):
+    """
+    Pergunta ao geocodificador do OpenRouteService (Pelias, dados OpenStreetMap
+    e outros abertos) as coordenadas de uma morada, só em Portugal.
+
+    Parâmetros:
+        texto (str): morada a pesquisar.
+
+    Devolve:
+        dict ou None: latitude, longitude, endereco_encontrado, precisao, codigo_postal.
+    """
+    chave = ler_chave_ors()
+    if not chave:
+        return None
+    parametros = {"text": texto, "boundary.country": "PRT", "size": 1}
+    for tentativa in range(1, 4):
+        try:
+            resposta = requests.get(f"{config.ORS_URL}/geocode/search", params=parametros,
+                                    headers={"Authorization": chave}, timeout=30)
+            time.sleep(1.0)
+            resposta.raise_for_status()
+            resultados = resposta.json().get("features", [])
+            if not resultados:
+                return None
+            r = resultados[0]
+            propriedades = r["properties"]
+            lon, lat = r["geometry"]["coordinates"]
+            return {"latitude": float(lat), "longitude": float(lon),
+                    "endereco_encontrado": propriedades.get("label", ""),
+                    "precisao": PRECISAO_POR_CAMADA_ORS.get(propriedades.get("layer", ""), "desconhecida"),
+                    "codigo_postal": propriedades.get("postalcode", "")}
+        except (requests.RequestException, ValueError, KeyError) as erro:
+            mensagem(f"      ERRO no geocodificador do OpenRouteService ({tentativa}/3): {erro}")
+            time.sleep(2 ** tentativa)
+    return None
+
+
+def pesquisar_com_cache(servico, texto, cache, novos):
+    """
+    Pesquisa uma morada num serviço, reutilizando resultados anteriores (cache).
+
+    Parâmetros:
+        servico (str): "ors" ou "nominatim".
+        texto (str): morada.
+        cache (dict): resultados anteriores {chave: dict}.
+        novos (list): lista onde se acrescentam os resultados novos (para gravar).
+
+    Devolve:
+        dict ou None: resultado da pesquisa.
+    """
+    chave = f"{servico}|{texto}"
+    if chave in cache:
+        c = cache[chave]
+        if c.get("latitude", "") in ("", None) or pd.isna(c.get("latitude")):
+            return None
+        return {"latitude": float(c["latitude"]), "longitude": float(c["longitude"]),
+                "endereco_encontrado": c.get("endereco_encontrado", ""), "precisao": c.get("precisao", ""),
+                "codigo_postal": "" if pd.isna(c.get("codigo_postal", "")) else str(c.get("codigo_postal", ""))}
+    resultado = pesquisar_ors(texto) if servico == "ors" else pesquisar_nominatim(texto)
+    registo = {"pesquisa": chave, "latitude": "", "longitude": "", "endereco_encontrado": "",
+               "precisao": "", "codigo_postal": "", "data": datetime.now().isoformat(timespec="seconds")}
+    if resultado:
+        registo.update({k: str(v) for k, v in resultado.items()})
+    cache[chave] = registo
+    novos.append(registo)
+    return resultado
 
 
 def geocodificar(doentes):
     """
-    Obtém as coordenadas de cada doente a partir da morada.
+    Converte a morada de cada doente em coordenadas, com DOIS serviços
+    independentes, para se poder confirmar o resultado:
 
-    Ordem: (1) coordenadas já preenchidas no ficheiro; (2) cache local de
-    pesquisas anteriores; (3) Nominatim com a morada completa; (4) Nominatim só
-    com "código postal + localidade" (precisão baixa).
+      1. geocodificador do OpenRouteService (principal, se houver chave);
+      2. Nominatim/OpenStreetMap (confirmação; principal se não houver chave).
+
+    Para cada serviço tenta-se a morada completa e, se falhar, só "código
+    postal + localidade" (precisão "código postal").
 
     Parâmetros:
         doentes (DataFrame): resultado de ler_doentes().
 
     Devolve:
-        DataFrame: com latitude, longitude, endereco_encontrado,
-        precisao_geocodificacao e fonte_coordenadas.
+        DataFrame: com latitude, longitude, endereço encontrado, precisão,
+        fonte, coordenadas do 2.º serviço e distância entre os dois (m).
     """
     cache = {}
     if FICHEIRO_CACHE_GEOCODIFICACAO.exists():
         tabela_cache = pd.read_csv(FICHEIRO_CACHE_GEOCODIFICACAO, sep=";", dtype=str, keep_default_na=False)
-        cache = {l["pesquisa"]: l.to_dict() for _, l in tabela_cache.iterrows()}
+        if "precisao" in tabela_cache.columns:   # formato atual
+            cache = {l["pesquisa"]: l.to_dict() for _, l in tabela_cache.iterrows()}
 
+    servicos = ["ors", "nominatim"] if ler_chave_ors() else ["nominatim"]
+    nomes = {"ors": "OpenRouteService", "nominatim": "Nominatim/OpenStreetMap"}
     doentes = doentes.copy()
     doentes["endereco_pesquisado"] = doentes.apply(texto_da_morada, axis=1)
-    doentes["endereco_encontrado"] = ""
-    doentes["precisao_geocodificacao"] = ""
-    doentes["fonte_coordenadas"] = ""
+    for coluna in ["endereco_encontrado", "precisao_geocodificacao", "fonte_coordenadas",
+                   "codigo_postal_encontrado", "latitude_confirmacao", "longitude_confirmacao",
+                   "diferenca_entre_servicos_m"]:
+        doentes[coluna] = np.nan if coluna in ("latitude_confirmacao", "longitude_confirmacao",
+                                               "diferenca_entre_servicos_m") else ""
 
     a_pesquisar = doentes["latitude"].isna() | doentes["longitude"].isna()
     if a_pesquisar.any():
-        mensagem(f"   A geocodificar {int(a_pesquisar.sum())} moradas em {config.GEOCODIFICACAO_URL} "
-                 "(as moradas são enviadas a este serviço — ver PRIVACIDADE no início do ficheiro)")
+        mensagem(f"   A geocodificar {int(a_pesquisar.sum())} moradas com: "
+                 f"{' + '.join(nomes[s] for s in servicos)} "
+                 "(as moradas são enviadas a estes serviços — ver PRIVACIDADE)")
     doentes.loc[~a_pesquisar, "fonte_coordenadas"] = "coordenadas indicadas no ficheiro"
     doentes.loc[~a_pesquisar, "precisao_geocodificacao"] = "indicada pelo utilizador"
 
-    novos_cache = []
+    novos = []
+    candidatos_por_doente = {}
     for indice in doentes.index[a_pesquisar]:
         linha = doentes.loc[indice]
-        tentativas = [(linha["endereco_pesquisado"], "morada completa")]
+        textos = [(linha["endereco_pesquisado"], "morada completa")]
         alternativa = " ".join(p for p in [linha["codigo_postal"], linha["localidade"]] if p)
         if alternativa and alternativa != linha["endereco_pesquisado"]:
-            tentativas.append((alternativa, "só código postal e localidade"))
+            textos.append((alternativa, "só código postal e localidade"))
 
-        encontrado, como = None, ""
-        for texto, descricao in tentativas:
-            if not texto:
-                continue
-            if texto in cache:
-                c = cache[texto]
-                encontrado = None if c["latitude"] == "" else {
-                    "latitude": float(c["latitude"]), "longitude": float(c["longitude"]),
-                    "endereco_encontrado": c["endereco_encontrado"], "tipo": c["tipo"]}
-            else:
-                encontrado = pesquisar_nominatim(texto)
-                registo = {"pesquisa": texto, "latitude": "", "longitude": "",
-                           "endereco_encontrado": "", "tipo": "",
-                           "data": datetime.now().isoformat(timespec="seconds")}
+        resultados = {}
+        for servico in servicos:
+            for texto, como in textos:
+                if not texto:
+                    continue
+                encontrado = pesquisar_com_cache(servico, texto, cache, novos)
                 if encontrado:
-                    registo.update({k: str(v) for k, v in encontrado.items()})
-                cache[texto] = registo
-                novos_cache.append(registo)
-            if encontrado:
-                como = descricao
-                break
+                    if como != "morada completa" and encontrado["precisao"] not in PRECISAO_INSUFICIENTE:
+                        encontrado["precisao"] = "código postal"
+                    encontrado["como"] = como
+                    resultados[servico] = encontrado
+                    break
 
-        if encontrado is None:
+        if not resultados:
             doentes.loc[indice, "precisao_geocodificacao"] = "morada não encontrada"
             mensagem(f"   NÃO ENCONTRADA {linha['id_doente']}: {linha['endereco_pesquisado']}")
             continue
-        precisao = PRECISAO_POR_TIPO.get(encontrado["tipo"], "desconhecida")
-        if como != "morada completa" and precisao not in PRECISAO_INSUFICIENTE:
-            precisao = "código postal"
-        doentes.loc[indice, ["latitude", "longitude"]] = [encontrado["latitude"], encontrado["longitude"]]
-        doentes.loc[indice, "endereco_encontrado"] = encontrado["endereco_encontrado"]
-        doentes.loc[indice, "precisao_geocodificacao"] = precisao
-        doentes.loc[indice, "fonte_coordenadas"] = f"Nominatim/OpenStreetMap ({como})"
-        aviso = ""
-        if precisao in PRECISAO_BAIXA:
-            aviso = "  <- precisão baixa, confirme a morada"
-        if precisao in PRECISAO_INSUFICIENTE:
-            aviso = "  <- só encontrou a localidade: SERÁ EXCLUÍDO"
-        mensagem(f"   {linha['id_doente']}: {encontrado['latitude']:.6f}, {encontrado['longitude']:.6f} "
-                 f"[{precisao}]{aviso}")
 
-    if novos_cache:
+        # Guardam-se TODOS os candidatos; a escolha é feita em verificar_moradas(),
+        # que confirma qual deles fica no concelho/freguesia e código postal indicados.
+        candidatos = []
+        for servico, r in resultados.items():
+            r = dict(r)
+            r["servico"] = nomes[servico]
+            candidatos.append(r)
+        candidatos_por_doente[linha["id_doente"]] = candidatos
+
+    if novos:
         PASTA_DOENTES.mkdir(exist_ok=True)
         pd.DataFrame(list(cache.values())).to_csv(FICHEIRO_CACHE_GEOCODIFICACAO, sep=";",
                                                   index=False, encoding="utf-8-sig")
+    doentes["candidatos"] = [candidatos_por_doente.get(i, []) for i in doentes["id_doente"]]
     return doentes
 
 
-# ---------------------------------------------------------------------------
-# 3. Validar as coordenadas (dentro de Portugal)
-# ---------------------------------------------------------------------------
-def validar_doentes(doentes):
+def normalizar(texto):
     """
-    Confirma que cada doente tem coordenadas válidas em território português.
+    Põe um texto em minúsculas e sem acentos, para comparar nomes de lugares
+    (ex.: "Évora" e "EVORA" ficam iguais).
+
+    Parâmetros:
+        texto (str): texto original.
+
+    Devolve:
+        str: texto normalizado.
+    """
+    texto = unicodedata.normalize("NFKD", str(texto or "")).encode("ascii", "ignore").decode()
+    return " ".join(texto.lower().replace("-", " ").split())
+
+
+def localizar_na_bgri(latitude, longitude, subseccoes):
+    """
+    Indica em que subsecção, freguesia e concelho (BGRI 2021) cai um ponto.
+
+    Parâmetros:
+        latitude, longitude (float): coordenadas.
+        subseccoes (GeoDataFrame): subsecções da área de estudo (WGS84).
+
+    Devolve:
+        dict: id_subseccao, freguesia, municipio ("" se o ponto não cair em nenhuma).
+    """
+    from shapely.geometry import Point
+    ponto = Point(longitude, latitude)
+    candidatas = subseccoes.iloc[list(subseccoes.sindex.query(ponto, predicate="within"))]
+    if candidatas.empty:
+        return {"id_subseccao": "", "freguesia": "", "municipio": ""}
+    linha = candidatas.iloc[0]
+    return {"id_subseccao": linha["id_subseccao"], "freguesia": linha["freguesia"],
+            "municipio": linha["municipio"]}
+
+
+def avaliar_candidato(linha, candidato, subseccoes):
+    """
+    Avalia se um resultado de geocodificação corresponde à morada indicada.
+
+    Parâmetros:
+        linha (pandas.Series): dados do doente (localidade, código postal).
+        candidato (dict): resultado de um serviço (latitude, longitude, precisão...).
+        subseccoes (GeoDataFrame): subsecções da BGRI.
+
+    Devolve:
+        dict: o candidato com bgri (dict), problemas (list[str]) e pontuação.
+    """
+    bgri = localizar_na_bgri(candidato["latitude"], candidato["longitude"], subseccoes)
+    problemas = []
+    localidade_ok = True
+    localidade = normalizar(linha["localidade"])
+    if bgri["municipio"] == "":
+        problemas.append("ponto fora da área de estudo da BGRI")
+        localidade_ok = False
+    elif localidade and localidade not in normalizar(f"{bgri['municipio']} {bgri['freguesia']}"):
+        problemas.append(f"localidade '{linha['localidade']}' não coincide com "
+                         f"{bgri['freguesia']} ({bgri['municipio']})")
+        localidade_ok = False
+    cp_indicado = str(linha["codigo_postal"])[:4]
+    cp_encontrado = str(candidato.get("codigo_postal") or "")[:4]
+    cp_ok = not (len(cp_indicado) == 4 and len(cp_encontrado) == 4 and cp_indicado != cp_encontrado)
+    if not cp_ok:
+        problemas.append(f"código postal {linha['codigo_postal']} ≠ encontrado {candidato['codigo_postal']}")
+    if candidato["precisao"] in PRECISAO_INSUFICIENTE:
+        problemas.append("só foi encontrada a localidade")
+    ordem = ["número de porta", "edifício/equipamento", "edifício", "rua", "rua/praça",
+             "código postal", "bairro", "desconhecida", "localidade", "concelho"]
+    rank = ordem.index(candidato["precisao"]) if candidato["precisao"] in ordem else 99
+    # Pontuação: primeiro a localidade certa, depois o código postal, depois a precisão
+    return dict(candidato, bgri=bgri, problemas=problemas,
+                pontuacao=(not localidade_ok, not cp_ok, rank))
+
+
+def verificar_moradas(doentes):
+    """
+    REVISÃO DAS MORADAS: para cada doente, escolhe e confirma as coordenadas.
+
+    Cada morada foi procurada em dois serviços (OpenRouteService e Nominatim).
+    Para cada resultado verifica-se:
+      1. CONCELHO/FREGUESIA: o ponto é colocado na subsecção da BGRI 2021 que o
+         contém; a LOCALIDADE do ficheiro tem de corresponder ao nome do
+         concelho ou da freguesia (há ruas com o mesmo nome em muitas terras!);
+      2. CÓDIGO POSTAL: os 4 primeiros dígitos (CP4) têm de coincidir com os do
+         código postal devolvido, quando o serviço o devolve;
+      3. PRECISÃO: pelo menos rua ou código postal.
+    Fica o resultado que passa mais verificações (em empate, o mais preciso).
+    Se os dois serviços passarem, mede-se a distância entre eles (confirmação).
 
     Parâmetros:
         doentes (DataFrame): resultado de geocodificar().
 
     Devolve:
-        DataFrame: o mesmo, com a coluna "estado" preenchida para os
-        doentes com problemas ("" = sem problemas).
+        DataFrame: com coordenadas escolhidas, concelho_bgri, freguesia_bgri,
+        subseccao_bgri, verificacao_morada e morada_confirmada.
+    """
+    doentes = doentes.copy()
+    for coluna in ["concelho_bgri", "freguesia_bgri", "subseccao_bgri", "verificacao_morada"]:
+        doentes[coluna] = ""
+    doentes["morada_confirmada"] = False
+    if not config.FICHEIRO_SUBSECCOES.exists():
+        mensagem("   (Sem BGRI preparada: execute a Parte A para verificar concelho/freguesia.)")
+        return doentes
+    subseccoes = gpd.read_file(config.FICHEIRO_SUBSECCOES,
+                               columns=["id_subseccao", "municipio", "freguesia"]).to_crs(config.CRS_WGS84)
+    nomes = {"OpenRouteService": "ORS", "Nominatim/OpenStreetMap": "Nominatim"}
+
+    for indice, linha in doentes.iterrows():
+        candidatos = linha.get("candidatos") or []
+        if not candidatos:
+            # Coordenadas indicadas no ficheiro (ou morada não encontrada)
+            if pd.notna(linha["latitude"]) and pd.notna(linha["longitude"]):
+                candidatos = [{"latitude": linha["latitude"], "longitude": linha["longitude"],
+                               "precisao": linha["precisao_geocodificacao"], "codigo_postal": "",
+                               "endereco_encontrado": "", "servico": "ficheiro", "como": "coordenadas"}]
+            else:
+                continue
+        avaliados = sorted((avaliar_candidato(linha, c, subseccoes) for c in candidatos),
+                           key=lambda c: c["pontuacao"])
+        escolhido = avaliados[0]
+        problemas = list(escolhido["problemas"])
+        doentes.loc[indice, ["latitude", "longitude"]] = [escolhido["latitude"], escolhido["longitude"]]
+        doentes.loc[indice, "endereco_encontrado"] = escolhido["endereco_encontrado"]
+        doentes.loc[indice, "precisao_geocodificacao"] = escolhido["precisao"]
+        doentes.loc[indice, "codigo_postal_encontrado"] = escolhido.get("codigo_postal", "")
+        if escolhido["servico"] != "ficheiro":
+            doentes.loc[indice, "fonte_coordenadas"] = f"{escolhido['servico']} ({escolhido['como']})"
+        doentes.loc[indice, ["concelho_bgri", "freguesia_bgri", "subseccao_bgri"]] = [
+            escolhido["bgri"]["municipio"], escolhido["bgri"]["freguesia"], escolhido["bgri"]["id_subseccao"]]
+
+        notas = []
+        for outro in avaliados[1:]:
+            distancia = 1000 * distancia_linha_reta_km(escolhido["latitude"], escolhido["longitude"],
+                                                       outro["latitude"], outro["longitude"])
+            doentes.loc[indice, ["latitude_confirmacao", "longitude_confirmacao"]] = [outro["latitude"],
+                                                                                      outro["longitude"]]
+            doentes.loc[indice, "diferenca_entre_servicos_m"] = round(distancia)
+            if outro["precisao"] in PRECISAO_INSUFICIENTE and distancia > config.GEOCODIFICACAO_DISTANCIA_MAX_CENTRO_M:
+                # O outro serviço só encontrou o CENTRO da localidade: se o ponto escolhido
+                # fica longe desse centro, pode ser uma rua com o mesmo nome noutra terra
+                # do mesmo concelho (ex.: Praça da República de Alcáçovas vs. Viana do Alentejo).
+                problemas.append(f"fica a {distancia / 1000:.1f} km do centro de '{linha['localidade']}' "
+                                 "— confirme se é a localidade certa")
+            elif outro["problemas"]:
+                notas.append(f"{nomes.get(outro['servico'], outro['servico'])} rejeitado "
+                             f"({outro['problemas'][0]})")
+            elif distancia > config.GEOCODIFICACAO_DIFERENCA_MAXIMA_M:
+                problemas.append(f"os dois serviços diferem {distancia:.0f} m — confirme o número de porta")
+
+        doentes.loc[indice, "verificacao_morada"] = ("OK" if not problemas else "; ".join(problemas)) + (
+            f" | {'; '.join(notas)}" if notas else "")
+        doentes.loc[indice, "morada_confirmada"] = not problemas
+        origem = nomes.get(escolhido["servico"], escolhido["servico"])
+        if problemas:
+            mensagem(f"   VERIFICAR {linha['id_doente']}: {'; '.join(problemas)}")
+        else:
+            mensagem(f"   OK {linha['id_doente']}: {escolhido['bgri']['freguesia']} "
+                     f"({escolhido['bgri']['municipio']}) [{escolhido['precisao']}, {origem}]"
+                     + (f" — {'; '.join(notas)}" if notas else ""))
+    return doentes.drop(columns=["candidatos"], errors="ignore")
+
+
+def validar_doentes(doentes):
+    """
+    Decide que doentes entram no cálculo. São EXCLUÍDOS (com o motivo):
+      * morada não encontrada;
+      * só a localidade foi encontrada (precisão insuficiente);
+      * coordenadas inválidas ou fora de Portugal / da área de estudo;
+      * localidade que não coincide com o concelho/freguesia onde o ponto caiu
+        (sinal forte de que o geocodificador encontrou outro lugar).
+    Os outros avisos (código postal, diferença entre serviços) ficam na coluna
+    "verificacao_morada" para o utilizador confirmar, mas não excluem.
+
+    Parâmetros:
+        doentes (DataFrame): resultado de verificar_moradas().
+
+    Devolve:
+        DataFrame: o mesmo, com a coluna "estado" ("" = entra no cálculo).
     """
     doentes = doentes.copy()
     doentes["estado"] = ""
-    doentes.loc[doentes["precisao_geocodificacao"] == "morada não encontrada", "estado"] = "morada não encontrada"
+    nao_encontrada = doentes["precisao_geocodificacao"] == "morada não encontrada"
+    doentes.loc[nao_encontrada, "estado"] = "morada não encontrada"
     insuficiente = doentes["precisao_geocodificacao"].isin(PRECISAO_INSUFICIENTE)
     doentes.loc[insuficiente, "estado"] = ("morada não localizada com precisão (só a localidade) — "
                                            "corrija a morada ou indique latitude/longitude")
     plausivel = np.array([validar_coordenadas(la, lo) for la, lo in
                           zip(doentes["latitude"], doentes["longitude"])])
     doentes.loc[~plausivel & (doentes["estado"] == ""), "estado"] = "coordenadas inválidas"
-
-    if config.FICHEIRO_TERRITORIO.exists():
-        territorio = gpd.read_file(config.FICHEIRO_TERRITORIO).to_crs(config.CRS_WGS84).geometry.iloc[0]
-        pontos = gpd.GeoSeries(gpd.points_from_xy(doentes["longitude"], doentes["latitude"]),
-                               crs=config.CRS_WGS84)
-        fora = (~pontos.within(territorio)).values & (doentes["estado"] == "").values
-        doentes.loc[fora, "estado"] = "fora da área de estudo / de Portugal"
+    fora = (doentes["concelho_bgri"] == "") & (doentes["estado"] == "")
+    doentes.loc[fora, "estado"] = "fora da área de estudo / de Portugal"
+    # Só conta o resultado ESCOLHIDO (o texto depois de " | " descreve o candidato rejeitado)
+    problemas_escolhido = doentes["verificacao_morada"].str.split(" | ", regex=False).str[0]
+    outro_lugar = problemas_escolhido.str.contains("não coincide", na=False) & (doentes["estado"] == "")
+    doentes.loc[outro_lugar, "estado"] = ("localizado noutro concelho/freguesia — confirme a morada "
+                                          "ou indique latitude/longitude")
     for _, linha in doentes[doentes["estado"] != ""].iterrows():
         mensagem(f"   EXCLUÍDO {linha['id_doente']}: {linha['estado']}")
     return doentes
 
 
-# ---------------------------------------------------------------------------
-# 4 e 5. Matriz OSRM e condições reais
-# ---------------------------------------------------------------------------
-def calcular_matriz_osrm(doentes):
+def calcular_matriz(doentes):
     """
-    Pede ao OSRM a matriz completa (hospital + doentes, todos para todos).
+    Pede ao motor de routing (OpenRouteService ou OSRM, rede OpenStreetMap) a
+    matriz completa (hospital + doentes, todos para todos).
 
     Parâmetros:
         doentes (DataFrame): doentes com coordenadas válidas.
@@ -334,8 +576,8 @@ def calcular_matriz_osrm(doentes):
     etiquetas = ["HOSPITAL"] + doentes["id_doente"].tolist()
     coordenadas = [(config.HOSPITAL_LONGITUDE, config.HOSPITAL_LATITUDE)]
     coordenadas += list(zip(doentes["longitude"], doentes["latitude"]))
-    mensagem(f"   A pedir ao OSRM a matriz {len(etiquetas)} × {len(etiquetas)} (rede OpenStreetMap)...")
-    resposta = pedir_tabela_osrm(coordenadas)
+    mensagem(f"   A pedir ao {nome_motor()} a matriz {len(etiquetas)} × {len(etiquetas)} (rede OpenStreetMap)...")
+    resposta = pedir_matriz(coordenadas)
     tempos = pd.DataFrame(resposta["durations"], index=etiquetas, columns=etiquetas, dtype=float) / 60
     distancias = pd.DataFrame(resposta["distances"], index=etiquetas, columns=etiquetas, dtype=float) / 1000
     encaixe = pd.DataFrame({
@@ -502,32 +744,6 @@ def lista_de_pares(tempos_livre, tempos_reais, distancias):
     return pares[pares["origem"] != pares["destino"]].round(3)
 
 
-def obter_percurso_osrm(origem, destino):
-    """
-    Pede ao OSRM o desenho (geometria) do percurso mais rápido entre dois pontos.
-
-    Serve só para DESENHAR no mapa o caminho real pela rede OpenStreetMap;
-    os tempos e distâncias usados nos cálculos vêm da matriz.
-
-    Parâmetros:
-        origem, destino (tuple): (latitude, longitude).
-
-    Devolve:
-        list[list[float]] ou None: pontos [lat, lon] do percurso, ou None se falhar.
-    """
-    url = (f"{config.OSRM_URL}/route/v1/{config.OSRM_PERFIL}/"
-           f"{origem[1]},{origem[0]};{destino[1]},{destino[0]}")
-    try:
-        resposta = requests.get(url, params={"overview": "full", "geometries": "geojson"},
-                                timeout=config.OSRM_TIMEOUT_S, headers=config.CABECALHOS_HTTP)
-        time.sleep(config.OSRM_PAUSA_ENTRE_PEDIDOS_S)
-        coordenadas = resposta.json()["routes"][0]["geometry"]["coordinates"]
-        return [[lat, lon] for lon, lat in coordenadas]   # GeoJSON usa lon,lat; o folium usa lat,lon
-    except (requests.RequestException, ValueError, KeyError, IndexError) as erro:
-        mensagem(f"   (Não foi possível desenhar o percurso: {erro})")
-        return None
-
-
 def icone_doente(id_doente, minutos, cor):
     """
     Cria o símbolo de um doente: um ponto colorido com a etiqueta "E01 · 7 min".
@@ -571,8 +787,10 @@ def criar_mapa(tabela, destino):
     folium.TileLayer("OpenStreetMap", name="OpenStreetMap").add_to(mapa)
 
     if config.FICHEIRO_ISOCRONA.exists():
-        folium.GeoJson(gpd.read_file(config.FICHEIRO_ISOCRONA),
-                       name=f"Isócrona {config.LIMITE_TEMPO_MINUTOS} min (Valhalla, fluxo livre)",
+        isocrona = gpd.read_file(config.FICHEIRO_ISOCRONA)
+        servico_iso = isocrona["motor"].iloc[0] if "motor" in isocrona.columns else "isócrona"
+        folium.GeoJson(isocrona,
+                       name=f"Isócrona {config.LIMITE_TEMPO_MINUTOS} min ({servico_iso}, sem trânsito)",
                        style_function=lambda f: {"color": "#2c7fb8", "weight": 1.5, "opacity": 0.8,
                                                  "fillColor": "#2c7fb8", "fillOpacity": 0.10},
                        tooltip=f"Isócrona de {config.LIMITE_TEMPO_MINUTOS} min (referência)").add_to(mapa)
@@ -581,7 +799,7 @@ def criar_mapa(tabela, destino):
     nao_desenhados = tabela[tabela["tempo_hospital_doente_fluxo_livre_min"].isna()]
     hospital = (config.HOSPITAL_LATITUDE, config.HOSPITAL_LONGITUDE)
 
-    camada_percursos = folium.FeatureGroup(name="Percursos hospital → doente (OSRM/OSM)").add_to(mapa)
+    camada_percursos = folium.FeatureGroup(name=f"Percursos hospital → doente ({nome_motor()}/OSM)").add_to(mapa)
     # Agrupamento automático: deixa de agrupar a partir do zoom 16 (ruas visíveis)
     grupo_doentes = plugins.MarkerCluster(name="Doentes", options={
         "disableClusteringAtZoom": 16, "maxClusterRadius": 35, "spiderfyOnMaxZoom": True}).add_to(mapa)
@@ -591,7 +809,9 @@ def criar_mapa(tabela, destino):
         cor = "#1a9850" if incluido else "#d95f02"
         texto = (f"<b>{d['id_doente']}</b> — {d['estado']}<br>{d['endereco_pesquisado']}<br>"
                  f"<small>Localizado em: {d['endereco_encontrado']}<br>"
-                 f"Precisão: {d['precisao_geocodificacao']}</small><br><br>"
+                 f"Precisão: {d['precisao_geocodificacao']} · {d['fonte_coordenadas']}<br>"
+                 f"BGRI: {d['freguesia_bgri']} ({d['concelho_bgri']})<br>"
+                 f"Verificação da morada: <b>{d['verificacao_morada']}</b></small><br><br>"
                  f"<b>Hospital → doente:</b> {d['distancia_hospital_doente_km']} km · "
                  f"{d['tempo_hospital_doente_condicoes_reais_min']} min (condições reais) · "
                  f"{d['tempo_hospital_doente_fluxo_livre_min']} min (sem trânsito)<br>"
@@ -599,7 +819,7 @@ def criar_mapa(tabela, destino):
                  f"{d['tempo_doente_hospital_condicoes_reais_min']} min (condições reais) · "
                  f"{d['tempo_doente_hospital_fluxo_livre_min']} min (sem trânsito)")
         if incluido:
-            percurso = obter_percurso_osrm(hospital, (d["latitude"], d["longitude"]))
+            percurso = obter_percurso(hospital, (d["latitude"], d["longitude"]))
             if percurso:
                 folium.PolyLine(percurso, color=cor, weight=3, opacity=0.55,
                                 tooltip=f"Hospital → {d['id_doente']}: "
@@ -667,7 +887,9 @@ def exportar(pasta, tabela, quadradas, completas, pares, encaixe, verificacoes):
     pasta.mkdir(parents=True, exist_ok=True)
     opcoes = {"encoding": "utf-8-sig", "sep": ";", "decimal": ","}
     colunas = ["id_doente", "morada", "codigo_postal", "localidade", "endereco_pesquisado",
-               "endereco_encontrado",
+               "endereco_encontrado", "codigo_postal_encontrado", "concelho_bgri", "freguesia_bgri",
+               "subseccao_bgri", "verificacao_morada", "morada_confirmada",
+               "latitude_confirmacao", "longitude_confirmacao", "diferenca_entre_servicos_m",
                "precisao_geocodificacao", "fonte_coordenadas", "latitude", "longitude", "estado",
                "dentro_dos_30min", "distancia_hospital_doente_km", "tempo_hospital_doente_fluxo_livre_min",
                "tempo_hospital_doente_condicoes_reais_min", "distancia_doente_hospital_km",
@@ -690,8 +912,9 @@ def exportar(pasta, tabela, quadradas, completas, pares, encaixe, verificacoes):
         "valor": [datetime.now().isoformat(timespec="seconds"), config.HOSPITAL_MORADA,
                   config.HOSPITAL_LATITUDE, config.HOSPITAL_LONGITUDE, config.LIMITE_TEMPO_MINUTOS,
                   "incluído se tempo hospital → doente em condições reais ≤ limite",
-                  f"OSRM {config.OSRM_URL} (perfil {config.OSRM_PERFIL})", "OpenStreetMap",
-                  f"Nominatim {config.GEOCODIFICACAO_URL}", config.CONDICOES_REAIS_FATOR_TRANSITO,
+                  descricao_motor(), "OpenStreetMap",
+                  ("OpenRouteService geocode + Nominatim (confirmação)" if ler_chave_ors()
+                   else f"Nominatim {config.GEOCODIFICACAO_URL}"), config.CONDICOES_REAIS_FATOR_TRANSITO,
                   config.CONDICOES_REAIS_TEMPO_ACESSO_MIN,
                   "linha = ORIGEM, coluna = DESTINO; condições reais = fluxo livre × fator + acesso "
                   "(estimativa, não é trânsito medido)"]})
@@ -768,13 +991,13 @@ def executar_matriz_doentes(caminho=FICHEIRO_EXEMPLO, pasta_resultados=None):
     # 1-3. Ler, geocodificar e validar
     doentes = ler_doentes(caminho)
     mensagem(f"   Doentes no ficheiro: {len(doentes)}")
-    doentes = validar_doentes(geocodificar(doentes))
+    doentes = validar_doentes(verificar_moradas(geocodificar(doentes)))
     validos = doentes[doentes["estado"] == ""]
     if validos.empty:
         raise ValueError("Nenhum doente com coordenadas válidas.")
 
     # 4-5. Matriz completa (todos os geocodificados) e condições reais
-    tempos_livre, distancias, encaixe = calcular_matriz_osrm(validos)
+    tempos_livre, distancias, encaixe = calcular_matriz(validos)
     tempos_reais = aplicar_condicoes_reais(tempos_livre)
     mensagem(f"   Condições reais (estimativa): fluxo livre × {config.CONDICOES_REAIS_FATOR_TRANSITO} "
              f"+ {config.CONDICOES_REAIS_TEMPO_ACESSO_MIN} min de acesso")
