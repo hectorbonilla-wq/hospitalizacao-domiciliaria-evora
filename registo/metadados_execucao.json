@@ -1,0 +1,453 @@
+{
+  "etapa_01_fontes_ine": {
+    "data_recolha": "2026-11-10T14:16:07",
+    "pagina_download_utilizada": "https://mapas.ine.pt/",
+    "fonte": "INE — Censos 2021 (resultados definitivos) e BGRI 2021",
+    "ficheiros": [
+      {
+        "nome": "BGRI21_ALENTEJO",
+        "url": "https://mapas.ine.pt/download/filesGPG/2021/nuts2/BGRI21_ALENTEJO.zip",
+        "ficheiro_local": "dados/entrada/BGRI21_ALENTEJO.zip",
+        "tamanho_bytes": 55457110,
+        "sha256": "18493208c594719de9457eef6ee53ef7776f7d4aa94d0f5bd1e0e1ae24b6ef64",
+        "conteudo": [
+          {
+            "ficheiro": "BGRI21_ALENTEJO.gpkg",
+            "tamanho_bytes": 111685632,
+            "data_no_zip": "2022-11-21T09:39:52"
+          },
+          {
+            "ficheiro": "C2021_FSINTESE_VARIAVEIS.csv",
+            "tamanho_bytes": 2638,
+            "data_no_zip": "2022-11-24T10:27:28"
+          }
+        ]
+      },
+      {
+        "nome": "BGRI21_LISBOA",
+        "url": "https://mapas.ine.pt/download/filesGPG/2021/nuts2/BGRI21_LISBOA.zip",
+        "ficheiro_local": "dados/entrada/BGRI21_LISBOA.zip",
+        "tamanho_bytes": 31731154,
+        "sha256": "de15fc610606d37f21653e0d9c8117ae3a5087d8e70cb32ed9081609ba184a2e",
+        "conteudo": [
+          {
+            "ficheiro": "BGRI21_LISBOA.gpkg",
+            "tamanho_bytes": 71622656,
+            "data_no_zip": "2022-11-21T09:39:50"
+          },
+          {
+            "ficheiro": "C2021_FSINTESE_VARIAVEIS.csv",
+            "tamanho_bytes": 2638,
+            "data_no_zip": "2022-11-24T10:27:28"
+          }
+        ]
+      },
+      {
+        "nome": "FS_SUBSECCAO",
+        "url": "https://mapas.ine.pt/2021FicheiroSintese/FS2021SubSeccaoTot.zip",
+        "ficheiro_local": "dados/entrada/FS2021SubSeccaoTot.zip",
+        "tamanho_bytes": 44526142,
+        "sha256": "b3fe316622c3972bb1985b11cbb4235f070d3e4dd4bd19d4d11cf3177f634e8d",
+        "conteudo": [
+          {
+            "ficheiro": "FS 2021 SubSecção Tot.xlsx",
+            "tamanho_bytes": 46388418,
+            "data_no_zip": "2023-11-23T16:18:14"
+          }
+        ]
+      },
+      {
+        "nome": "FS_SECCAO",
+        "url": "https://mapas.ine.pt/2021FicheiroSintese/FS2021SeccaoTot.zip",
+        "ficheiro_local": "dados/entrada/FS2021SeccaoTot.zip",
+        "tamanho_bytes": 13392427,
+        "sha256": "db23635ed08890215789b3b4b141f4ed7214b3d01d021fc3bc9dffac5346214f",
+        "conteudo": [
+          {
+            "ficheiro": "FS 2021 Secção Tot.xlsx",
+            "tamanho_bytes": 13539954,
+            "data_no_zip": "2023-11-23T16:41:40"
+          }
+        ]
+      },
+      {
+        "nome": "DICIONARIO",
+        "url": "https://mapas.ine.pt/C2021_FSINTESE_VARIAVEIS.csv",
+        "ficheiro_local": "dados/entrada/C2021_FSINTESE_VARIAVEIS.csv",
+        "tamanho_bytes": 2638,
+        "sha256": "66deaac0264e7ad591b6627b0dfb088cf73220f3245a069242d01392905ee7a9"
+      }
+    ],
+    "registado_em": "2026-11-10T14:16:07"
+  },
+  "etapa_02_preparacao": {
+    "unidade_geografica": "subsecção estatística (BGRI 2021)",
+    "variavel_populacao": "N_INDIVIDUOS",
+    "raio_pre_selecao_km": 65.0,
+    "criterio_pre_selecao": "distância em linha reta do centroide ao hospital (limite físico: 30 min × 130 km/h)",
+    "cobertura_circulo": {
+      "percentagem_circulo_coberta": 96.94,
+      "area_em_falta_a_leste_km2_espanha": 405.1,
+      "area_em_falta_a_oeste_km2": 0.0
+    },
+    "hospital_latitude": 38.5688861,
+    "hospital_longitude": -7.9031778,
+    "hospital_coordenadas_origem": "GPS indicado pelo utilizador: 38º34'07.99\" N, 7º54'11.44\" W",
+    "subseccao_do_hospital": "07052300732",
+    "ambito_territorial": "apenas Portugal (subsecções da BGRI 2021)",
+    "subseccoes_pre_selecionadas": 9748,
+    "populacao_pre_selecionada": 240452,
+    "coordenadas_invalidas": 0,
+    "centroides_fora_do_poligono": 82,
+    "controlo_populacao": {
+      "subseccoes_com_ambas_as_fontes": 9748,
+      "subseccoes_com_valores_diferentes": 0,
+      "subseccoes_sem_ficheiro_sintese": 0,
+      "subseccoes_sem_populacao": 0
+    },
+    "controlo_totais_municipais": [
+      {
+        "municipio": "Alvito",
+        "codigo": "0203",
+        "soma_subseccoes": 2280,
+        "total_oficial_ine": 2280,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Cuba",
+        "codigo": "0207",
+        "soma_subseccoes": 4373,
+        "total_oficial_ine": 4373,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Vidigueira",
+        "codigo": "0214",
+        "soma_subseccoes": 5175,
+        "total_oficial_ine": 5175,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Alandroal",
+        "codigo": "0701",
+        "soma_subseccoes": 5014,
+        "total_oficial_ine": 5014,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Arraiolos",
+        "codigo": "0702",
+        "soma_subseccoes": 6606,
+        "total_oficial_ine": 6606,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Borba",
+        "codigo": "0703",
+        "soma_subseccoes": 6428,
+        "total_oficial_ine": 6428,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Estremoz",
+        "codigo": "0704",
+        "soma_subseccoes": 12680,
+        "total_oficial_ine": 12680,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Évora",
+        "codigo": "0705",
+        "soma_subseccoes": 53577,
+        "total_oficial_ine": 53577,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Montemor-o-Novo",
+        "codigo": "0706",
+        "soma_subseccoes": 15799,
+        "total_oficial_ine": 15799,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Mora",
+        "codigo": "0707",
+        "soma_subseccoes": 4135,
+        "total_oficial_ine": 4135,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Portel",
+        "codigo": "0709",
+        "soma_subseccoes": 5747,
+        "total_oficial_ine": 5747,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Redondo",
+        "codigo": "0710",
+        "soma_subseccoes": 6286,
+        "total_oficial_ine": 6286,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Reguengos de Monsaraz",
+        "codigo": "0711",
+        "soma_subseccoes": 9871,
+        "total_oficial_ine": 9871,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Viana do Alentejo",
+        "codigo": "0713",
+        "soma_subseccoes": 5318,
+        "total_oficial_ine": 5318,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Vila Viçosa",
+        "codigo": "0714",
+        "soma_subseccoes": 7387,
+        "total_oficial_ine": 7387,
+        "diferenca": 0
+      },
+      {
+        "municipio": "Sousel",
+        "codigo": "1215",
+        "soma_subseccoes": 4360,
+        "total_oficial_ine": 4360,
+        "diferenca": 0
+      }
+    ],
+    "metodo_centroide": "centroide geométrico calculado em EPSG:3763 e convertido para EPSG:4326",
+    "registado_em": "2026-11-10T14:30:05"
+  },
+  "etapa_03_routing": {
+    "servico": "OSRM (Open Source Routing Machine) — serviço /table",
+    "servidor": "https://router.project-osrm.org",
+    "perfil": "driving",
+    "rede_rodoviaria": "OpenStreetMap (versão carregada no servidor à data do cálculo)",
+    "hospital_na_rede": {
+      "rua": "Rua do Valasco",
+      "coordenadas_na_estrada": [
+        -7.903395,
+        38.568746
+      ],
+      "distancia_encaixe_m": 24.5,
+      "data_version_osrm": null
+    },
+    "pontos_por_pedido": 99,
+    "pausa_entre_pedidos_s": 1.0,
+    "distancia_maxima_ate_estrada_m": 1000,
+    "sentidos_calculados": [
+      "hospital → domicílio",
+      "domicílio → hospital"
+    ],
+    "estados": {
+      "ok": 9673,
+      "ok_afastado_da_rede": 75
+    },
+    "data_calculo_inicio": "2026-11-10T14:23:43",
+    "data_calculo_fim": "2026-11-10T14:29:10",
+    "nota": "Tempos em condições de tráfego livre (sem trânsito em tempo real).",
+    "registado_em": "2026-11-10T14:29:16"
+  },
+  "etapa_04_consistencia": {
+    "verificacoes": [
+      {
+        "verificacao": "Subsecções sem tempo de viagem",
+        "resultado": "OK",
+        "valor": 0,
+        "explicacao": "Estados: {'ok': 9673, 'ok_afastado_da_rede': 75}"
+      },
+      {
+        "verificacao": "Centroides afastados da estrada (> 1000 m)",
+        "resultado": "AVISO",
+        "valor": 75,
+        "explicacao": "Distância de encaixe mediana: 29 m; máxima: 1859 m"
+      },
+      {
+        "verificacao": "Pontos de encaixe na estrada fora de Portugal",
+        "resultado": "OK",
+        "valor": 0,
+        "explicacao": "Todos os destinos devem estar em território português."
+      },
+      {
+        "verificacao": "Velocidades médias implausíveis (ida)",
+        "resultado": "OK",
+        "valor": 0,
+        "explicacao": "Mediana: 61.0 km/h; mín.: 18.0; máx.: 82.8"
+      },
+      {
+        "verificacao": "Velocidades médias implausíveis (regresso)",
+        "resultado": "OK",
+        "valor": 0,
+        "explicacao": "Mediana: 61.8 km/h; mín.: 15.5; máx.: 86.7"
+      },
+      {
+        "verificacao": "Distância por estrada menor que em linha reta",
+        "resultado": "OK",
+        "valor": 0,
+        "explicacao": "Fator de sinuosidade mediano (estrada / linha reta): 1.29"
+      },
+      {
+        "verificacao": "Subsecções com assimetria ida/regresso > 10 %",
+        "resultado": "INFO",
+        "valor": 601,
+        "explicacao": "Diferença média (regresso − ida): -0.80 min; máx. absoluta: 36.89 min. A assimetria é esperada."
+      },
+      {
+        "verificacao": "Subsecções cuja classificação mudaria se se usasse o regresso",
+        "resultado": "INFO",
+        "valor": 189,
+        "explicacao": "A classificação oficial usa o sentido hospital → domicílio."
+      },
+      {
+        "verificacao": "Diagonal da matriz (tempo de um ponto para si próprio)",
+        "resultado": "OK",
+        "valor": "0.0 s",
+        "explicacao": "Deve ser 0."
+      },
+      {
+        "verificacao": "Desigualdade triangular (tempos)",
+        "resultado": "OK",
+        "valor": "0 violações em 68921 trios",
+        "explicacao": "Maior excesso: 0.0 s (tolerância 5 s)"
+      },
+      {
+        "verificacao": "Desigualdade triangular (distâncias)",
+        "resultado": "INFO",
+        "valor": "1608 violações em 68921 trios",
+        "explicacao": "O OSRM minimiza o TEMPO e não a distância; violações nas distâncias podem ocorrer e não são um erro (maior excesso: 21475 m)."
+      },
+      {
+        "verificacao": "Repetibilidade: mesma rota pedida duas vezes",
+        "resultado": "OK",
+        "valor": "0.01 min",
+        "explicacao": "Diferença máxima entre a matriz da amostra e a etapa 3."
+      }
+    ],
+    "tamanho_amostra_triangular": 40,
+    "semente_aleatoria": 2021,
+    "registado_em": "2026-11-10T14:30:07"
+  },
+  "etapa_05_classificacao": {
+    "regra": "elegível se tempo hospital → domicílio ≤ 30 min",
+    "sentido_usado": "hospital → domicílio (ida)",
+    "margem_proximo_do_limite_min": 3,
+    "registado_em": "2026-11-10T14:30:11"
+  },
+  "etapa_06_isocrona": {
+    "servico_isocrona": "Valhalla — serviço /isochrone",
+    "servidor": "https://valhalla1.openstreetmap.de",
+    "perfil": "auto",
+    "valhalla": {
+      "versao": "3.9.1-52228c4",
+      "dados_osm_modificados_em": "2026-11-10"
+    },
+    "isocrona_obtida": true,
+    "isocrona_recortada_pelo_territorio_portugues": true,
+    "area_isocrona_fora_de_portugal_km2": 0.0,
+    "concordancia_centroides_elegiveis_percent": 70.3,
+    "populacao_centroides_dentro_isocrona_valhalla": 49889,
+    "nota": "A isócrona é apenas ilustrativa; a elegibilidade é determinada pelo OSRM.",
+    "registado_em": "2026-11-10T14:31:54"
+  },
+  "etapa_07_mapas": {
+    "ficheiros": [
+      "resultados/mapas/mapa_centroides.html",
+      "resultados/mapas/mapa_poligonos_bgri.html"
+    ],
+    "biblioteca": "folium 0.20.0",
+    "simplificacao_poligonos_m": 10,
+    "registado_em": "2026-11-10T14:33:31"
+  },
+  "etapa_08_resumo": {
+    "indicadores": {
+      "subseccoes_analisadas": 9748,
+      "subseccoes_elegiveis": 1804,
+      "subseccoes_nao_elegiveis": 7944,
+      "subseccoes_sem_tempo_calculado": 0,
+      "populacao_sem_tempo_calculado": 0,
+      "subseccoes_elegiveis_com_populacao": 1669,
+      "populacao_total_analisada": 240452,
+      "populacao_residente_abrangida": 59756,
+      "percentagem_populacao_abrangida": 24.85,
+      "subseccoes_proximas_do_limite_27_33min": 593,
+      "populacao_proxima_do_limite_27_33min": 14680,
+      "tempo_hospital_domicilio_elegiveis_min": {
+        "minimo": 0.12,
+        "mediana": 7.21,
+        "media": 12.39,
+        "maximo": 30.0,
+        "media_ponderada_pela_populacao": 9.49
+      },
+      "tempo_domicilio_hospital_elegiveis_min": {
+        "minimo": 0.39,
+        "mediana": 6.42,
+        "media": 11.87,
+        "maximo": 36.27,
+        "media_ponderada_pela_populacao": 8.95
+      },
+      "distancia_hospital_domicilio_elegiveis_km": {
+        "minimo": 0.05,
+        "mediana": 4.51,
+        "media": 10.24,
+        "maximo": 39.08,
+        "media_ponderada_pela_populacao": 7.51
+      },
+      "distancia_domicilio_hospital_elegiveis_km": {
+        "minimo": 0.12,
+        "mediana": 3.97,
+        "media": 9.96,
+        "maximo": 45.27,
+        "media_ponderada_pela_populacao": 7.22
+      },
+      "tempo_hospital_domicilio_todas_min": {
+        "minimo": 0.12,
+        "mediana": 51.32,
+        "media": 49.6,
+        "maximo": 148.78,
+        "media_ponderada_pela_populacao": 44.51
+      },
+      "distancia_hospital_domicilio_todas_km": {
+        "minimo": 0.05,
+        "mediana": 55.17,
+        "media": 50.16,
+        "maximo": 112.66,
+        "media_ponderada_pela_populacao": 47.21
+      }
+    },
+    "capacidade": {
+      "natureza": "CENÁRIO ILUSTRATIVO baseado em pressupostos — não é um dado observado",
+      "pressupostos": {
+        "equipas": 1,
+        "composicao_equipa": "1 médico + 1 enfermeiro",
+        "viaturas": 1,
+        "lugares_por_viatura_incluindo_condutor": 5,
+        "equipas_operacionais": 1,
+        "minutos_turno": 420,
+        "duracao_visita_min": 45,
+        "deslocacao_entre_visitas_min": 15,
+        "visitas_por_doente_dia": 1
+      },
+      "cenarios": {
+        "tempos_medios": {
+          "tempo_ida_usado_min": 9.5,
+          "tempo_regresso_usado_min": 8.9,
+          "visitas_por_equipa_dia": 6,
+          "visitas_totais_dia": 6,
+          "doentes_acompanhados_em_simultaneo": 6
+        },
+        "pior_caso_30min": {
+          "tempo_ida_usado_min": 30,
+          "tempo_regresso_usado_min": 30,
+          "visitas_por_equipa_dia": 6,
+          "visitas_totais_dia": 6,
+          "doentes_acompanhados_em_simultaneo": 6
+        }
+      }
+    },
+    "registado_em": "2026-11-10T14:32:14"
+  }
+}

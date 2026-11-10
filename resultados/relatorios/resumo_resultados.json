@@ -1,0 +1,137 @@
+{
+  "indicadores": {
+    "subseccoes_analisadas": 9748,
+    "subseccoes_elegiveis": 1804,
+    "subseccoes_nao_elegiveis": 7944,
+    "subseccoes_sem_tempo_calculado": 0,
+    "populacao_sem_tempo_calculado": 0,
+    "subseccoes_elegiveis_com_populacao": 1669,
+    "populacao_total_analisada": 240452,
+    "populacao_residente_abrangida": 59756,
+    "percentagem_populacao_abrangida": 24.85,
+    "subseccoes_proximas_do_limite_27_33min": 593,
+    "populacao_proxima_do_limite_27_33min": 14680,
+    "tempo_hospital_domicilio_elegiveis_min": {
+      "minimo": 0.12,
+      "mediana": 7.21,
+      "media": 12.39,
+      "maximo": 30.0,
+      "media_ponderada_pela_populacao": 9.49
+    },
+    "tempo_domicilio_hospital_elegiveis_min": {
+      "minimo": 0.39,
+      "mediana": 6.42,
+      "media": 11.87,
+      "maximo": 36.27,
+      "media_ponderada_pela_populacao": 8.95
+    },
+    "distancia_hospital_domicilio_elegiveis_km": {
+      "minimo": 0.05,
+      "mediana": 4.51,
+      "media": 10.24,
+      "maximo": 39.08,
+      "media_ponderada_pela_populacao": 7.51
+    },
+    "distancia_domicilio_hospital_elegiveis_km": {
+      "minimo": 0.12,
+      "mediana": 3.97,
+      "media": 9.96,
+      "maximo": 45.27,
+      "media_ponderada_pela_populacao": 7.22
+    },
+    "tempo_hospital_domicilio_todas_min": {
+      "minimo": 0.12,
+      "mediana": 51.32,
+      "media": 49.6,
+      "maximo": 148.78,
+      "media_ponderada_pela_populacao": 44.51
+    },
+    "distancia_hospital_domicilio_todas_km": {
+      "minimo": 0.05,
+      "mediana": 55.17,
+      "media": 50.16,
+      "maximo": 112.66,
+      "media_ponderada_pela_populacao": 47.21
+    }
+  },
+  "capacidade_operacional": {
+    "natureza": "CENÁRIO ILUSTRATIVO baseado em pressupostos — não é um dado observado",
+    "pressupostos": {
+      "equipas": 1,
+      "composicao_equipa": "1 médico + 1 enfermeiro",
+      "viaturas": 1,
+      "lugares_por_viatura_incluindo_condutor": 5,
+      "equipas_operacionais": 1,
+      "minutos_turno": 420,
+      "duracao_visita_min": 45,
+      "deslocacao_entre_visitas_min": 15,
+      "visitas_por_doente_dia": 1
+    },
+    "cenarios": {
+      "tempos_medios": {
+        "tempo_ida_usado_min": 9.5,
+        "tempo_regresso_usado_min": 8.9,
+        "visitas_por_equipa_dia": 6,
+        "visitas_totais_dia": 6,
+        "doentes_acompanhados_em_simultaneo": 6
+      },
+      "pior_caso_30min": {
+        "tempo_ida_usado_min": 30,
+        "tempo_regresso_usado_min": 30,
+        "visitas_por_equipa_dia": 6,
+        "visitas_totais_dia": 6,
+        "doentes_acompanhados_em_simultaneo": 6
+      }
+    }
+  },
+  "sensibilidade": [
+    {
+      "limite_min": 20,
+      "subseccoes_elegiveis": 1259,
+      "populacao_abrangida": 49383,
+      "percentagem_populacao_analisada": 20.54
+    },
+    {
+      "limite_min": 25,
+      "subseccoes_elegiveis": 1567,
+      "populacao_abrangida": 55665,
+      "percentagem_populacao_analisada": 23.15
+    },
+    {
+      "limite_min": 27,
+      "subseccoes_elegiveis": 1635,
+      "populacao_abrangida": 56797,
+      "percentagem_populacao_analisada": 23.62
+    },
+    {
+      "limite_min": 30,
+      "subseccoes_elegiveis": 1804,
+      "populacao_abrangida": 59756,
+      "percentagem_populacao_analisada": 24.85
+    },
+    {
+      "limite_min": 33,
+      "subseccoes_elegiveis": 2228,
+      "populacao_abrangida": 71477,
+      "percentagem_populacao_analisada": 29.73
+    },
+    {
+      "limite_min": 35,
+      "subseccoes_elegiveis": 2399,
+      "populacao_abrangida": 76872,
+      "percentagem_populacao_analisada": 31.97
+    },
+    {
+      "limite_min": 40,
+      "subseccoes_elegiveis": 3123,
+      "populacao_abrangida": 97635,
+      "percentagem_populacao_analisada": 40.6
+    },
+    {
+      "limite_min": 45,
+      "subseccoes_elegiveis": 3736,
+      "populacao_abrangida": 111920,
+      "percentagem_populacao_analisada": 46.55
+    }
+  ]
+}

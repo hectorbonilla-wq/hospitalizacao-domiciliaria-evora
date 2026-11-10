@@ -1,0 +1,12 @@
+# Bibliotecas necessárias (versões testadas em novembro de 2026, Python 3.13)
+pandas>=2.2          # tabelas (testado com 3.0.5)
+geopandas>=1.0       # tabelas com geometria (testado com 1.2.0)
+pyogrio>=0.9         # leitura/escrita de GeoPackage e GeoJSON (testado com 0.13.0)
+shapely>=2.0         # operações geométricas (testado com 2.2.0)
+pyproj>=3.6          # conversão de coordenadas (testado com 3.8.0)
+numpy>=1.26          # cálculos numéricos
+requests>=2.31       # pedidos à Internet (INE, OSRM, Valhalla)
+openpyxl>=3.1        # leitura/escrita de ficheiros Excel
+folium>=0.17         # mapas interativos (testado com 0.20.0)
+branca>=0.7          # escalas de cores dos mapas
+pytest>=8            # (opcional) para correr os testes

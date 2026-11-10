@@ -1,0 +1,8 @@
+dados/entrada/*
+!dados/entrada/.gitkeep
+dados/processados/*
+!dados/processados/.gitkeep
+__pycache__/
+*.parcial
+registo/execucao.log
+.venv/
