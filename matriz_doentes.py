@@ -63,6 +63,7 @@ from datetime import datetime
 from pathlib import Path
 
 import folium
+from folium import plugins
 import geopandas as gpd
 import numpy as np
 import pandas as pd
@@ -209,7 +210,7 @@ def geocodificar(doentes):
     cache = {}
     if FICHEIRO_CACHE_GEOCODIFICACAO.exists():
         tabela_cache = pd.read_csv(FICHEIRO_CACHE_GEOCODIFICACAO, sep=";", dtype=str, keep_default_na=False)
-        cache = {l["pesquisa"]: l for _, l in tabela_cache.iterrows()}
+        cache = {l["pesquisa"]: l.to_dict() for _, l in tabela_cache.iterrows()}
 
     doentes = doentes.copy()
     doentes["endereco_pesquisado"] = doentes.apply(texto_da_morada, axis=1)
@@ -501,38 +502,154 @@ def lista_de_pares(tempos_livre, tempos_reais, distancias):
     return pares[pares["origem"] != pares["destino"]].round(3)
 
 
+def obter_percurso_osrm(origem, destino):
+    """
+    Pede ao OSRM o desenho (geometria) do percurso mais rápido entre dois pontos.
+
+    Serve só para DESENHAR no mapa o caminho real pela rede OpenStreetMap;
+    os tempos e distâncias usados nos cálculos vêm da matriz.
+
+    Parâmetros:
+        origem, destino (tuple): (latitude, longitude).
+
+    Devolve:
+        list[list[float]] ou None: pontos [lat, lon] do percurso, ou None se falhar.
+    """
+    url = (f"{config.OSRM_URL}/route/v1/{config.OSRM_PERFIL}/"
+           f"{origem[1]},{origem[0]};{destino[1]},{destino[0]}")
+    try:
+        resposta = requests.get(url, params={"overview": "full", "geometries": "geojson"},
+                                timeout=config.OSRM_TIMEOUT_S, headers=config.CABECALHOS_HTTP)
+        time.sleep(config.OSRM_PAUSA_ENTRE_PEDIDOS_S)
+        coordenadas = resposta.json()["routes"][0]["geometry"]["coordinates"]
+        return [[lat, lon] for lon, lat in coordenadas]   # GeoJSON usa lon,lat; o folium usa lat,lon
+    except (requests.RequestException, ValueError, KeyError, IndexError) as erro:
+        mensagem(f"   (Não foi possível desenhar o percurso: {erro})")
+        return None
+
+
+def icone_doente(id_doente, minutos, cor):
+    """
+    Cria o símbolo de um doente: um ponto colorido com a etiqueta "E01 · 7 min".
+    O ponto fica exatamente nas coordenadas do doente.
+
+    Parâmetros:
+        id_doente (str): identificador.
+        minutos (float): tempo hospital → doente (condições reais).
+        cor (str): cor (verde = incluído, laranja = excluído).
+
+    Devolve:
+        folium.DivIcon: símbolo para usar num folium.Marker.
+    """
+    html = (f'<div style="display:flex;align-items:center;white-space:nowrap;">'
+            f'<span style="width:12px;height:12px;border-radius:50%;background:{cor};'
+            f'border:2px solid white;box-shadow:0 0 2px #333;"></span>'
+            f'<span style="margin-left:3px;background:{cor};color:white;border-radius:3px;'
+            f'padding:0 4px;font:bold 11px Arial;box-shadow:0 1px 2px rgba(0,0,0,.4);">'
+            f'{id_doente} · {minutos:.0f} min</span></div>')
+    return folium.DivIcon(html=html, icon_size=(110, 16), icon_anchor=(8, 8))
+
+
 def criar_mapa(tabela, destino):
     """
-    Mapa HTML com o hospital, os doentes (verde = incluído, laranja = excluído)
-    e a isócrona de 30 min da Parte A.
+    Mapa HTML (fundo OpenStreetMap) com o hospital, os doentes e os percursos.
+
+      * verde   = doente incluído (≤ 30 min), com o percurso real desde o hospital;
+      * laranja = doente excluído por estar a mais de 30 min;
+      * doentes muito próximos uns dos outros aparecem AGRUPADOS num círculo
+        com o número de doentes; clique no círculo (ou aproxime) para os ver;
+      * os doentes sem localização fiável NÃO são desenhados (seria enganador)
+        e ficam listados na caixa do canto inferior esquerdo;
+      * a caixa inclui uma tabela com km e minutos de todos os doentes.
 
     Parâmetros:
         tabela (DataFrame): tabela por doente.
         destino (Path): ficheiro HTML a criar.
     """
     mapa = folium.Map(location=[config.HOSPITAL_LATITUDE, config.HOSPITAL_LONGITUDE],
-                      zoom_start=10, control_scale=True)
+                      zoom_start=11, control_scale=True, tiles=None)
+    folium.TileLayer("OpenStreetMap", name="OpenStreetMap").add_to(mapa)
+
     if config.FICHEIRO_ISOCRONA.exists():
-        folium.GeoJson(gpd.read_file(config.FICHEIRO_ISOCRONA), name="Isócrona 30 min (Valhalla, fluxo livre)",
-                       style_function=lambda f: {"color": "#2c7fb8", "weight": 2, "fillOpacity": 0.05,
-                                                 "dashArray": "6 4"}).add_to(mapa)
-    folium.Marker([config.HOSPITAL_LATITUDE, config.HOSPITAL_LONGITUDE], tooltip="HOSPITAL",
-                  popup=config.HOSPITAL_MORADA, icon=folium.Icon(color="red", icon="plus-sign")).add_to(mapa)
-    for _, d in tabela.dropna(subset=["latitude", "longitude"]).iterrows():
-        cor = "#1a9850" if d["dentro_dos_30min"] else "#d95f02"
+        folium.GeoJson(gpd.read_file(config.FICHEIRO_ISOCRONA),
+                       name=f"Isócrona {config.LIMITE_TEMPO_MINUTOS} min (Valhalla, fluxo livre)",
+                       style_function=lambda f: {"color": "#2c7fb8", "weight": 1.5, "opacity": 0.8,
+                                                 "fillColor": "#2c7fb8", "fillOpacity": 0.10},
+                       tooltip=f"Isócrona de {config.LIMITE_TEMPO_MINUTOS} min (referência)").add_to(mapa)
+
+    desenhados = tabela[tabela["tempo_hospital_doente_fluxo_livre_min"].notna()]
+    nao_desenhados = tabela[tabela["tempo_hospital_doente_fluxo_livre_min"].isna()]
+    hospital = (config.HOSPITAL_LATITUDE, config.HOSPITAL_LONGITUDE)
+
+    camada_percursos = folium.FeatureGroup(name="Percursos hospital → doente (OSRM/OSM)").add_to(mapa)
+    # Agrupamento automático: deixa de agrupar a partir do zoom 16 (ruas visíveis)
+    grupo_doentes = plugins.MarkerCluster(name="Doentes", options={
+        "disableClusteringAtZoom": 16, "maxClusterRadius": 35, "spiderfyOnMaxZoom": True}).add_to(mapa)
+
+    for _, d in desenhados.iterrows():
+        incluido = bool(d["dentro_dos_30min"])
+        cor = "#1a9850" if incluido else "#d95f02"
         texto = (f"<b>{d['id_doente']}</b> — {d['estado']}<br>{d['endereco_pesquisado']}<br>"
-                 f"<small>Encontrado: {d['endereco_encontrado']} [{d['precisao_geocodificacao']}]</small><br>"
-                 f"Hospital → doente: {d['distancia_hospital_doente_km']} km; "
-                 f"{d['tempo_hospital_doente_fluxo_livre_min']} min (fluxo livre), "
-                 f"{d['tempo_hospital_doente_condicoes_reais_min']} min (condições reais)<br>"
-                 f"Doente → hospital: {d['distancia_doente_hospital_km']} km; "
-                 f"{d['tempo_doente_hospital_condicoes_reais_min']} min (condições reais)")
-        icone = folium.DivIcon(html=f'<div style="background:{cor};color:white;border-radius:12px;'
-                                    f'padding:2px 6px;font:bold 12px Arial;white-space:nowrap;'
-                                    f'border:1px solid white;display:inline-block">{d["id_doente"]}</div>')
-        folium.Marker([d["latitude"], d["longitude"]], icon=icone, tooltip=d["id_doente"],
-                      popup=folium.Popup(texto, max_width=350)).add_to(mapa)
-    folium.LayerControl().add_to(mapa)
+                 f"<small>Localizado em: {d['endereco_encontrado']}<br>"
+                 f"Precisão: {d['precisao_geocodificacao']}</small><br><br>"
+                 f"<b>Hospital → doente:</b> {d['distancia_hospital_doente_km']} km · "
+                 f"{d['tempo_hospital_doente_condicoes_reais_min']} min (condições reais) · "
+                 f"{d['tempo_hospital_doente_fluxo_livre_min']} min (sem trânsito)<br>"
+                 f"<b>Doente → hospital:</b> {d['distancia_doente_hospital_km']} km · "
+                 f"{d['tempo_doente_hospital_condicoes_reais_min']} min (condições reais) · "
+                 f"{d['tempo_doente_hospital_fluxo_livre_min']} min (sem trânsito)")
+        if incluido:
+            percurso = obter_percurso_osrm(hospital, (d["latitude"], d["longitude"]))
+            if percurso:
+                folium.PolyLine(percurso, color=cor, weight=3, opacity=0.55,
+                                tooltip=f"Hospital → {d['id_doente']}: "
+                                        f"{d['tempo_hospital_doente_condicoes_reais_min']} min").add_to(camada_percursos)
+        folium.Marker([d["latitude"], d["longitude"]],
+                      icon=icone_doente(d["id_doente"], d["tempo_hospital_doente_condicoes_reais_min"], cor),
+                      tooltip=f"{d['id_doente']}: {d['endereco_pesquisado']}",
+                      popup=folium.Popup(texto, max_width=380)).add_to(grupo_doentes)
+
+    folium.Marker(hospital, tooltip="Hospital do Espírito Santo de Évora", z_index_offset=-1000,
+                  popup=folium.Popup(f"<b>{config.HOSPITAL_NOME}</b><br>{config.HOSPITAL_MORADA}", max_width=300),
+                  icon=folium.DivIcon(icon_size=(22, 22), icon_anchor=(11, 11),
+                                      html='<div style="width:22px;height:22px;border-radius:4px;'
+                                           'background:#c0392b;color:white;font:bold 15px Arial;'
+                                           'text-align:center;line-height:22px;border:2px solid white;'
+                                           'box-shadow:0 0 3px #333;">H</div>')).add_to(mapa)
+
+    # Caixa: legenda + tabela de km/minutos + doentes não representados
+    linhas = "".join(
+        f"<tr><td style='color:{'#1a9850' if d['dentro_dos_30min'] else '#d95f02'};font-weight:bold'>"
+        f"{d['id_doente']}</td><td align='right'>{d['distancia_hospital_doente_km']:.1f}</td>"
+        f"<td align='right'>{d['tempo_hospital_doente_condicoes_reais_min']:.1f}</td>"
+        f"<td align='right'>{d['tempo_doente_hospital_condicoes_reais_min']:.1f}</td></tr>"
+        for _, d in desenhados.iterrows())
+    lista = "".join(f"<li>{d['id_doente']}: {d['estado']}</li>" for _, d in nao_desenhados.iterrows())
+    caixa_nao = (f"<b>Não representados:</b><ul style='margin:2px 0 0 16px;padding:0'>{lista}</ul>"
+                 if lista else "")
+    legenda = f"""
+    <div style="position:fixed;bottom:40px;left:10px;z-index:9999;background:rgba(255,255,255,0.95);
+                padding:8px 10px;border:1px solid #999;border-radius:6px;font:12px Arial;
+                max-width:300px;max-height:55%;overflow:auto;">
+      <b>Doentes — Hospitalização Domiciliária (HESE)</b><br>
+      <span style="background:#c0392b;color:white;padding:0 4px;border-radius:3px;font-weight:bold">H</span> Hospital
+      &nbsp; <span style="color:#1a9850;font-size:15px">&#9679;</span> ≤ {config.LIMITE_TEMPO_MINUTOS} min
+      &nbsp; <span style="color:#d95f02;font-size:15px">&#9679;</span> &gt; {config.LIMITE_TEMPO_MINUTOS} min<br>
+      <span style="color:#1a9850">&#9473;&#9473;</span> percurso real (rede OpenStreetMap)<br>
+      <small>Círculo com número = doentes próximos agrupados (clique para abrir).</small>
+      <table style="border-collapse:collapse;margin-top:4px;font-size:11px;width:100%">
+        <tr style="border-bottom:1px solid #ccc"><th align="left">Doente</th><th>km</th>
+            <th>H→D min</th><th>D→H min</th></tr>{linhas}
+      </table>
+      <small>Minutos em condições reais estimadas (fluxo livre × {config.CONDICOES_REAIS_FATOR_TRANSITO}
+      + {config.CONDICOES_REAIS_TEMPO_ACESSO_MIN} min).</small><br>{caixa_nao}
+    </div>"""
+    mapa.get_root().html.add_child(folium.Element(legenda))
+
+    # Enquadrar: hospital + doentes desenhados; margem maior à esquerda (caixa)
+    pontos = [list(hospital)] + desenhados[["latitude", "longitude"]].values.tolist()
+    mapa.fit_bounds(pontos, padding_top_left=(320, 40), padding_bottom_right=(40, 40))
+    folium.LayerControl(collapsed=False).add_to(mapa)
     mapa.save(destino)
 
 
@@ -629,12 +746,14 @@ def criar_exemplo():
 # ---------------------------------------------------------------------------
 # Programa principal
 # ---------------------------------------------------------------------------
-def executar_matriz_doentes(caminho=FICHEIRO_EXEMPLO):
+def executar_matriz_doentes(caminho=FICHEIRO_EXEMPLO, pasta_resultados=None):
     """
     Executa a Parte B completa para um ficheiro de doentes.
 
     Parâmetros:
         caminho (Path): ficheiro CSV de doentes.
+        pasta_resultados (Path ou None): onde gravar os resultados; por omissão
+            resultados/doentes/<nome_do_ficheiro>/.
 
     Devolve:
         Path: pasta com os resultados.
@@ -680,7 +799,8 @@ def executar_matriz_doentes(caminho=FICHEIRO_EXEMPLO):
                            quadradas["distancias_km"])
 
     # 8. Exportar
-    pasta = config.PASTA_PROJETO / "resultados" / "doentes" / caminho.stem
+    pasta = Path(pasta_resultados) if pasta_resultados else (
+        config.PASTA_PROJETO / "resultados" / "doentes" / caminho.stem)
     completas = {"distancias_km": distancias, "tempos_condicoes_reais_min": tempos_reais}
     exportar(pasta, tabela, quadradas, completas, pares, encaixe, verificacoes)
 
@@ -696,7 +816,7 @@ def executar_matriz_doentes(caminho=FICHEIRO_EXEMPLO):
     for linha in quadradas["tempos_condicoes_reais_min"].round(1).to_string().splitlines():
         mensagem("   " + linha)
     mensagem("-" * 70)
-    mensagem(f"PARTE B concluída. Resultados em: {pasta.relative_to(config.PASTA_PROJETO)}/")
+    mensagem(f"PARTE B concluída. Resultados em: {pasta.resolve().relative_to(config.PASTA_PROJETO)}/")
     return pasta
 
 

@@ -40,7 +40,8 @@ import config
 from utilitarios import mensagem, registar_metadados, verificar_ficheiro_existe
 
 COR_ELEGIVEL = "#1a9850"
-COR_NAO_ELEGIVEL = "#d95f02"
+COR_NAO_ELEGIVEL = "#e6550d"
+COR_NAO_ELEGIVEL_SUAVE = "#8c8c8c"  # cinzento: não tapa o fundo OpenStreetMap
 COR_ISOCRONA = "#2c7fb8"
 
 # Campos mostrados ao clicar numa localização, e respetivas etiquetas
@@ -101,14 +102,14 @@ def adicionar_areas_cobertura(mapa, mostrar_area_elegivel=True):
         isocrona = gpd.read_file(config.FICHEIRO_ISOCRONA)
         folium.GeoJson(
             isocrona, name=f"Isócrona {config.LIMITE_TEMPO_MINUTOS} min (Valhalla)",
-            style_function=lambda f: {"color": COR_ISOCRONA, "weight": 3, "fillOpacity": 0.05,
-                                      "dashArray": "6 4"},
+            style_function=lambda f: {"color": COR_ISOCRONA, "weight": 1.5, "opacity": 0.9,
+                                      "fillColor": COR_ISOCRONA, "fillOpacity": 0.12},
             tooltip=f"Isócrona rodoviária de {config.LIMITE_TEMPO_MINUTOS} min (Valhalla/OSM)",
         ).add_to(mapa)
     area = gpd.read_file(config.PASTA_GEOJSON / "area_subseccoes_elegiveis.geojson")
     folium.GeoJson(
         area, name="Área das subsecções elegíveis (OSRM)", show=mostrar_area_elegivel,
-        style_function=lambda f: {"color": COR_ELEGIVEL, "weight": 2, "fillOpacity": 0.08},
+        style_function=lambda f: {"color": COR_ELEGIVEL, "weight": 2, "fillOpacity": 0.06},
         tooltip=f"União das subsecções com tempo ≤ {config.LIMITE_TEMPO_MINUTOS} min (OSRM)",
     ).add_to(mapa)
 
@@ -122,18 +123,31 @@ def adicionar_legenda(mapa, texto_extra=""):
         texto_extra (str): linhas HTML adicionais.
     """
     html = f"""
-    <div style="position: fixed; bottom: 30px; left: 10px; z-index: 9999; background: white;
+    <div style="position: fixed; bottom: 55px; left: 10px; z-index: 9999; background: rgba(255,255,255,0.93);
                 padding: 10px 12px; border: 1px solid #999; border-radius: 6px;
                 font: 13px Arial, sans-serif; max-width: 300px;">
       <b>Hospitalização Domiciliária — HESE Évora</b><br>
       <span style="color:{COR_ELEGIVEL};">&#9679;</span> Elegível (≤ {config.LIMITE_TEMPO_MINUTOS} min)<br>
-      <span style="color:{COR_NAO_ELEGIVEL};">&#9679;</span> Não elegível (&gt; {config.LIMITE_TEMPO_MINUTOS} min)<br>
-      <span style="color:{COR_ISOCRONA};">&#9473;&#9473;</span> Isócrona {config.LIMITE_TEMPO_MINUTOS} min (Valhalla)<br>
+      <span style="color:{COR_NAO_ELEGIVEL_SUAVE};">&#9679;</span> Não elegível (&gt; {config.LIMITE_TEMPO_MINUTOS} min)<br>
+      <span style="background:{COR_ISOCRONA};opacity:0.35;">&nbsp;&nbsp;&nbsp;&nbsp;</span> Isócrona {config.LIMITE_TEMPO_MINUTOS} min (Valhalla)<br>
       {texto_extra}
       <small>População: INE, Censos 2021 / BGRI 2021. Rede: © OpenStreetMap.
       Tempos: OSRM, sem trânsito. Pontos = centroides (aproximação).</small>
     </div>"""
     mapa.get_root().html.add_child(folium.Element(html))
+
+
+def enquadrar_na_area_elegivel(mapa):
+    """
+    Ajusta a vista inicial do mapa à área das subsecções elegíveis (com margem),
+    para que a zona de cobertura apareça logo ao abrir o mapa.
+
+    Parâmetros:
+        mapa (folium.Map): mapa a enquadrar.
+    """
+    area = gpd.read_file(config.PASTA_GEOJSON / "area_subseccoes_elegiveis.geojson")
+    oeste, sul, leste, norte = area.total_bounds
+    mapa.fit_bounds([[sul, oeste], [norte, leste]], padding=(30, 30))
 
 
 def criar_mapa_centroides(centroides):
@@ -151,17 +165,18 @@ def criar_mapa_centroides(centroides):
 
     # Raio do círculo proporcional à raiz quadrada da população (mín. 2 px)
     centroides = centroides.copy()
-    centroides["raio"] = (2 + np.sqrt(centroides["populacao_residente"]) / 2.5).clip(upper=14).round(1)
+    centroides["raio"] = (2 + np.sqrt(centroides["populacao_residente"]) / 4).clip(upper=9).round(1)
 
-    for classe, cor, visivel in [("elegível", COR_ELEGIVEL, True),
-                                 ("não elegível", COR_NAO_ELEGIVEL, True)]:
+    for classe, cor, visivel, opacidade in [("elegível", COR_ELEGIVEL, True, 0.75),
+                                            ("não elegível", COR_NAO_ELEGIVEL_SUAVE, True, 0.35)]:
         grupo = centroides[centroides["elegibilidade"] == classe]
         camada = folium.GeoJson(
             grupo[CAMPOS_POPUP + ["raio", "geometry"]],
             name=f"Centroides — {classe} ({len(grupo)})", show=visivel,
-            marker=folium.CircleMarker(radius=4, weight=1, fill=True, fill_opacity=0.7),
-            style_function=lambda f, cor=cor: {"color": cor, "fillColor": cor,
-                                               "radius": f["properties"]["raio"]},
+            marker=folium.CircleMarker(radius=4, weight=0.5, fill=True),
+            style_function=lambda f, cor=cor, opacidade=opacidade: {
+                "color": "white", "weight": 0.5, "fillColor": cor, "fillOpacity": opacidade,
+                "radius": f["properties"]["raio"]},
             tooltip=folium.GeoJsonTooltip(fields=["designacao", "tempo_hospital_domicilio_min"],
                                           aliases=["", "Tempo (min):"]),
             popup=folium.GeoJsonPopup(fields=CAMPOS_POPUP, aliases=ETIQUETAS_POPUP, max_width=400),
@@ -177,6 +192,7 @@ def criar_mapa_centroides(centroides):
     adicionar_legenda(mapa, "Tamanho do círculo ∝ população residente<br>")
     folium.LayerControl(collapsed=False).add_to(mapa)
 
+    enquadrar_na_area_elegivel(mapa)
     destino = config.PASTA_MAPAS / "mapa_centroides.html"
     mapa.save(destino)
     return destino
@@ -212,9 +228,11 @@ def criar_mapa_poligonos(poligonos):
     folium.GeoJson(
         poligonos[campos + ["geometry"]], name="Subsecções — elegibilidade",
         style_function=lambda f: {
-            "color": "#555", "weight": 0.3,
-            "fillColor": COR_ELEGIVEL if f["properties"]["elegibilidade"] == "elegível" else COR_NAO_ELEGIVEL,
-            "fillOpacity": 0.45},
+            "color": COR_ELEGIVEL if f["properties"]["elegibilidade"] == "elegível" else "#999999",
+            "weight": 0.6 if f["properties"]["elegibilidade"] == "elegível" else 0.3,
+            "opacity": 0.8 if f["properties"]["elegibilidade"] == "elegível" else 0.4,
+            "fillColor": COR_ELEGIVEL if f["properties"]["elegibilidade"] == "elegível" else "#bbbbbb",
+            "fillOpacity": 0.35 if f["properties"]["elegibilidade"] == "elegível" else 0.03},
         highlight_function=lambda f: {"weight": 2, "color": "black"},
         tooltip=folium.GeoJsonTooltip(fields=["designacao", "populacao_residente"],
                                       aliases=["", "Residentes:"]),
@@ -227,7 +245,7 @@ def criar_mapa_poligonos(poligonos):
     folium.GeoJson(
         poligonos[campos + ["geometry"]], name="Subsecções — densidade populacional", show=False,
         style_function=lambda f: {
-            "color": "#777", "weight": 0.2, "fillOpacity": 0.7,
+            "color": "#777", "weight": 0.2, "fillOpacity": 0.55,
             "fillColor": escala(min(4, np.log10(f["properties"]["densidade_hab_km2"] + 1)))},
         tooltip=folium.GeoJsonTooltip(fields=["designacao", "densidade_hab_km2"],
                                       aliases=["", "hab./km²:"]),
@@ -240,6 +258,7 @@ def criar_mapa_poligonos(poligonos):
     adicionar_legenda(mapa, "Polígonos: subsecções estatísticas BGRI 2021<br>")
     folium.LayerControl(collapsed=False).add_to(mapa)
 
+    enquadrar_na_area_elegivel(mapa)
     destino = config.PASTA_MAPAS / "mapa_poligonos_bgri.html"
     mapa.save(destino)
     return destino

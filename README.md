@@ -147,6 +147,10 @@ o programa:
 4. constrói a **matriz quadrada** hospital + doentes selecionados (todos para todos), em km e em minutos;
 5. verifica a matriz e exporta CSV, Excel e um mapa.
 
+> 📁 **Exemplo completo e separado:** a pasta [`exemplo_doentes_30min/`](exemplo_doentes_30min/README.md)
+> tem 9 doentes fictícios, todos a ≤ 30 min, com o ficheiro de entrada, o programa
+> (`python exemplo_doentes_30min/executar_exemplo.py`), os resultados e a explicação passo a passo.
+
 **1) Preparar o ficheiro** `doentes/os_meus_doentes.csv` (separador `;`, abre no Excel):
 
 ```text
@@ -196,6 +200,14 @@ D03            6.9   5.0   4.8   0.0   8.2  28.9
 D04            7.8   8.6   8.5   9.5   0.0  29.6
 D05           28.8  27.4  27.3  28.2  27.5   0.0
 ```
+
+**O mapa dos doentes** (`mapa_doentes.html`, fundo OpenStreetMap):
+
+* `H` = hospital; verde = doente incluído (≤ 30 min); laranja = excluído (> 30 min);
+* cada doente tem a etiqueta "id · minutos desde o hospital"; linhas verdes = percurso real na rede;
+* doentes muito próximos aparecem **agrupados** num círculo com o número de doentes; clique para os ver;
+* a caixa no canto inferior esquerdo tem a tabela de km e minutos e lista os doentes que não puderam
+  ser localizados (estes não são desenhados, para não mostrar uma posição errada).
 
 **Regras de segurança da geocodificação:**
 
@@ -248,6 +260,7 @@ hospitalizacao_domiciliaria_evora/
 ├── utilitarios.py                    ← mensagens, downloads, metadados
 ├── executar_tudo.py                  ← corre as etapas 1 a 10 (10 = Parte B, exemplo)
 ├── matriz_doentes.py                 ← PARTE B: doentes por morada → matriz quadrada
+├── exemplo_doentes_30min/            ← EXEMPLO separado: 9 doentes a ≤ 30 min (entrada, programa, resultados)
 ├── doentes/
 │   └── doentes_exemplo.csv           ← doentes FICTÍCIOS (os seus ficheiros ficam aqui, fora do Git)
 ├── etapa_01_descarregar_dados_ine.py
@@ -517,6 +530,8 @@ de cada execução ficam em `resultados/relatorios/resumo_resultados.md` e nos m
   indica quantas subsecções mudariam de classe se se usasse o regresso.
 * **Subsecções com 0 residentes** (campos, zonas industriais, albufeiras) entram na contagem de
   subsecções mas não alteram a população.
+* **Cores dos mapas:** verde = elegível; cinzento claro = não elegível (discreto, para não tapar o
+  OpenStreetMap); azul = isócrona de 30 min. Os mapas abrem já enquadrados na área de cobertura.
 * **Mapa de centroides:** cada círculo é uma subsecção; o tamanho é proporcional à população. Clique
   para ver os dados. A caixa de pesquisa aceita o código de 11 dígitos (por exemplo, `07052300732`).
 * **Mapa de polígonos:** mostra a forma real das subsecções. A camada "densidade populacional"
